@@ -1,0 +1,11 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Name=MadSci Deamon
+Comment=Kevin's MadSci Backend App
+Exec=msdeamon
+Icon=msdeamon
+Terminal=false
+Type=Application
+Categories=GTK;GNOME;Utility;
+

@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=MadSci Remote
+Comment=Kevin's MadSci Front End App
+Exec=msremote
+Icon=msremote
+Terminal=false
+Type=Application
+Categories=GTK;GNOME;Utility;
+
