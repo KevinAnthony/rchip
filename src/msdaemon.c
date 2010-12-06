@@ -12,6 +12,7 @@ char* build_playing_info_sql_query(const struct playing_info,char*);
 size_t nelem;
 size_t size; 
 char* base;
+
 /*The Main Program*/
 int main(int argc, char** argv) {
 	/* defines the tray_icon, as well as init gtk*/
@@ -41,10 +42,6 @@ int main(int argc, char** argv) {
                 for (i = 0; i < nelem; i++) {
                         char* elem = base+(i*size);
                         strcpy(hostname,elem);
-                        //char* query = build_playing_info_sql_query(pInfo,hostname);
-                        //strcpy(hostname,elem);
-                        printf("%s\n",hostname);
-                        //sql_exec_quary(query);
                 }
 	g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
 	g_timeout_add (5000,(GSourceFunc) update_active_devices,NULL);
@@ -52,6 +49,7 @@ int main(int argc, char** argv) {
 	free(base);
 	return 0;
 }
+
 gboolean daemon_loop(gpointer data) {
 	/*if the dbus is active, do the following, else try and connect*/
 	get_next_cmd();
@@ -66,7 +64,6 @@ gboolean daemon_loop(gpointer data) {
 			char* elem = base+(i*size);
 			strcpy(hostname,elem);
 			char* query = build_playing_info_sql_query(pInfo,hostname);
-	        	printf("%s\n",hostname);
 			sql_exec_quary(query);
 		}
 			
@@ -74,13 +71,13 @@ gboolean daemon_loop(gpointer data) {
 	}
 	return TRUE;
 }
+
 gboolean update_active_devices(gpointer data){
 	size=get_size();
         nelem=get_nelem();
 	get_active_devices(base,size,nelem);
 	return TRUE;
 }
-
 
 char* build_playing_info_sql_query(const struct playing_info pInfo,char* hostname) {
 	char* query =(char *)malloc(1024);
