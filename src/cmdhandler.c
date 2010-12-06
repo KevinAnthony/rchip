@@ -6,89 +6,8 @@
 #include "sql.h"
 #include "cmdhandler.h"
 
-hn_list *hosts_head = NULL;
-hn_list *hosts_cur = NULL;
-
-gboolean add_to_hosts(char* item) {
-	hn_list *temp;
-	hn_list *last;
-	if (hosts_head == NULL) {
-		temp = (hn_list*) malloc(sizeof(hn_list));
-		temp->hostname = item;
-		temp->next = NULL;
-		hosts_head = temp;
-	} else {
-		temp = hosts_head;
-		while(temp->next != NULL)
-		{
-			if (temp->hostname == item) {
-				return FALSE;
-			}
-			temp=temp->next; 
-		}
-		if (temp->hostname == item) {
-                	return FALSE;
-                }
-		last = (hn_list*) malloc(sizeof(hn_list));
-		last->hostname = item;
-		last->next = NULL;
-		temp->next = last;
-	}
-	return TRUE;
-}
-
-gboolean delete_from_hosts(char* item){
-	printf("Deleteing: %s\n",item);
-	if (hosts_head == NULL) {
-		return FALSE;
-	} else {
-		hn_list *old;
-		hn_list *temp = hosts_head;
-		int found = 0;
-		while (temp != NULL) {
-			if (temp->hostname == item) {
-				if (temp == hosts_head) {
-					hosts_head = temp->next;
-				} else {
-					old->next=temp->next;
-				}
-				free(temp);
-				found++;
-			} else {
-				old = temp;
-				temp=temp->next;
-			}
-		}
-		if (found == 0) {
-			return FALSE;
-		}
-	}
-	return TRUE;
-}
-
-char* get_next_host(){
-	if (hosts_head == NULL) {
-		return NULL;
-	}
-	if (hosts_cur == NULL) {
-		hosts_cur = hosts_head;
-	} else {
-		hosts_cur = hosts_cur->next;
-	}
-	if (hosts_cur == NULL){
-		return NULL;
-	} else {
-		return hosts_cur->hostname;
-	}
-}
-
-void print_list() {
-	hn_list *node = hosts_head;
-	while(node) {
-		printf("hostname: %s\n",node->hostname);
-		node = node->next;
-	}
-	printf ("\n");
+char* get_next_host(void* base,size_t size, size_t next){
+	return base+(next*size);
 }
 
 void get_next_cmd() {
@@ -106,11 +25,10 @@ void get_next_cmd() {
 		return;;
 	}
 	if (!(strcmp(cmd,"STRB"))) {
-		printf("STRB\n");
-		add_to_hosts(source);
+		printf("Warning:STRB is deprecated");
 		delete_from_cmdQueue(cmdID);
 	} else if (!(strcmp(cmd,"SPRB"))) {
-		delete_from_hosts(source);
+		printf("Warning:SPRB is deprecated");
 		delete_from_cmdQueue(cmdID);
 	} else if (!(strcmp(cmd,"NEXT"))) {
 		if(send_command_to_player("next"))
