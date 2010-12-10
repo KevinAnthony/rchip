@@ -42,16 +42,21 @@ void sql_exec_quary (char* query) {
 	#ifdef _DEBUG 
 		printf("Query:%s\n",query);	
 	#endif
+	if (!sql_init()){ return; }
 	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
 		#ifndef _SILENT	
 			printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		#endif
+		mysql_close(mysql);
+		printf("Returning because real_connect failed in sql_exec_quary");
 		return;
 	}
 	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
 		#ifndef _SILENT
 			printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		#endif
+		mysql_close(mysql);
+		printf("Returning because real_query failed in sql_exec_quary");
 		return;
 	}
 	mysql_close(mysql);
@@ -66,22 +71,29 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 	#ifdef _DEBUG 
                 printf("Next Cmd Query:::: %s\n",query);
         #endif	
-	sql_init();	
-        if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+        if (!sql_init()){ return; }
+	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
                 #ifndef _SILENT 
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
+		mysql_close(mysql);
+		printf("Returning because real_connect failed in get_next_cmd_from_sql");
                 return;
         } 
         if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
                 #ifndef _SILENT
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
+		mysql_close(mysql);
+		printf("Returning because real_query failed in get_next_cmd_from_sql");
                 return; 
         }
 
 	res = mysql_use_result(mysql);
 	if (res == NULL) { 
+		mysql_close(mysql);
+		//mysql_free_result(res);
+		printf("Returning because res == NULL in get_next_cmd_from_sql");
 		return;
 	}
 	if ((row = mysql_fetch_row(res))) {
@@ -99,7 +111,7 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 		*source = " ";
 		*cmdID = 0;
 	}
-	mysql_free_result(res);
+	//mysql_free_result(res);
 	mysql_close(mysql);
 }
 
@@ -110,19 +122,24 @@ void delete_from_cmdQueue(int cmdID) {
         #ifdef _DEBUG 
                 printf("Next Cmd Query:::: %s\n",query);
         #endif
-        sql_init();
-        if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+        if (!sql_init()){ return; }
+	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
                 #ifndef _SILENT 
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
+		mysql_close(mysql);
+		printf("Returning because real_connect failed in delete_from_cmdQueue");
                 return;
         }
         if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
                 #ifndef _SILENT
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
+		printf("Returning because real_query failed in delete_from_cmdQueue");
+		mysql_close(mysql);
                 return;
         }
+	mysql_close(mysql);
 }
 
 char* get_registered_devices_message(){
@@ -130,21 +147,29 @@ char* get_registered_devices_message(){
 	MYSQL_RES *res;
         MYSQL_ROW row;
 	char* returnval = (char*) malloc(1024);
+	if (!sql_init()){ return NULL; }
 	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
                 #ifndef _SILENT 
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
+		mysql_close(mysql);
+		printf("Returning because real_connect failed in get_registered_devices_message");
                 return NULL;
         }
         if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
                 #ifndef _SILENT
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
+		mysql_close(mysql);
+		printf("Returning because real_query failed in get_registered_devices_message");
                 return NULL;
         }
 
         res = mysql_use_result(mysql);
         if (res == NULL) {
+		//mysql_free_result(res);
+		mysql_close(mysql);
+		printf("Returning because res == NULL in get_registered_devices_message");
                 return NULL;
         }
 	row=mysql_fetch_row(res);
@@ -152,16 +177,21 @@ char* get_registered_devices_message(){
 	while ((row = mysql_fetch_row(res))) {
 		returnval=strcat(returnval,row[0]);
 	}
+	//mysql_free_result(res);
+        mysql_close(mysql);
 	return returnval;
 }
 
 size_t get_nelem(){
 	char* query = "select hostname from remoteActiveDevices where active = \"TRUE\"";
         MYSQL_RES *res;
+	if (!sql_init()){ return -1; }
 	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
                 #ifndef _SILENT 
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
+		printf("Returning because real_connect failed in get_nelem");
+		mysql_close(mysql);
                 return -1;
         }
 
@@ -169,10 +199,15 @@ size_t get_nelem(){
                 #ifndef _SILENT
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
+		mysql_close(mysql);
+		printf("Returning because real_query failed in get_nelem");
                 return -1;
         }
         res = mysql_store_result(mysql);
-        return (int)mysql_num_rows(res);
+	size_t retval = (int)mysql_num_rows(res);
+	//mysql_free_result(res);
+        mysql_close(mysql);
+	return retval;
 }
 
 size_t get_size(){
@@ -181,42 +216,46 @@ size_t get_size(){
 
 void get_active_devices(void* base, size_t size, size_t nelem)
 {	
-	char* query = "select hostname from remoteActiveDevices where active = \"TRUE\"";
+	char* query = "select hostname from remoteActiveDevices where active = \"TRUE\";";
         MYSQL_RES *res;
         MYSQL_ROW row;
         char* hostname = (char*) malloc(HOSTNAME_MAX_SIZE);
+	if (!sql_init()){ return; }
         if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
                 #ifndef _SILENT 
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
-                return;
+                mysql_close(mysql);
+		printf("Returning because real_connect failed in get_active_device");
+		return;
         }
-        if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
-                #ifndef _SILENT
-                        printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
-                return;
-        }
-	res = mysql_store_result(mysql);
+	
+	
+	printf("Query: %s\n",query);
 	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
                 #ifndef _SILENT
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
                 #endif
-                return;
+		mysql_close(mysql);
+                printf("Returning because real_query failed in get_active_device");
+		return;
         }
         res = mysql_use_result(mysql);
 
 	if (res == NULL) {
-                return;
+		//mysql_free_result(res);
+		mysql_close(mysql);
+                printf("Returning because res == NULL in get_active_device");
+		return;
         }
 	size_t len = 0;	
-	size_t num_fields = mysql_num_fields(res);
-		
-	while ((row = mysql_fetch_row(res))){
+	
+	while ((row = mysql_fetch_row(res)) != NULL){
    		unsigned long *lengths;
    		lengths = mysql_fetch_lengths(res);
 		int i;
-   		for(i = 0; i < num_fields; i++) {
+   		size_t num_fields = mysql_num_fields(res);
+		for(i = 0; i < num_fields; i++) {
        			sprintf(hostname,"%.*s", (int) lengths[i],row[i] ? row[i] : "NULL");
 			if (hostname != NULL) {
 				char* temp = base+ (len*size);
@@ -225,5 +264,8 @@ void get_active_devices(void* base, size_t size, size_t nelem)
 			}
    		}
 	}
+	//mysql_free_result(res);
+        mysql_close(mysql);
+
 }
 
