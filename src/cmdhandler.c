@@ -30,33 +30,32 @@ void get_next_cmd() {
 	} else if (!(strcmp(cmd,"SPRB"))) {
 		printf("Warning:SPRB is deprecated");
 		delete_from_cmdQueue(cmdID);
-	} else if (!(strcmp(cmd,"NEXT"))) {
-		if(send_command_to_player("next"))
+	} else if (!(strcmp(cmd,"NEXTRB"))) {
+		if(send_command_to_rhythmbox("next"))
 		{
 			delete_from_cmdQueue(cmdID);
 		} else {
 			printf("Could not Next\n");
 			delete_from_cmdQueue(cmdID);
 		}
-	} else if (!(strcmp(cmd,"BACK"))) {
-                if(send_command_to_player("previous"))  
+	} else if (!(strcmp(cmd,"BACKRB"))) {
+                if(send_command_to_rhythmbox("previous"))  
                 {
                         delete_from_cmdQueue(cmdID);
                 } else {
                         printf("Could not BACK\n");
 			delete_from_cmdQueue(cmdID);
                 }
-	} else if (!(strcmp(cmd,"PLAY"))) {
-                printf("umm, playing...");
-		if(send_command_to_player_with_argument("playPause",G_TYPE_BOOLEAN,"TRUE"))  
+	} else if (!(strcmp(cmd,"PLAYRB"))) {
+		if(send_command_to_rhythmbox_with_argument("playPause",G_TYPE_BOOLEAN,"TRUE"))  
                 {
                         delete_from_cmdQueue(cmdID);
                 } else {
                         printf("Could not PLAY\n");
 			delete_from_cmdQueue(cmdID);
                 }
-	} else if (!(strcmp(cmd,"STOP"))) {
-               	if(send_command_to_player_with_argument("playPause",G_TYPE_BOOLEAN,"TRUE")) 
+	} else if (!(strcmp(cmd,"STOPRB"))) {
+               	if(send_command_to_rhythmbox_with_argument("playPause",G_TYPE_BOOLEAN,"TRUE")) 
 		{
                         delete_from_cmdQueue(cmdID);
                 } else {

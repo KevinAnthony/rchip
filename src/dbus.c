@@ -70,7 +70,7 @@ gboolean dbus_init(){
         }
 	return TRUE;
 }
-gboolean send_command_to_player(char* command_name) {
+gboolean send_command_to_rhythmbox(char* command_name) {
 	GError *error = NULL;
 	dbus_g_proxy_call_with_timeout(player,command_name, DBUS_TIMEOUT, &error, G_TYPE_INVALID, G_TYPE_INVALID);
 	 if (error != NULL) {
@@ -83,7 +83,7 @@ gboolean send_command_to_player(char* command_name) {
 	}
 }
 
-gboolean send_command_to_player_with_argument(char* command_name,GType type, char* argument) {
+gboolean send_command_to_rhythmbox_with_argument(char* command_name,GType type, char* argument) {
         GError *error = NULL;
         dbus_g_proxy_call_with_timeout(player,command_name, DBUS_TIMEOUT, &error,type,argument, G_TYPE_INVALID, G_TYPE_INVALID);
          if (error != NULL) {
@@ -96,8 +96,8 @@ gboolean send_command_to_player_with_argument(char* command_name,GType type, cha
         }
 }
 
-struct playing_info dbus_get_playing_info() {
-	struct playing_info pInfo = {"Artist","Album","Song",0,3600,0};
+struct playing_info_rb dbus_get_playing_info_rb() {
+	struct playing_info_rb pInfo = {"Artist","Album","Song",0,3600,0};
 	GError *error = NULL;
 	if (dbus_is_connected(TRUE)) {
 			
@@ -159,6 +159,6 @@ unsigned int get_hash_uint(GHashTable *table, const char *key)
 	return 0;
 }
 
-void print_playing_info(const struct playing_info pInfo){
+void print_playing_info_rb(const struct playing_info_rb pInfo){
 	printf("Artist\t\t%s\nAlbum\t\t%s\nSong\t\t%s\nElapised Time\t%i\nDuration\t%i\nIs Playing\t%i\n\n",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying);
 }

@@ -3,7 +3,7 @@
 #include	<dbus/dbus.h>
 #include	<dbus/dbus-glib.h>
 #include        <string.h>
-struct playing_info{
+struct playing_info_rb{
         char *Artist;
         char *Album;
         char *Song;
@@ -14,9 +14,9 @@ struct playing_info{
 
 gboolean dbus_is_connected(gboolean);
 gboolean dbus_init();
-gboolean send_command_to_player(char*);
-gboolean send_command_to_player_with_argument(char*,GType, char*);
-struct playing_info dbus_get_playing_info();
+gboolean send_command_to_rhythmbox(char*);
+gboolean send_command_to_rhythmbox_with_argument(char*,GType, char*);
+struct playing_info_rb dbus_get_playing_info_rb();
 gchar* get_hash_str(GHashTable*, const char*);
 unsigned int get_hash_uint(GHashTable*, const char*);
-void print_playing_info(const struct playing_info);
+void print_playing_info_rb(const struct playing_info_rb);
