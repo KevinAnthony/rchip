@@ -37,12 +37,12 @@ int main(int argc, char** argv) {
 		print_playing_info_rb(pInfo);
 	#endif
 	/*adds the fuction daemon_loop to the gtk main loop, and executes it evert 1/2 second*/
-	char* hostname = malloc(size);
+	/*char* hostname = malloc(size);
                 int i = 0;
                 for (i = 0; i < nelem; i++) {
                         char* elem = base+(i*size);
                         strcpy(hostname,elem);
-                }
+                }*/
 	g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
 	g_timeout_add (5000,(GSourceFunc) update_active_devices,NULL);
 	start_tray();
@@ -56,15 +56,15 @@ gboolean daemon_loop(gpointer data) {
 	if (dbus_is_connected(TRUE)) {
 		struct playing_info_rb pInfo = dbus_get_playing_info_rb();
 		#ifdef _DEBUG
-			print_playing_info(pInfo);
+			print_playing_info_rb(pInfo);
 		#endif
 		char* hostname = malloc(size);
-		int i = 0;
-		for (i = 0; i < nelem; i++) {
+		for (int i = 0; i < nelem; i++) {
 			char* elem = base+(i*size);
 			strcpy(hostname,elem);
 			char* query = build_playing_info_sql_query(pInfo,hostname);
 			sql_exec_quary(query);
+			free(query);
 		}
 			
 		free(hostname);	

@@ -231,7 +231,6 @@ void get_active_devices(void* base, size_t size, size_t nelem)
         }
 	
 	
-	printf("Query: %s\n",query);
 	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
                 #ifndef _SILENT
                         printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));

@@ -9,13 +9,13 @@ LD=gcc
 DEPS=gtk+-2.0 dbus-1 dbus-glib-1 glib-2.0
 CFLAGS=$(shell pkg-config --cflags $(DEPS)) 
 CFLAGS+=$(shell mysql_config --cflags)
-#CFLAGS+=-Wall -g -D _DEBUG -D 'PREFIX="$(PREFIX)"'
-CFLAGS+=-Wall -g -D _SILENT -D 'PREFIX="$(PREFIX)"'
+#CFLAGS+=-std=c99 -Wall -g -D _DEBUG -D 'PREFIX="$(PREFIX)"'
+CFLAGS+=-std=c99 -Wall -g -D _SILENT -D 'PREFIX="$(PREFIX)"'
 
 LDFLAGS=$(shell pkg-config --libs $(DEPS)) 
 LDFLAGS+=$(shell mysql_config --libs )
 
-OBJS=msdaemon.o mstray.o notifications.o sql.o dbus.o cmdhandler.o
+OBJS=msdaemon.o mstray.o notifications.o sql.o dbus.o cmdhandler.o showlist.o
 
 PROG=msdaemon
 

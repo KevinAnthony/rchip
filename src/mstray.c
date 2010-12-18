@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "mstray.h"
+#include "showlist.h"
 
 void start_tray(){
 	gtk_main();
@@ -21,8 +22,35 @@ void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gp
 		printf("clicked on menu\n");
 	#endif
 	GtkWidget *tray_menu = create_tray_menu(status_icon);
-	//gtk_menu_popup (GTK_MENU (tray_menu), NULL, NULL,NULL,NULL,button, activate_time);
 	gtk_menu_popup (GTK_MENU (tray_menu), NULL, NULL,gtk_status_icon_position_menu,status_icon,button,activate_time);
+}
+
+void add_shows(GtkWidget *widget, gpointer gdata){
+ 	#ifdef _DEBUG
+                printf("addShows Clicked\n");
+	#endif
+	GtkWidget *dialog;
+	dialog = gtk_file_chooser_dialog_new ("Open File",
+				      NULL,
+				      GTK_FILE_CHOOSER_ACTION_OPEN,
+				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				      NULL);
+	gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog),TRUE);
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){
+		char *filename;
+		GSList* filelist =  gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER (dialog));
+    		GSList* node = filelist;
+		while (node != NULL){
+			filename = (char*)node->data;
+			add_file_to_playqueue(filename);
+			node=node->next;
+		}
+		g_slist_free(filelist),
+    		g_free (filename);
+  	}
+	gtk_widget_destroy (dialog);
+
 }
 
 void about_box(GtkWidget *widget, gpointer gdata){
@@ -67,13 +95,17 @@ GtkStatusIcon* create_tray_icon() {
 
 GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
 	GtkWidget *tray_menu;
+	GtkWidget *showsadd_item;
 	GtkWidget *about_item;
 	GtkWidget *quit_item;
 	tray_menu = gtk_menu_new ();
+	showsadd_item = gtk_menu_item_new_with_label ("Add Shows");
 	about_item = gtk_menu_item_new_with_label ("About");
     	quit_item = gtk_menu_item_new_with_label ("Quit");
+	gtk_menu_append (GTK_MENU_SHELL (tray_menu), showsadd_item);
 	gtk_menu_append (GTK_MENU_SHELL (tray_menu), about_item);	
 	gtk_menu_append (GTK_MENU_SHELL (tray_menu), quit_item);
+	gtk_signal_connect_object (GTK_OBJECT (showsadd_item), "activate",G_CALLBACK(add_shows),NULL);
 	gtk_signal_connect_object (GTK_OBJECT (about_item), "activate",G_CALLBACK(about_box),NULL);
 	gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate",(GtkSignalFunc) gtk_main_quit,(gpointer) "file.quit");
 	gtk_widget_show_all(tray_menu);

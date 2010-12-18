@@ -68,5 +68,23 @@ void get_next_cmd() {
 	}
 	
 }
-
-
+void send_cmd(char* cmd, char* cmdTxt) {
+	size_t nelem;
+	size_t size;
+	char* base;
+	size=get_size();
+        nelem=get_nelem();
+        base = calloc(nelem,size);
+        get_active_devices(base,size,nelem);
+	char* hostname = malloc(size);
+                for (int i = 0; i < nelem; i++) {
+                        char* elem = base+(i*size);
+                        strcpy(hostname,elem);
+                        char* query = (char *)malloc(1024);
+                        sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",hostname);
+			sql_exec_quary(query);
+			
+                        free(query);
+                }
+	free(hostname);
+}
