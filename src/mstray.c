@@ -79,12 +79,15 @@ void about_box(GtkWidget *widget, gpointer gdata){
 }
 GtkStatusIcon* create_tray_icon() {
         GtkStatusIcon *tray_icon;
-
         tray_icon = gtk_status_icon_new();
         g_signal_connect(G_OBJECT(tray_icon), "activate",G_CALLBACK(tray_click), NULL);
         g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
 	#ifdef PREFIX
-        	gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/madsci/msdaemon.png");
+		#ifdef _WIN32
+        		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/msdaemon.png");
+		#else
+			gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/madsci/msdaemon.png");
+		#endif
 	#else
 		gtk_status_icon_set_from_icon_name(tray_icon,GTK_STOCK_MEDIA_STOP);
 	#endif
@@ -108,6 +111,7 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
 	gtk_signal_connect_object (GTK_OBJECT (showsadd_item), "activate",G_CALLBACK(add_shows),NULL);
 	gtk_signal_connect_object (GTK_OBJECT (about_item), "activate",G_CALLBACK(about_box),NULL);
 	gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate",(GtkSignalFunc) gtk_main_quit,(gpointer) "file.quit");
+	printf("Got Here3");
 	gtk_widget_show_all(tray_menu);
 	return tray_menu;
 }

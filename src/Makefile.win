@@ -1,0 +1,53 @@
+SHELL = /bin/sh
+
+PREFIX=c:/Program Files/msDaemon//
+
+GOB1=gob2
+CC=gcc 
+LD=gcc
+
+DEPS=gtk+-2.0 glib-2.0
+CFLAGS=$(shell pkg-config --cflags $(DEPS)) 
+CFLAGS+=-IC:/mysql/include
+#CFLAGS+=-Wl,-subsystem,windows -std=c99 -Wall -g -D _DEBUG -D 'PREFIX="$(PREFIX)"'
+CFLAGS+=-Wl,-subsystem,windows -std=c99 -Wall -g -D _SILENT -D 'PREFIX="$(PREFIX)"'
+
+LDFLAGS=$(shell pkg-config --libs $(DEPS)) 
+LDFLAGS+=-LC:/mysql/lib/opt/ -lmysql 
+
+OBJS=msdaemon.o mstray.o notifications.o sql.o cmdhandler.o showlist.o
+
+PROG=msdaemon
+
+DATA=../data/*.png
+ICON=../data/msdaemon.svg
+INSTALL_BIN = "$(PREFIX)/sbin"
+INSTALL_DATA = "$(PREFIX)/share/"
+INSTALL_ICON= "$(PREFIX)/share/"
+INC=./*.h
+
+%.c %.h : %.gob
+	$(GOB2) $<
+
+$(PROG): $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(PROG) $(INC) $(LDFLAGS) 
+	$(shell echo)
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -c $< $(INC) 
+	$(shell echo)
+
+all: $(PROG)
+
+default: $(PROG)
+
+install: all
+	mkdir -p $(INSTALL_BIN)
+	cp $(PROG).exe $(INSTALL_BIN)
+	cp *.dll $(INSTALL_BIN)
+	mkdir -p $(INSTALL_DATA)
+	cp $(DATA) $(INSTALL_DATA)
+	cp $(ICON) $(INSTALL_ICON)
+
+clean:
+	rm -f *.o $(PROG) *.gch

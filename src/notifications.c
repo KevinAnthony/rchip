@@ -1,7 +1,9 @@
 #include        "sql.h"
 #include	"notifications.h" 
-#include 	<dbus/dbus.h>
-#include        <dbus/dbus-glib.h>
+#ifndef _WIN32
+	#include 	<dbus/dbus.h>
+	#include        <dbus/dbus-glib.h>
+#endif
 #include        <glib.h>
 #include	<stdlib.h>
 #include	<stdio.h>
@@ -18,8 +20,9 @@ gboolean setNotification(char* tickerString,char* notificationTitle,char* notifi
 	sql_exec_quary(query);
 	return TRUE;
 }
-
-void getTorrentInfo(DBusGProxy* proxy,char* torrent) 
-{
-	printf("\n\n\n\n\n\n\n\n%s\n\n\n\n\n\n\n\n\n\n\n",torrent);
-}
+#ifndef _WIN32
+	void getTorrentInfo(DBusGProxy* proxy,char* torrent) 
+	{
+		printf("\n\n\n\n\n\n\n\n%s\n\n\n\n\n\n\n\n\n\n\n",torrent);
+	}
+#endif

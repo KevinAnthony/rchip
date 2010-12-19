@@ -1,4 +1,9 @@
-#include        <mysql/mysql.h>
+#ifdef _WIN32
+	#include        <winsock.h>
+	#include        <mysql.h>
+#else
+	#include	<mysql/mysql.h>
+#endif
 #include	<glib.h>
 
 gboolean sql_init();
