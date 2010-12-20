@@ -111,7 +111,6 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
 	gtk_signal_connect_object (GTK_OBJECT (showsadd_item), "activate",G_CALLBACK(add_shows),NULL);
 	gtk_signal_connect_object (GTK_OBJECT (about_item), "activate",G_CALLBACK(about_box),NULL);
 	gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate",(GtkSignalFunc) gtk_main_quit,(gpointer) "file.quit");
-	printf("Got Here3");
 	gtk_widget_show_all(tray_menu);
 	return tray_menu;
 }

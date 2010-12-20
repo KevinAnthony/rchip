@@ -9,7 +9,7 @@ void add_file_to_playqueue(char* filepath){
 
 	//here i really should somehow figure out if it's an anime, a live action, or something else
 	// for now, it's all live action
-	if (strstr(filepath,"/English/Live_Action/") != NULL) {
+		if (strstr(filepath,"/English/Live_Action/") != NULL) {
 		send_cmd("ADDS",live_action(filepath));
 	} else if (strstr(filepath,"/Foreign/Animeted/") != NULL) {
 		send_cmd("ADDS",anime(filepath));
@@ -20,7 +20,7 @@ void add_file_to_playqueue(char* filepath){
 }
 
 char* live_action(char* filepath){
-	char* posOfLastSlash=0;
+	char* posOfLastSlash=filepath;
 	int fnamelen=0;
         int lenOfName=0;
         int lenOfEpsNumber=0;
@@ -92,20 +92,20 @@ char* anime(char* filepath){
 }
 
 char* other(char* filepath){
-	char* posOfLastSlash=0;
+	char* posOfLastSlash=filepath;
         int fnamelen=0;
         int lenOfName=0;
         int totallen=0;
         char* ptr = filepath;
         char* sptr = filepath;
 	for (; *ptr != '\0';ptr++) {
-                if (*ptr == '/') {
+	        if (*ptr == '/') {
                         posOfLastSlash = ptr;
                 }
                 fnamelen++;
         }
-        ptr = posOfLastSlash +1;
-        for (; *ptr!='\0'; ptr++){
+	ptr = posOfLastSlash +1;
+        for (; *ptr != '\0'; ptr++){
         	lenOfName++;
 	}
         totallen=fnamelen+lenOfName+5;
@@ -132,7 +132,7 @@ char* other(char* filepath){
 }
 
 char* std_anime(char* filepath,char* name){
-	char* posOfLastSlash=0;
+	char* posOfLastSlash=filepath;
         int fnamelen=0;
         int lenOfName=strlen(name);
         int lenOfEpsNumber=0;

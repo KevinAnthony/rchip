@@ -55,4 +55,4 @@ install: all
 	cp $(LAUNCHER) $(INSTALL_LAUNCHER)
 
 clean:
-	rm -f *.o $(PROG) *.gch
+	rm -f *.o $(PROG) *.gch 

@@ -1,0 +1,24 @@
+ID ICON "..\data\msDaemon.ico"
+1 VERSIONINFO
+FILEVERSION     0,3,2,5
+PRODUCTVERSION  0,3,2,5
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "NoSide Racing"
+      VALUE "FileDescription", "MS Daemon"
+      VALUE "FileVersion", "0.3"
+      VALUE "InternalName", "msDaemon"
+      VALUE "LegalCopyright", "Copyright info"
+      VALUE "OriginalFilename", "msDaemon.exe"
+      VALUE "ProductName", "msDaemon"
+      VALUE "ProductVersion", "0.3"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END
