@@ -1,7 +1,6 @@
 #include <glib.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 #ifndef _WIN32
 	#include <sys/utsname.h>
 	#include "dbus.h"
@@ -90,7 +89,85 @@ void get_next_cmd() {
 		#else
 			delete_from_cmdQueue(cmdID);
 		#endif
+	} else if (!(strcmp(cmd,"PLAYSM"))) {
+        	if (system("smplayer -send-action play")) {
+			delete_from_cmdQueue(cmdID);
+		} else {
+                	printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+	} else if (!(strcmp(cmd,"STOPSM"))) {
+                if (system("smplayer -send-action stop")) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+	} else if (!(strcmp(cmd,"PAUSESM"))) {
+                if (system("smplayer -send-action pause")) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+
+       } else if (!(strcmp(cmd,"SKIPFSM"))) {
+                if (system("smplayer -send-action forward1")) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+	} else if (!(strcmp(cmd,"SKIPBSM"))) {
+                if (system("smplayer -send-action rewind1")) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+	} else if (!(strcmp(cmd,"FULLONSM"))) {
+                if (system("smplayer -send-action fullscreen")) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+	} else if (!(strcmp(cmd,"FULLOFFSM"))) {
+                if (system("smplayer -send-action exit-fullscreen")) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+	} else if (!(strcmp(cmd,"OPENSM"))) {
+		char* text = "smplayer ";
+		char* command;
+		command = malloc(strlen(cmdTxt)+strlen(text)+1);
+		sprintf(command,"%s%s&",text,cmdTxt);
+                if (system(command)) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }   
+	} else if (!(strcmp(cmd,"MUTESM"))) {
+                if (system("smplayer -send-action mute")) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+	} else if (!(strcmp(cmd,"QUITSM"))) {
+                if (system("smplayer -send-action quit")) {
+                        delete_from_cmdQueue(cmdID);
+                } else {
+                        printf("Could not Play SMplayer\n");
+                        delete_from_cmdQueue(cmdID);
+                }
+ 
+
 	} else {
+
 		printf("Command Not Recognized: ::%s::\n",cmd);
 		delete_from_cmdQueue(cmdID);
 	}
