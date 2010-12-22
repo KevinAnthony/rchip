@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+	#include <windows.h>
+#endif
 #include "mstray.h"
 #include "showlist.h"
 
@@ -62,7 +65,7 @@ void about_box(GtkWidget *widget, gpointer gdata){
         /* Create the widgets */
      
         dialog = gtk_dialog_new_with_buttons ("Message", NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_OK,  GTK_RESPONSE_NONE, NULL);
-        label = gtk_label_new ("MSDaemon\nFancy Text here, maybe an icon...\nwho knows");
+       	label = gtk_label_new ("MSDaemon\nFancy Text here, maybe an icon...\nwho knows");
      
         /* Ensure that the dialog box is destroyed when the user responds. */
      

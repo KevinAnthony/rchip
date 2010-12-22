@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "msDaemon"
-!define PRODUCT_VERSION "0.3.2.5"
+!define PRODUCT_VERSION "0.3.3.2"
 !define PRODUCT_PUBLISHER "NoSide Racing"
 !define PRODUCT_WEB_SITE "http://www.nosideracing.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\msdaemon.exe"

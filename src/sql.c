@@ -71,7 +71,7 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 	char *query;
 	query = (char*) malloc (sizeof("select * from cmdQueue where dest_hostname = '")+sizeof(hostname)+sizeof("';"));
 	sprintf(query,"select * from cmdQueue where dest_hostname = '%s';",hostname);
-        MYSQL_RES *res;
+	MYSQL_RES *res;
         MYSQL_ROW row;
 	#ifdef _DEBUG 
                 printf("Next Cmd Query:::: %s\n",query);
@@ -97,7 +97,7 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 	res = mysql_use_result(mysql);
 	if (res == NULL) { 
 		mysql_close(mysql);
-		//mysql_free_result(res);
+		mysql_free_result(res);
 		printf("Returning because res == NULL in get_next_cmd_from_sql");
 		return;
 	}
@@ -116,8 +116,9 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 		*source = " ";
 		*cmdID = 0;
 	}
-	//mysql_free_result(res);
+	mysql_free_result(res);
 	mysql_close(mysql);
+	free(query);
 }
 
 void delete_from_cmdQueue(int cmdID) {

@@ -6,12 +6,19 @@
 #include "cmdhandler.h"
 
 void add_file_to_playqueue(char* filepath){
-
 	//here i really should somehow figure out if it's an anime, a live action, or something else
 	// for now, it's all live action
+	#ifdef _WIN32
+		if (strstr(filepath,"\\English\\Live_Action\\") != NULL) {
+	#else
 		if (strstr(filepath,"/English/Live_Action/") != NULL) {
+	#endif
 		send_cmd("ADDS",live_action(filepath));
-	} else if (strstr(filepath,"/Foreign/Animeted/") != NULL) {
+	#ifdef _WIN32
+		} else if (strstr(filepath,"\\Foreign\\Animeted\\") != NULL) {
+	#else
+		} else if (strstr(filepath,"/Foreign/Animeted/") != NULL) {
+	#endif
 		send_cmd("ADDS",anime(filepath));
 	} else {
 		send_cmd("ADDS",other(filepath));
@@ -26,10 +33,16 @@ char* live_action(char* filepath){
         int lenOfEpsNumber=0;
         int lenOfEpsName=0;
 	int totallen=0;
+	int totalex=0;
 	char* ptr = filepath;
 	char* sptr = filepath;
 	for (; *ptr != '\0';ptr++) {
+	#ifdef _WIN32
+		if (*ptr == '\\') {
+			totalex++;
+	#else
 		if (*ptr == '/') {
+	#endif
 			posOfLastSlash = ptr;
 		}
 		fnamelen++;
@@ -53,7 +66,7 @@ char* live_action(char* filepath){
 		ptr++;
 	}
 	if (*ptr == '\0'){ lenOfEpsName = 0;}
-	totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfEpsName;
+	totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfEpsName+totalex;
 	char* retval = malloc(totallen+5);
 	ptr = retval;
 	for (int i = 0; i < lenOfName; i++){
@@ -71,11 +84,16 @@ char* live_action(char* filepath){
         }
         *ptr++='|';
         sptr=filepath;
-	
 	for (int i = 0; i < fnamelen; i++){
+	#ifdef _WIN32
+		if (*sptr == '\\') {
+			*ptr++='\\';
+		}
+	#endif
 		*ptr++=*sptr++;
 	}
 	*ptr='\0';
+	printf("%s\n",retval);
 	return retval;
 }
 
@@ -96,10 +114,16 @@ char* other(char* filepath){
         int fnamelen=0;
         int lenOfName=0;
         int totallen=0;
-        char* ptr = filepath;
+        int totalex=0;
+	char* ptr = filepath;
         char* sptr = filepath;
 	for (; *ptr != '\0';ptr++) {
-	        if (*ptr == '/') {
+	#ifdef _WIN32
+		if (*ptr == '\\') {
+			totalex++;
+	#else
+		if (*ptr == '/') {
+	#endif
                         posOfLastSlash = ptr;
                 }
                 fnamelen++;
@@ -108,7 +132,7 @@ char* other(char* filepath){
         for (; *ptr != '\0'; ptr++){
         	lenOfName++;
 	}
-        totallen=fnamelen+lenOfName+5;
+        totallen=fnamelen+lenOfName+5+totalex;
         char* retval = malloc(totallen+5);
         ptr=retval;
 	sptr = posOfLastSlash+1;
@@ -124,7 +148,12 @@ char* other(char* filepath){
         *ptr++='|';
         sptr=filepath;
 	for (int i = 0; i < fnamelen; i++){
-                *ptr++=*sptr++;
+	#ifdef _WIN32
+		if (*sptr == '\\') {
+			*ptr++='\\';
+		}
+	#endif
+		*ptr++=*sptr++;
         }
         *ptr='\0';
         return retval;
@@ -138,11 +167,17 @@ char* std_anime(char* filepath,char* name){
         int lenOfEpsNumber=0;
         int lenOfSubgroup=0;
         int totallen=0;
+	int totalex=0;
         char* ptr = filepath;
         char* sptr = filepath;
         for (; *ptr != '\0';ptr++) {
-                if (*ptr == '/') {
-                        posOfLastSlash = ptr;
+        #ifdef _WIN32
+		if (*ptr == '\\') {
+			totalex++;
+	#else
+		if (*ptr == '/') {
+	#endif
+			posOfLastSlash = ptr;
                 }
                 fnamelen++;
         }
@@ -171,7 +206,7 @@ char* std_anime(char* filepath,char* name){
        }
 
 	if (*ptr == '\0'){ lenOfSubgroup = 0;}
-        totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfSubgroup;
+        totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfSubgroup+totalex;
         char* retval = malloc(totallen+5);
         ptr = retval;
 	sptr=name;
@@ -192,7 +227,12 @@ char* std_anime(char* filepath,char* name){
         *ptr++='|';
         sptr=filepath;
 	for (int i = 0; i < fnamelen; i++){
-                *ptr++=*sptr++;
+	#ifdef _WIN32
+		if (*sptr == '\\') {
+			*ptr++='\\';
+		}
+	#endif
+	      	*ptr++=*sptr++;
         }
         *ptr='\0';
 	return retval;

@@ -6,9 +6,9 @@
 #endif
 #include "sql.h"
 #include "cmdhandler.h"
-#ifndef _WIN32
-	gboolean daemon_loop(gpointer);
-#endif
+
+
+gboolean daemon_loop(gpointer);
 gboolean update_active_devices(gpointer);
 #ifndef _WIN32
 	char* build_playing_info_sql_query(const struct playing_info_rb,char*);
@@ -49,9 +49,7 @@ int main(int argc, char** argv) {
                         char* elem = base+(i*size);
                         strcpy(hostname,elem);
                 }*/
-	#ifndef _WIN32
-		g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
-	#endif
+	g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
 	g_timeout_add (5000,(GSourceFunc) update_active_devices,NULL);
 	start_tray();
 	free(base);
@@ -79,7 +77,13 @@ int main(int argc, char** argv) {
 		}
 		return TRUE;
 	}
+#else
+	gboolean daemon_loop(gpointer data){
+		get_next_cmd();
+		return TRUE;
+	}
 #endif
+
 gboolean update_active_devices(gpointer data){
 	size=get_size();
         nelem=get_nelem();
