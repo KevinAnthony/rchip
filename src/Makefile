@@ -15,7 +15,7 @@ CFLAGS+=-std=c99 -Wall -g -D _SILENT -D 'PREFIX="$(PREFIX)"'
 LDFLAGS=$(shell pkg-config --libs $(DEPS)) 
 LDFLAGS+=$(shell mysql_config --libs )
 
-OBJS=msdaemon.o mstray.o notifications.o sql.o dbus.o cmdhandler.o showlist.o settings.o
+OBJS=msdaemon.o utils.o mstray.o notifications.o sql.o dbus.o cmdhandler.o showlist.o settings.o
 
 PROG=msdaemon
 

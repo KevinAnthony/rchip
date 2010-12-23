@@ -1,10 +1,17 @@
 #include "settings.h"
+
+#ifndef _WIN32
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#else
+#include <parser.h>
+#include <tree.h>
+#endif
+
 #include <string.h>
 
-//#ifdef LIBXML_TREE_ENABLED
-//#ifdef LIBXML_OUTPUT_ENABLED
+#ifdef LIBXML_TREE_ENABLED
+#ifdef LIBXML_OUTPUT_ENABLED
 
 char* getsetting(char* settingname){
 	
@@ -98,7 +105,7 @@ int new_xml_file() {
     	xmlMemoryDump();
     	return 1;
 }
-/*#else
+#else
 char* getsetting(char* gigo) {
     	#ifndef _SILENT
 	printf(stderr, "tree support not compiled in\n");
@@ -109,4 +116,4 @@ static void print_element_names(xmlNode * a_node){}
 int new_xml_file() {return 0;}
 int xml_file_exists(){return 0;}
 #endif
-#endif*/
+#endif

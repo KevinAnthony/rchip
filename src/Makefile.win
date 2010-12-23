@@ -6,17 +6,17 @@ GOB1=gob2
 CC=gcc 
 LD=gcc
 
-DEPS=gtk+-2.0 glib-2.0 libxml-2.0
+DEPS=gtk+-2.0 glib-2.0 
 CFLAGS=$(shell pkg-config --cflags $(DEPS)) 
-CFLAGS+=-IC:/mysql/include
+CFLAGS+=-IC:/mysql/include -IC:/libs/libxml2/include -IC:/libs/libxml2/include/libxml
 #CFLAGS+=-std=c99 -Wall -g -D _DEBUG -D 'PREFIX="$(PREFIX)"'
 #CFLAGS+=-std=c99 -Wall -g -D _SILENT -D 'PREFIX="$(PREFIX)"'
 CFLAGS+=-Wl,-subsystem,windows -std=c99 -Wall -g -D _SILENT -D 'PREFIX="$(PREFIX)"'
 
 LDFLAGS=$(shell pkg-config --libs $(DEPS)) 
-LDFLAGS+=-LC:/mysql/lib/opt/ -lmysql -lWS2_32 
+LDFLAGS+=-LC:/mysql/lib/opt/ -lmysql -lWS2_32 -LC:/libs/libxml2/lib/ -llibxml2 
 
-OBJS=msdaemon.o mstray.o notifications.o sql.o cmdhandler.o showlist.o resource.o
+OBJS=msdaemon.o utils.o mstray.o notifications.o sql.o cmdhandler.o showlist.o resource.o settings.o
 
 PROG=msdaemon
 

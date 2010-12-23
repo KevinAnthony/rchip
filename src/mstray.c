@@ -7,6 +7,8 @@
 #endif
 #include "mstray.h"
 #include "showlist.h"
+#include "utils.h"
+#include "settings.h"
 
 void start_tray(){
 	gtk_main();
@@ -46,11 +48,16 @@ void add_shows(GtkWidget *widget, gpointer gdata){
     		GSList* node = filelist;
 		while (node != NULL){
 			filename = (char*)node->data;
+			#ifdef _WIN32
+			char* p = filename;
+			while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
+			#endif
+			filename = replace_str(filename,getsetting("pathToRoot"),"/mnt/raid/");
 			add_file_to_playqueue(filename);
 			node=node->next;
 		}
-		g_slist_free(filelist),
-    		g_free (filename);
+		g_slist_free(filelist);
+    		//g_free (filename);
   	}
 	gtk_widget_destroy (dialog);
 

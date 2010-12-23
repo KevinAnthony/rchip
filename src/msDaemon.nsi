@@ -75,6 +75,8 @@ Section "Main" SEC01
   File "..\libs\libpng14-14.dll"
   File "..\libs\libwimp.dll"
   File "..\libs\zlib1.dll"
+  File "..\libs\libxml2.dll"
+  File "..\libs\iconv.dll"
   SetOverwrite ifnewer
   File "msdaemon.exe"
   CreateDirectory "$SMPROGRAMS\msDaemon"

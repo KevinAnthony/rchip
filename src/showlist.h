@@ -7,6 +7,5 @@ char* live_action(char*);
 char* anime(char*);
 char* other(char*);
 char* std_anime(char*,char*);
-char* replace_str(char*, char*, char*);
 
 #endif

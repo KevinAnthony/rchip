@@ -11,6 +11,8 @@
 #endif
 #include "sql.h"
 #include "cmdhandler.h"
+#include "settings.h"
+#include "utils.h"
 
 char* get_next_host(void* base,size_t size, size_t next){
 	return base+(next*size);
@@ -104,14 +106,14 @@ void get_next_cmd() {
                	if (system("smplayer -send-action stop")) {
                         delete_from_cmdQueue(cmdID);
                 } else {
-                        printf("Could not Play SMplayer\n");
+                        printf("Could not Stop SMplayer\n");
                         delete_from_cmdQueue(cmdID);
                 }
 	} else if (!(strcmp(cmd,"PAUSESM"))) {
        	 	if (system("smplayer -send-action pause")) {
                         delete_from_cmdQueue(cmdID);
                 } else {
-                        printf("Could not Play SMplayer\n");
+                        printf("Could not Pause SMplayer\n");
                         delete_from_cmdQueue(cmdID);
                 }
 
@@ -119,38 +121,41 @@ void get_next_cmd() {
                	if (system("smplayer -send-action forward1")) {
                         delete_from_cmdQueue(cmdID);
                 } else {
-                        printf("Could not Play SMplayer\n");
+                        printf("Could not Skip Foward SMplayer\n");
                         delete_from_cmdQueue(cmdID);
                 }
 	} else if (!(strcmp(cmd,"SKIPBSM"))) {
                	if (system("smplayer -send-action rewind1")) {
                         delete_from_cmdQueue(cmdID);
                 } else {
-                        printf("Could not Play SMplayer\n");
+                        printf("Could not Skip Backwards SMplayer\n");
                         delete_from_cmdQueue(cmdID);
                 }
 	} else if (!(strcmp(cmd,"FULLONSM"))) {
                	if (system("smplayer -send-action fullscreen")) {
                         delete_from_cmdQueue(cmdID);
                 } else {
-                        printf("Could not Play SMplayer\n");
+                        printf("Could not Fullscreen SMplayer\n");
                         delete_from_cmdQueue(cmdID);
                 }
 	} else if (!(strcmp(cmd,"FULLOFFSM"))) {
                	if (system("smplayer -send-action exit-fullscreen")) {
                         delete_from_cmdQueue(cmdID);
                 } else {
-                        printf("Could not Play SMplayer\n");
+                        printf("Could not Fullscreen off SMplayer\n");
                         delete_from_cmdQueue(cmdID);
                 }
 	} else if (!(strcmp(cmd,"OPENSM"))) {
 		
 		char* command;
-		
+		char* filename = cmdTxt;
+                filename = replace_str(filename,"/mnt/raid/",getsetting("pathToRoot"));
+
 		#ifdef _WIN32
 			char* cmd= "smplayer.exe";
 			char* path="c:\\Program Files\\smplayer\\smplayer.exe";
 			command = malloc(1);
+			while (*filename++ != '\0') {if (*filename == '/') { *filename = '\\';}
 			if(spawnl(P_NOWAIT, path ,cmd ,cmdTxt,NULL) >= 0) {
 		#else
 			char* text = "smplayer ";
@@ -160,7 +165,7 @@ void get_next_cmd() {
 		#endif
 		       	delete_from_cmdQueue(cmdID);
                 } else {
-                       	printf("Could not Play SMplayer\n");
+                       	printf("Could not open SMplayer\n");
 			#ifdef _WIN32
 				printf("Last error: %i\n",myerrno);
 			#endif

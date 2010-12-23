@@ -12,6 +12,7 @@
 #include	<stdlib.h>
 #include 	"sql.h"
 #include	"settings.h"
+
 #define		HOSTNAME		"192.168.1.3"
 #define 	USERNAME		"nTesla"
 #define		PASSWORD		"deathray"
