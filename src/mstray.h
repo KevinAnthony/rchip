@@ -1,3 +1,6 @@
+#ifndef MSTRAY_H
+#define MSTRAY_H
+
 #include <gtk/gtk.h>
 
 	void start_tray();
@@ -10,4 +13,4 @@
 
 	GtkStatusIcon* create_tray_icon();
 	GtkWidget* create_tray_menu(GtkStatusIcon*);
-
+#endif

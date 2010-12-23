@@ -6,7 +6,7 @@ GOB1=gob2
 CC=gcc 
 LD=gcc
 
-DEPS=gtk+-2.0 glib-2.0
+DEPS=gtk+-2.0 glib-2.0 libxml-2.0
 CFLAGS=$(shell pkg-config --cflags $(DEPS)) 
 CFLAGS+=-IC:/mysql/include
 #CFLAGS+=-std=c99 -Wall -g -D _DEBUG -D 'PREFIX="$(PREFIX)"'

@@ -152,9 +152,8 @@ void get_next_cmd() {
 			char* path="c:\\Program Files\\smplayer\\smplayer.exe";
 			command = malloc(1);
 			if(spawnl(P_NOWAIT, path ,cmd ,cmdTxt,NULL) >= 0) {
-			
 		#else
-			char* text"smplayer ";
+			char* text = "smplayer ";
 			command = malloc(strlen(cmdTxt)+strlen(text)+1);
 			sprintf(command,"%s%s&",text,cmdTxt);
 			if (system(command)) {
@@ -187,7 +186,9 @@ void get_next_cmd() {
 		printf("Command Not Recognized: ::%s::\n",cmd);
 		delete_from_cmdQueue(cmdID);
 	}
-
+	free(cmd);
+	free(cmdTxt);
+	free(source);
 }
 void send_cmd(char* cmd, char* cmdTxt) {
 	size_t nelem;

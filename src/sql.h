@@ -1,3 +1,6 @@
+#ifndef SQL_H
+#define SQL_H
+
 #ifdef _WIN32
 	#include        <winsock.h>
 	#include        <mysql.h>
@@ -15,3 +18,5 @@ char* get_registered_devices_message();
 void get_active_devices(void*, size_t, size_t);
 size_t get_size();
 size_t get_nelem();
+void update_daemon_sql();
+#endif

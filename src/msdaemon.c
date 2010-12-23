@@ -20,6 +20,7 @@ char* base;
 /*The Main Program*/
 int main(int argc, char** argv) {
 	/* defines the tray_icon, as well as init gtk*/
+	update_daemon_sql();
 	GtkStatusIcon *tray_icon;
 	gtk_init(&argc, &argv);
 	sql_init();

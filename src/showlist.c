@@ -4,10 +4,15 @@
 #include <string.h>
 #include "showlist.h"
 #include "cmdhandler.h"
+#include "settings.h"
 
 void add_file_to_playqueue(char* filepath){
 	//here i really should somehow figure out if it's an anime, a live action, or something else
 	// for now, it's all live action
+	char *path = getsetting("pathToRoot");
+        if (path != NULL){
+		filepath = replace_str(filepath,path,"/mnt/raid/");
+	}	
 	#ifdef _WIN32
 		if (strstr(filepath,"\\English\\Live_Action\\") != NULL) {
 	#else
@@ -237,4 +242,19 @@ char* std_anime(char* filepath,char* name){
         *ptr='\0';
 	return retval;
 
+}
+
+char* replace_str(char* str, char* orig, char* rep){
+  static char buffer[4096];
+  char* p;
+
+  if(!(p = strstr(str, orig)))  // Is 'orig' even in 'str'?
+    return str;
+
+  strncpy(buffer, str, p-str); // Copy characters from 'str' start to 'orig' st$
+  buffer[p-str] = '\0';
+
+  sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
+
+  return buffer;
 }
