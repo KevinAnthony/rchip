@@ -137,7 +137,7 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 
 void delete_from_cmdQueue(int cmdID) {
 	char *delquery;
-        delquery = (char*) malloc (500);
+	delquery = (char*) malloc (sizeof("delete from cmdQueue where id =;")+sizeof(cmdID));
         sprintf(delquery,"delete from cmdQueue where id =%i;",cmdID);
 	#ifdef _DEBUG 
                 printf("Next Cmd Query:::: %s\n",delquery);
