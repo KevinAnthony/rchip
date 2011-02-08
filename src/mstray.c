@@ -57,7 +57,6 @@ void add_shows(GtkWidget *widget, gpointer gdata){
 			node=node->next;
 		}
 		g_slist_free(filelist);
-    		//g_free (filename);
   	}
 	gtk_widget_destroy (dialog);
 
