@@ -323,6 +323,8 @@ void update_daemon_sql(){
                 char* p;
                 p=name;
                 for (int i = 0; i<len; i++){*p++=hn[i];}
+		*p='\0';
+
         #endif
 		char* query =(char *)malloc(1024);
 		sprintf(query,"INSERT INTO daemonRegister (hostname,pathToRoot) VALUES (\"%s\",\"%s\") ON DUPLICATE KEY UPDATE hostname=\"%s\",pathToRoot=\"%s\";",name,path,name,path);

@@ -149,13 +149,11 @@ void get_next_cmd() {
 		
 		char* command;
 		char* filename = cmdTxt;
-                filename = replace_str(filename,"/mnt/raid/",getsetting("pathToRoot"));
-
 		#ifdef _WIN32
 			char* cmd= "smplayer.exe";
 			char* path="c:\\Program Files\\smplayer\\smplayer.exe";
 			command = malloc(1);
-			while (*filename++ != '\0') {if (*filename == '/') { *filename = '\\';}
+			while (*filename++ != '\0') {if (*filename == '/') { *filename = '\\';} }
 			if(spawnl(P_NOWAIT, path ,cmd ,cmdTxt,NULL) >= 0) {
 		#else
 			char* text = "smplayer ";
