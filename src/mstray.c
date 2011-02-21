@@ -15,9 +15,9 @@ void start_tray(){
 	#if GTK_MAJOR_VERSION >= 3
 		GtkApplication *app;
 		gint status;
-		app = gtk_application_new ("org.noside.msdaemon", 0);
-		status = g_application_run (app);
-		g_object_unref (app);
+		app = gtk_application_new("org.noside.msdaemon", 0);
+		status = gtk_application_run(app);
+		g_object_unref(app);
 	#else
 		gtk_main ();
 	#endif

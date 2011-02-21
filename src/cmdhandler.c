@@ -148,8 +148,8 @@ void get_next_cmd() {
 	} else if (!(strcmp(cmd,"OPENSM"))) {
 		
 		char* command;
-		char* filename = cmdTxt;
 		#ifdef _WIN32
+			char* filename = cmdTxt;
 			char* cmd= "smplayer.exe";
 			char* path="c:\\Program Files\\smplayer\\smplayer.exe";
 			command = malloc(1);
