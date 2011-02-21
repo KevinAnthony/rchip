@@ -208,7 +208,6 @@ void send_cmd(char* cmd, char* cmdTxt) {
                         char* query = (char *)malloc(1024);
                         sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",hostname);
 			sql_exec_quary(query);
-			
                         free(query);
                 }
 	free(hostname);
