@@ -16,13 +16,22 @@ void start_tray(){
 		GtkApplication *app;
 		gint status;
 		app = gtk_application_new("org.noside.msdaemon", 0);
-		status = gtk_application_run(app);
+		g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+		status = g_application_run(G_APPLICATION (app),0,NULL);
+		//status = 5;
+		//gtk_main ();
 		g_object_unref(app);
 	#else
 		gtk_main ();
 	#endif
 }
-
+void activate (GtkApplication *app)
+{
+	#ifdef _DEBUG
+                printf("Application Activated\n");
+        #endif
+	gtk_main();
+}
 void tray_click(GtkStatusIcon *status_icon,gpointer user_data)
 {
 	#ifdef _DEBUG
@@ -95,7 +104,7 @@ void add_folders(GtkWidget *widget, gpointer gdata){
                         while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
                         #endif
                         printf("%s\n",filename);
-                        //filename = replace_str(filename,getsetting("pathToRoot"),"/mnt/raid/");
+                        filename = replace_str(filename,getsetting("pathToRoot"),"/mnt/raid/");
                         add_folder_to_playqueue(filename);
                         node=node->next;
                 } 
@@ -169,7 +178,7 @@ void about_box(GtkWidget *widget, gpointer gdata){
      
         /* Add the label, and show everything we've added to the dialog. */
      
-        gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
+        gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)),
                            label);
         gtk_widget_show_all (dialog);
 }
@@ -188,7 +197,7 @@ GtkStatusIcon* create_tray_icon() {
 	#else
 		gtk_status_icon_set_from_icon_name(tray_icon,GTK_STOCK_MEDIA_STOP);
 	#endif
-	gtk_status_icon_set_tooltip(tray_icon, "MS Deamon");
+	gtk_status_icon_set_tooltip_text (tray_icon, "MS Daemon");
         gtk_status_icon_set_visible(tray_icon, TRUE);
         return tray_icon;
 }
@@ -204,14 +213,14 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
 	folderadd_item = gtk_menu_item_new_with_label ("Add Shows from folders");
 	about_item = gtk_menu_item_new_with_label ("About");
     	quit_item = gtk_menu_item_new_with_label ("Quit");
-	gtk_menu_append (GTK_MENU_SHELL (tray_menu), showsadd_item);
-	gtk_menu_append (GTK_MENU_SHELL (tray_menu), folderadd_item);
-	gtk_menu_append (GTK_MENU_SHELL (tray_menu), about_item);	
-	gtk_menu_append (GTK_MENU_SHELL (tray_menu), quit_item);
-	gtk_signal_connect_object (GTK_OBJECT (showsadd_item), "activate",G_CALLBACK(add_files),NULL);
-	gtk_signal_connect_object (GTK_OBJECT (folderadd_item), "activate",G_CALLBACK(add_folders),NULL);
-	gtk_signal_connect_object (GTK_OBJECT (about_item), "activate",G_CALLBACK(about_box),NULL);
-	gtk_signal_connect_object (GTK_OBJECT (quit_item), "activate",(GtkSignalFunc) gtk_main_quit,(gpointer) "file.quit");
+	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), showsadd_item);
+	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), folderadd_item);
+	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), about_item);	
+	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), quit_item);
+	g_signal_connect_swapped(showsadd_item, "activate",G_CALLBACK(add_files),NULL);
+	g_signal_connect_swapped(folderadd_item, "activate",G_CALLBACK(add_folders),NULL);
+	g_signal_connect_swapped(about_item, "activate",G_CALLBACK(about_box),NULL);
+	g_signal_connect_swapped(quit_item, "activate",gtk_main_quit,(gpointer) "file.quit");
 	gtk_widget_show_all(tray_menu);
 	return tray_menu;
 }

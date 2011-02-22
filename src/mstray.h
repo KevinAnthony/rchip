@@ -9,6 +9,7 @@
   		FTDONOTPROC
 	};
 	void start_tray();
+	void activate (GtkApplication *);
 	void tray_click(GtkStatusIcon *,gpointer);
 	void tray_menu (GtkStatusIcon *, guint, guint, gpointer);
 	void add_files(GtkWidget*, gpointer);
