@@ -1,6 +1,8 @@
 #ifndef SQL_H
 #define SQL_H
 
+#ifdef _SQL
+
 #ifdef _WIN32
 	#include        <winsock.h>
 	#include        <mysql.h>
@@ -19,4 +21,5 @@ void get_active_devices(void*, size_t, size_t);
 size_t get_size();
 size_t get_nelem();
 void update_daemon_sql();
+#endif //#ifdef _SQL
 #endif

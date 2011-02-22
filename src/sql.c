@@ -1,3 +1,7 @@
+#include <config.h>
+
+#ifdef _SQL
+
 #ifdef _WIN32
 	#include 	<winsock.h>
 	#include        <mysql.h>
@@ -332,4 +336,4 @@ void update_daemon_sql(){
 		free(query);
         }
 }
-
+#endif //#ifdef _SQL
