@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <glib.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,13 +28,17 @@ void get_next_cmd() {
 	#ifndef _WIN32
 		struct utsname uts;
 		uname( &uts );
+		#ifdef _SQL
 		get_next_cmd_from_sql(uts.nodename,&cmdID,&cmd,&cmdTxt,&source);
+		#endif
 	#else
 		//char* smplayerLocation = "\"c:\\program files\\smplayer\\smplayer.exe\"";
 		char hn[500 + 1];
 		DWORD dwLen = 500;
 		GetComputerName(hn, &dwLen);
+		#ifdef _SQL
 		get_next_cmd_from_sql(hn,&cmdID,&cmd,&cmdTxt,&source);
+		#endif
 	#endif
 	#ifdef _DEBUG
 		printf("ID:%i\ncmd:%s\ncmdTxt:%s\n",cmdID,cmd,cmdTxt);
@@ -42,108 +48,164 @@ void get_next_cmd() {
 	}
 	if (!(strcmp(cmd,"STRB"))) {
 		printf("Warning:STRB is deprecated");
+		#ifdef _SQL
 		delete_from_cmdQueue(cmdID);
+		#endif
 	} else if (!(strcmp(cmd,"SPRB"))) {
 		printf("Warning:SPRB is deprecated");
+		#ifdef _SQL
 		delete_from_cmdQueue(cmdID);
+		#endif
 	} else if (!(strcmp(cmd,"NEXTRB"))) {
 		#ifndef _WIN32
 			if(send_command_to_rhythmbox("next"))
 			{
+				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
+				#endif
 			} else {
 				printf("Could not Next\n");
+				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
+				#endif
 			}
 		#else
+			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
+			#endif
 		#endif
 	} else if (!(strcmp(cmd,"BACKRB"))) {
 		#ifndef _WIN32
                 	if(send_command_to_rhythmbox("previous"))  
                 	{
+				#ifdef _SQL
                 	        delete_from_cmdQueue(cmdID);
+				#endif
                 	} else {
                 	        printf("Could not BACK\n");
+				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
+				#endif
                 	}
 		#else
+			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
+			#endif
 		#endif
 	} else if (!(strcmp(cmd,"PLAYRB"))) {
 		#ifndef _WIN32
 			if(send_command_to_rhythmbox_with_argument("playPause",G_TYPE_BOOLEAN,"TRUE"))  
 	                {
+				#ifdef _SQL
 	                        delete_from_cmdQueue(cmdID);
+				#endif
 	                } else {
        		                printf("Could not PLAY\n");
+				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
+				#endif
                 	}
 		#else
+			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
+			#endif
 		#endif
 	} else if (!(strcmp(cmd,"STOPRB"))) {
         	#ifndef _WIN32
 		       	if(send_command_to_rhythmbox_with_argument("playPause",G_TYPE_BOOLEAN,"TRUE")) 
 			{
-        	                delete_from_cmdQueue(cmdID);
+				#ifdef _SQL
+				delete_from_cmdQueue(cmdID);
+				#endif
         	        } else {
         	                printf("Could not STOP\n");
+				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
+				#endif
         	        }
 		#else
-			delete_from_cmdQueue(cmdID);
+			#ifdef _SQL
+			delete_fvirom_cmdQueue(cmdID);
+			#endif
 		#endif
 	} else if (!(strcmp(cmd,"PLAYSM"))) {
 		if (system("smplayer -send-action play")) {
+			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
+			#endif
 		} else {
                 	printf("Could not Play SMplayer\n");
-                        delete_from_cmdQueue(cmdID);
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
                 }
 
 	} else if (!(strcmp(cmd,"STOPSM"))) {
                	if (system("smplayer -send-action stop")) {
-                        delete_from_cmdQueue(cmdID);
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
                 } else {
                         printf("Could not Stop SMplayer\n");
-                        delete_from_cmdQueue(cmdID);
+                        #ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
                 }
 	} else if (!(strcmp(cmd,"PAUSESM"))) {
        	 	if (system("smplayer -send-action pause")) {
-                        delete_from_cmdQueue(cmdID);
+                        #ifdef _SQL
+			delete_from_cmdQueue(cmdID);	
+			#endif
                 } else {
                         printf("Could not Pause SMplayer\n");
+			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+			#endif
                 }
 
        } else if (!(strcmp(cmd,"SKIPFSM"))) {
                	if (system("smplayer -send-action forward1")) {
+			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+			#endif
                 } else {
                         printf("Could not Skip Foward SMplayer\n");
+			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+			#endif
                 }
 	} else if (!(strcmp(cmd,"SKIPBSM"))) {
                	if (system("smplayer -send-action rewind1")) {
+                	#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
-                } else {
+                        #endif
+		} else {
                         printf("Could not Skip Backwards SMplayer\n");
+                        #ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+                        #endif
                 }
 	} else if (!(strcmp(cmd,"FULLONSM"))) {
                	if (system("smplayer -send-action fullscreen")) {
+                        #ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+                        #endif
                 } else {
                         printf("Could not Fullscreen SMplayer\n");
+                        #ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+                        #endif
                 }
 	} else if (!(strcmp(cmd,"FULLOFFSM"))) {
                	if (system("smplayer -send-action exit-fullscreen")) {
+                        #ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+                        #endif
                 } else {
                         printf("Could not Fullscreen off SMplayer\n");
+                        #ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+                        #endif
                 }
 	} else if (!(strcmp(cmd,"OPENSM"))) {
 		
@@ -161,39 +223,54 @@ void get_next_cmd() {
 			sprintf(command,"%s%s&",text,cmdTxt);
 			if (system(command)) {
 		#endif
+			#ifdef _SQL
 		       	delete_from_cmdQueue(cmdID);
+			#endif
                 } else {
                        	printf("Could not open SMplayer\n");
 			#ifdef _WIN32
 				printf("Last error: %i\n",myerrno);
 			#endif
+			#ifdef _SQL
                        	delete_from_cmdQueue(cmdID);
+			#endif
                 }
 		free(command);	
 	} else if (!(strcmp(cmd,"MUTESM"))) {
                	if (system("smplayer -send-action mute")) {
+			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+			#endif
                 } else {
                         printf("Could not Play SMplayer\n");
+			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+			#endif
                 }
 	} else if (!(strcmp(cmd,"QUITSM"))) {
                	if (system("smplayer -send-action quit")) {
+			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+			#endif
                 } else {
                         printf("Could not Play SMplayer\n");
+			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
+			#endif
                 }
  	} else {
 
 		printf("Command Not Recognized: ::%s::\n",cmd);
+		#ifdef _SQL
 		delete_from_cmdQueue(cmdID);
+		#endif
 	}
 	free(cmd);
 	free(cmdTxt);
 	free(source);
 }
 void send_cmd(char* cmd, char* cmdTxt) {
+	#ifdef _SQL
 	size_t nelem;
 	size_t size;
 	char* base;
@@ -211,4 +288,5 @@ void send_cmd(char* cmd, char* cmdTxt) {
                         free(query);
                 }
 	free(hostname);
+	#endif
 }
