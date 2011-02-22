@@ -9,9 +9,11 @@
   		FTDONOTPROC
 	};
 	void start_tray();
-	void activate (GtkApplication *);
-	void tray_click(GtkStatusIcon *,gpointer);
-	void tray_menu (GtkStatusIcon *, guint, guint, gpointer);
+#if GTK_MAJOR_VERSION >= 3
+	void activate (GtkApplication*);
+#endif
+	void tray_click(GtkStatusIcon*,gpointer);
+	void tray_menu (GtkStatusIcon*, guint, guint, gpointer);
 	void add_files(GtkWidget*, gpointer);
 	void add_folders(GtkWidget*, gpointer);	
 	void about_box(GtkWidget*, gpointer);
