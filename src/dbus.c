@@ -1,3 +1,5 @@
+#include <config.h>
+
 #ifndef _WIN32
 	#include 	"dbus.h"
 	#include	"notifications.h"

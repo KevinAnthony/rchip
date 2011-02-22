@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include        "sql.h"
 #include	"notifications.h" 
 #ifndef _WIN32
@@ -10,6 +12,7 @@
 #include	<string.h>
 
 gboolean setNotification(char* tickerString,char* notificationTitle,char* notificationText) {
+	#ifdef _SQL
 	char* query = (char *)malloc(1024);
 	char* msg = (char *)malloc(256);
 	sprintf(msg,"%s|%s|%s",tickerString,notificationTitle,notificationText);
@@ -19,6 +22,9 @@ gboolean setNotification(char* tickerString,char* notificationTitle,char* notifi
 	sprintf(query,"Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\")","TMSG",msg,"Tomoya",recipt);
 	sql_exec_quary(query);
 	return TRUE;
+	#else
+	return FALSE;
+	#endif
 }
 #ifndef _WIN32
 	void getTorrentInfo(DBusGProxy* proxy,char* torrent) 
