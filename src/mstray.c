@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,20 +13,18 @@
 #include "settings.h"
 
 void start_tray(){
-	printf("GTK:%i\n",GTK_MAJOR_VERSION);
 	#if GTK_MAJOR_VERSION >= 3
 		GtkApplication *app;
 		gint status;
 		app = gtk_application_new("org.noside.msdaemon", 0);
 		g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
 		status = g_application_run(G_APPLICATION (app),0,NULL);
-		//status = 5;
-		//gtk_main ();
 		g_object_unref(app);
 	#else
 		gtk_main ();
 	#endif
 }
+#if GTK_MAJOR_VERSION >= 3 
 void activate (GtkApplication *app)
 {
 	#ifdef _DEBUG
@@ -32,6 +32,7 @@ void activate (GtkApplication *app)
         #endif
 	gtk_main();
 }
+#endif
 void tray_click(GtkStatusIcon *status_icon,gpointer user_data)
 {
 	#ifdef _DEBUG
@@ -192,7 +193,7 @@ GtkStatusIcon* create_tray_icon() {
 		#ifdef _WIN32
         		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/msdaemon.png");
 		#else
-			gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/madsci/msdaemon.png");
+			gtk_status_icon_set_from_file (tray_icon,PREFIX "/madsci/msdaemon.png");
 		#endif
 	#else
 		gtk_status_icon_set_from_icon_name(tray_icon,GTK_STOCK_MEDIA_STOP);
