@@ -1,14 +1,9 @@
 #include "settings.h"
+#include <string.h>
 
-#ifndef _WIN32
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-#else
+#ifdef _WIN32
 #include <parser.h>
 #include <tree.h>
-#endif
-
-#include <string.h>
 
 #ifdef LIBXML_TREE_ENABLED
 #ifdef LIBXML_OUTPUT_ENABLED
@@ -115,5 +110,91 @@ char* getsetting(char* gigo) {
 static void print_element_names(xmlNode * a_node){}
 int new_xml_file() {return 0;}
 int xml_file_exists(){return 0;}
-#endif
-#endif
+#endif //ifdef LIBXML_OUTPUT_ENABLED
+#endif //ifdef LIBXML_TREE_ENABLED
+
+#else //ifdev win32
+
+#include <glib.h>
+#include <gconf/gconf-client.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+void keyChangeCallback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpointer userData) {
+	const GConfValue* value = NULL;
+  	const gchar* keyname = NULL;
+  	gchar* strValue = NULL;
+	#ifdef _DEBUG
+  		printf("keyChangeCallback invoked.\n");
+	#endif
+ 	keyname = gconf_entry_get_key(entry);
+	if (keyname == NULL) {
+    		#ifndef _SILENT
+			printf("Couldn't get the key name!\n");
+		#endif
+		return;
+  	}
+	value = gconf_entry_get_value(entry);
+  	g_assert(value != NULL);
+	if (!GCONF_VALUE_TYPE_VALID(value->type)) {
+    		#ifndef _SILENT
+			printf("Invalid type for gconfvalue!\n");
+		#endif
+  	}
+	strValue = gconf_value_to_string(value);
+	#ifdef _DEBUG
+		if (strcmp(keyname, SERVICE_KEY_PATH_TO_VIDEO_ROOT) == 0) {
+			printf("Connection type setting changed: [%s]\n",strValue);
+  		} else {
+  	  		printf(":Unknown key: %s (value: [%s])\n", keyname,strValue);
+  		}
+	#endif
+  	g_free(strValue);
+	#ifdef _DEBUG
+  		printf("keyChangeCallback done.\n");
+	#endif
+}
+
+int registerCallback( void (*regesterFunction) (void),gchar* registerKey){
+	/*
+	 * Here we would register a function to a list or something
+	 * I'm unsure if how to prototype this
+	 * The secound value is which key the function should respond to
+	 */
+	return true;
+}
+
+int unregisterCallback( void (*regesterFunction) (gchar*)){
+	/*
+	 * here we would unregister the function, just like above
+	 */
+	return true;
+}
+
+int callbackRegisteredFunctions(gchar* keyname){
+	/*
+	 * we need to search the reigsteredFunctions by keyname, 
+	 * and callback the function based on which key it called
+	 */
+	return true;
+}
+
+char* getsetting( gchar* keyname) {
+	/*
+	 * we search based on keyname, and return the value
+         */
+	return NULL;
+}
+
+int init_settings(){
+	//This section sould run, but need's error checking
+	
+	GConfClient* client = NULL;
+	GError* error = NULL;
+	g_type_init();
+	client = gconf_client_get_default();
+	gconf_client_add_dir(client, SERVICE_GCONF_ROOT, GCONF_CLIENT_PRELOAD_NONE, &error);
+	gconf_client_notify_add(client, SERVICE_GCONF_ROOT,keyChangeCallback, NULL, NULL, &error);
+	return true;
+}
+#endif //ifdef win32
