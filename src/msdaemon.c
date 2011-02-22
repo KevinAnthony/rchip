@@ -4,9 +4,10 @@
 #ifndef _WIN32
 	#include "dbus.h"
 #endif
+#ifndef _NOSQL
 #include "sql.h"
 #include "cmdhandler.h"
-
+#endif
 
 gboolean daemon_loop(gpointer);
 gboolean update_active_devices(gpointer);
@@ -20,16 +21,19 @@ char* base;
 /*The Main Program*/
 int main(int argc, char** argv) {
 	/* defines the tray_icon, as well as init gtk*/
-	update_daemon_sql();
 	GtkStatusIcon *tray_icon;
 	gtk_init(&argc, &argv);
-	sql_init();
-	size=get_size();
-	nelem=get_nelem();
-	base = calloc(nelem,size);
-	get_active_devices(base,size,nelem);
+	#ifndef _NOSQL
+		sql_init();
+		update_daemon_sql();
+		size=get_size();
+		nelem=get_nelem();
+		base = calloc(nelem,size);
+		get_active_devices(base,size,nelem);
+	#endif
 	/*sets the tray icon from the create_tray_icon*/
 	tray_icon = create_tray_icon();
+	#ifndef _NOSQL
 	#ifndef _WIN32
 		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
 		struct playing_info_rb pInfo = {"Artist","Album","Song",0,3600,0};
@@ -43,19 +47,17 @@ int main(int argc, char** argv) {
 			print_playing_info_rb(pInfo);
 		#endif
 	#endif
-	/*adds the fuction daemon_loop to the gtk main loop, and executes it evert 1/2 second*/
-	/*char* hostname = malloc(size);
-                int i = 0;
-                for (i = 0; i < nelem; i++) {
-                        char* elem = base+(i*size);
-                        strcpy(hostname,elem);
-                }*/
+	
 	g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
 	g_timeout_add (5000,(GSourceFunc) update_active_devices,NULL);
+	#endif
 	start_tray();
-	free(base);
+	#ifndef _NOSQL
+		free(base);
+	#endif
 	return 0;
 }
+#ifndef _NOSQL
 #ifndef _WIN32
 	gboolean daemon_loop(gpointer data) {
 		/*if the dbus is active, do the following, else try and connect*/
@@ -97,4 +99,5 @@ gboolean update_active_devices(gpointer data){
 		sprintf(query,"INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
 		return query;
 	}
+#endif
 #endif
