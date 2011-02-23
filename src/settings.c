@@ -120,6 +120,7 @@ int xml_file_exists(){return 0;}
 #include <glib.h>
 #include <gconf/gconf-client.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 void keyChangeCallback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpointer userData) {
@@ -185,18 +186,42 @@ char* getsetting( gchar* keyname) {
 	/*
 	 * we search based on keyname, and return the value
          */
-	return "/mnt/raid";
+	GConfClient* client = NULL;
+	client = gconf_client_get_default();
+        g_assert(GCONF_IS_CLIENT(client));
+	gchar* valueStr = NULL;
+	gchar* lookup = (gchar*) malloc(sizeof(keyname) + sizeof(SERVICE_GCONF_ROOT)+5);
+	sprintf(lookup,SERVICE_GCONF_ROOT "%s", keyname);
+        valueStr = gconf_client_get_string(client,lookup, NULL);
+	g_free(lookup);
+        if (valueStr == NULL) {
+        	//#ifndef _SILENT
+		printf("Error: No Value for %s",keyname);
+		//#endif
+		return NULL;
+	}
+	return valueStr;
 }
 
-int init_settings(){
+void populate_defaults(GConfClient* client){
+ 	gchar* valueStr = NULL;
+  	valueStr = gconf_client_get_string(client, SERVICE_KEY_PATH_TO_VIDEO_ROOT, NULL);
+  	if (valueStr == NULL) {	
+		if (!gconf_client_set_string(client, SERVICE_KEY_PATH_TO_VIDEO_ROOT, "/media/Tamatebako/",NULL)) {
+		}
+	}
+}
+int settings_init(){
 	//This section sould run, but need's error checking
 	
 	GConfClient* client = NULL;
 	GError* error = NULL;
 	g_type_init();
 	client = gconf_client_get_default();
+	g_assert(GCONF_IS_CLIENT(client));
 	gconf_client_add_dir(client, SERVICE_GCONF_ROOT, GCONF_CLIENT_PRELOAD_NONE, &error);
 	gconf_client_notify_add(client, SERVICE_GCONF_ROOT,keyChangeCallback, NULL, NULL, &error);
+	populate_defaults(client);
 	return true;
 }
 #endif //ifdef win32
