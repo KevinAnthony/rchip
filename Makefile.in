@@ -202,7 +202,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . src data
-CLEANFILES = Makefile aclocal.m4 config.log config.h config.h.in~ stamp-h1 autom4te.cache/*
+CLEANFILES = Makefile config.log config.h config.h.in~ stamp-h1 autom4te.cache/* config-status
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
