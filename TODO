@@ -5,17 +5,14 @@
 	* replace _DEBUG _SILENT with verbosity
 		Kevin
 
-	* gconf settings for desthostname in notification.c setNotification
-		Kevin
-
-	* some popup window to set desthostname, from registered devices perhaps
-		Kevin
-
-	* notificaiton.c source_hostname hardcoded
-		Kevin
-
 	* mstray open window should open to VIDEO_PATH instead of random dir
 		Kevin
 	
 	* Make callback functions under settings.c
+		Kevin
+	
+	* Normilize function names either thisIsAFunction or this_is_a_fuction.  not both.
+		Kevin
+
+	* Comments!
 		Kevin
