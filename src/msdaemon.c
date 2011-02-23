@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
 	/* defines the tray_icon, as well as init gtk*/
 	GtkStatusIcon *tray_icon;
 	gtk_init(&argc, &argv);
+	g_set_application_name("msDaemon");
 	#ifndef _NOSQL
 		sql_init();
 		update_daemon_sql();
@@ -37,6 +38,7 @@ int main(int argc, char** argv) {
 	tray_icon = create_tray_icon();
 	#ifndef _NOSQL
 	#ifndef _WIN32
+		settings_init();
 		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
 		struct playing_info_rb pInfo = {"Artist","Album","Song",0,3600,0};
 		#ifdef _DEBUG
