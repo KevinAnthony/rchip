@@ -179,7 +179,7 @@ void about_box(GtkWidget *widget, gpointer gdata){
      
         /* Add the label, and show everything we've added to the dialog. */
      
-        gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)),
+        gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
                            label);
         gtk_widget_show_all (dialog);
 }
