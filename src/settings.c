@@ -185,7 +185,7 @@ char* getsetting( gchar* keyname) {
 	/*
 	 * we search based on keyname, and return the value
          */
-	return NULL;
+	return "/mnt/raid";
 }
 
 int init_settings(){
