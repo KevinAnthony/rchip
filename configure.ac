@@ -2,10 +2,10 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.67])
-AC_INIT([msDaemon], [0.1.1.0], [kevin@nosideracing.com])
+AC_INIT([msDaemon], [0.1.1.1], [kevin@nosideracing.com])
 AC_CONFIG_SRCDIR([src/sql.h])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([msDaemon], [0.1.1.0])
+AM_INIT_AUTOMAKE([msDaemon], [0.1.1.1])
 
 # Checks for programs.
 AC_PROG_CC
