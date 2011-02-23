@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "mstray.h"
+#include "settings.h"
 #ifndef _WIN32
 	#include "dbus.h"
 #endif

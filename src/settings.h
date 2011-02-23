@@ -17,6 +17,7 @@
 	#include <gconf/gconf-client.h>
 	#include <stdio.h>
 	#define SERVICE_GCONF_ROOT "/apps/noside/msdaemon"
+	
 	#define VIDEO_ROOT "/videoroot"
 	#define SERVICE_KEY_PATH_TO_VIDEO_ROOT \
 	        SERVICE_GCONF_ROOT "/videoroot"
