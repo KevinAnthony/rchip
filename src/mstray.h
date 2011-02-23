@@ -18,7 +18,7 @@
 	void add_folders(GtkWidget*, gpointer);	
 	void about_box(GtkWidget*, gpointer);
 	void add_folder_to_playqueue(char*);
-	int fileType(char*);
+	int file_type(char*);
 	GtkStatusIcon* create_tray_icon();
 	GtkWidget* create_tray_menu(GtkStatusIcon*);
 #endif

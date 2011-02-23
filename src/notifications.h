@@ -9,10 +9,10 @@
 #include        <dbus/dbus-glib.h>
 #endif
 
-gboolean setNotification(char*,char*,char*);
+gboolean set_notification(char*,char*,char*);
 
 #ifndef _WIN32
-void getTorrentInfo(DBusGProxy*,char*);
+void get_torrent_info(DBusGProxy*,char*);
 #endif
 
 #endif

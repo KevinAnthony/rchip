@@ -10,7 +10,7 @@
 #ifdef LIBXML_TREE_ENABLED
 #ifdef LIBXML_OUTPUT_ENABLED
 
-char* getsetting(char* settingname){
+char* get_setting(char* settingname){
 	
 	if (!(xml_file_exists())){
 		if(!(new_xml_file())){
@@ -103,7 +103,7 @@ int new_xml_file() {
     	return 1;
 }
 #else
-char* getsetting(char* gigo) {
+char* gets_setting(char* gigo) {
     	#ifndef _SILENT
 	printf(stderr, "tree support not compiled in\n");
 	#endif
@@ -123,7 +123,7 @@ int xml_file_exists(){return 0;}
 #include <stdlib.h>
 #include <stdbool.h>
 
-void keyChangeCallback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpointer userData) {
+void key_change_callback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpointer userData) {
 	const GConfValue* value = NULL;
   	const gchar* keyname = NULL;
   	gchar* strValue = NULL;
@@ -158,7 +158,7 @@ void keyChangeCallback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpoin
 	#endif
 }
 
-int registerCallback( void (*regesterFunction) (void),gchar* registerKey){
+int register_settings_changed_callback( void (*regesterFunction) (void),gchar* registerKey){
 	/*
 	 * Here we would register a function to a list or something
 	 * I'm unsure if how to prototype this
@@ -167,14 +167,14 @@ int registerCallback( void (*regesterFunction) (void),gchar* registerKey){
 	return true;
 }
 
-int unregisterCallback( void (*regesterFunction) (gchar*)){
+int unregister_settings_changed_callback( void (*unregesterFunction) (gchar*)){
 	/*
 	 * here we would unregister the function, just like above
 	 */
 	return true;
 }
 
-int callbackRegisteredFunctions(gchar* keyname){
+int callback_registered_functions(gchar* keyname){
 	/*
 	 * we need to search the reigsteredFunctions by keyname, 
 	 * and callback the function based on which key it called
@@ -182,7 +182,7 @@ int callbackRegisteredFunctions(gchar* keyname){
 	return true;
 }
 
-char* getsetting( gchar* keyname) {
+char* get_setting( gchar* keyname) {
 	/*
 	 * we search based on keyname, and return the value
          */
@@ -220,7 +220,7 @@ int settings_init(){
 	client = gconf_client_get_default();
 	g_assert(GCONF_IS_CLIENT(client));
 	gconf_client_add_dir(client, SERVICE_GCONF_ROOT, GCONF_CLIENT_PRELOAD_NONE, &error);
-	gconf_client_notify_add(client, SERVICE_GCONF_ROOT,keyChangeCallback, NULL, NULL, &error);
+	gconf_client_notify_add(client, SERVICE_GCONF_ROOT,key_change_callback, NULL, NULL, &error);
 	populate_defaults(client);
 	return true;
 }

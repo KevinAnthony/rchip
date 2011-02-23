@@ -22,7 +22,7 @@
 
 
 
-gboolean setNotification(char* tickerString,char* notificationTitle,char* notificationText) {
+gboolean set_notification(char* tickerString,char* notificationTitle,char* notificationText) {
 	#ifdef _SQL
 	size_t nelem;
 	size_t size;
@@ -74,7 +74,7 @@ gboolean setNotification(char* tickerString,char* notificationTitle,char* notifi
 	#endif
 }
 #ifndef _WIN32
-	void getTorrentInfo(DBusGProxy* proxy,char* torrent) 
+	void get_torrent_info(DBusGProxy* proxy,char* torrent) 
 	{
 		printf("\n\n\n\n\n\n\n\n%s\n\n\n\n\n\n\n\n\n\n\n",torrent);
 	}

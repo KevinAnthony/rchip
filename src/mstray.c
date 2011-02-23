@@ -72,7 +72,7 @@ void add_files(GtkWidget *widget, gpointer gdata){
 			while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
 			#endif
 			printf("%s\n",filename);
-			filename = replace_str(filename,getsetting(VIDEO_ROOT),"/mnt/raid/");
+			filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
 			add_file_to_playqueue(filename);
 			node=node->next;
 		}
@@ -105,7 +105,7 @@ void add_folders(GtkWidget *widget, gpointer gdata){
                         while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
                         #endif
                         printf("%s\n",filename);
-                        filename = replace_str(filename,getsetting(VIDEO_ROOT),"/mnt/raid/");
+                        filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
                         add_folder_to_playqueue(filename);
                         node=node->next;
                 } 
@@ -122,7 +122,7 @@ void add_folder_to_playqueue(char *dirFile){
   	char *newDirFile;
 	
   	if ((dp=opendir(dirFile))==NULL) {
-		dirFile = replace_str(dirFile,getsetting(VIDEO_ROOT),"/mnt/raid/");
+		dirFile = replace_str(dirFile,get_setting(VIDEO_ROOT),"/mnt/raid/");
 		add_file_to_playqueue(dirFile);
   	} else  {
 		while((ep=readdir(dp))) {
@@ -133,12 +133,12 @@ void add_folder_to_playqueue(char *dirFile){
 			#else
       				newDirFile = g_strdup_printf("%s/%s", dirFile, ep->d_name);  
 			#endif
-      			switch(fileType(newDirFile)){
+      			switch(file_type(newDirFile)){
         			case FTDIR:
           				add_folder_to_playqueue(newDirFile);
         				break;
         			case FTFILE:
-					newDirFile = replace_str(newDirFile,getsetting(VIDEO_ROOT),"/mnt/raid/");
+					newDirFile = replace_str(newDirFile,get_setting(VIDEO_ROOT),"/mnt/raid/");
         				add_file_to_playqueue(newDirFile);
 					break;
         			case FTDONOTPROC:
@@ -149,7 +149,7 @@ void add_folder_to_playqueue(char *dirFile){
   	}
 }
 
-int fileType(char *name){
+int file_type(char *name){
 	DIR    *dp;
 	int   ret = FTFILE;
 	if (!((dp=opendir(name))==NULL)){

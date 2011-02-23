@@ -7,7 +7,7 @@
 	#include <libxml/parser.h>
 	#include <libxml/tree.h>
 	#define XMLFILE PREFIX"/share/settings.xml"
-	char* getsetting(char*);
+	char* get_setting(char*);
 	char* find_element_names(xmlNode*,char*);
 	int xml_file_exists();
 	int new_xml_file();
@@ -22,11 +22,11 @@
 	#define SERVICE_KEY_PATH_TO_VIDEO_ROOT \
 	        SERVICE_GCONF_ROOT "/videoroot"
 	
-	void keyChangeCallback(GConfClient*,guint,GConfEntry*,gpointer);
-	int registerCallback( void (*) (void),gchar*);
-	int unregisterCallback( void (*) (gchar*));
-	int callbackRegisteredFunctions(gchar*);
-	char* getsetting( gchar*);
+	void key_change_callback(GConfClient*,guint,GConfEntry*,gpointer);
+	int register_callback( void (*) (void),gchar*);
+	int unregister_callback( void (*) (gchar*));
+	int callback_registered_functions(gchar*);
+	char* get_setting( gchar*);
 	void populate_defaults(GConfClient*);
 	int settings_init();
 
