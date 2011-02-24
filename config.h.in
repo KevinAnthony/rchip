@@ -67,17 +67,14 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* "Output Verbosity Level" */
+#undef VERBOSE
+
 /* Version number of package */
 #undef VERSION
 
-/* "Verbose Outputting" */
-#undef _DEBUG
-
 /* "Turn OFF SQL Functionality" */
 #undef _NOSQL
-
-/* "Quiet Outpitting" */
-#undef _SILENT
 
 /* "Turn ON SQL Functionality" */
 #undef _SQL

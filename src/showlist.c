@@ -44,9 +44,10 @@ char* live_action(char* filepath){
 		for (; *ptr!='.' ; ptr++){
 			if (*ptr == '\0'){
 				if (i == 2){ break; }
-				//#ifndef _SILENT
-					printf("Error: badly formed file name\n");
-				//#endif
+				#if VERBOSE >= 2
+				printf("Error: badly formed file name\n");
+				printf("File Name: %s\n",filepath);
+				#endif
 				return NULL;
 			}
 			if (i == 0){ lenOfName++; }
@@ -78,7 +79,9 @@ char* live_action(char* filepath){
 		*ptr++=*sptr++;
 	}
 	*ptr='\0';
-	printf("%s\n",retval);
+	#if VERBOSE >= 4
+		printf("returnValue of live_action in showlist.c\n%s\n",retval);
+	#endif
 	return retval;
 }
 
@@ -154,9 +157,10 @@ char* std_anime(char* filepath,char* name){
         sptr=ptr;
         for (; *ptr!='_' ; ptr++){
         	if (*ptr == '\0'){
-                        //#ifndef _SILENT
-                        	printf("Error: badly formed file name\n");
-                       	//#endif
+                        #if VERBOSE >= 2
+                        printf("Error: badly formed file name\n");
+                        printf("File Name: %s\n",filepath);
+                        #endif
                         return NULL;
              	}
 		lenOfEpsNumber++;
@@ -165,9 +169,10 @@ char* std_anime(char* filepath,char* name){
 	ptr++;
         for (; *ptr!=']' ; ptr++){
                if (*ptr == '\0'){
-                       //#ifndef _SILENT
-                               printf("Error: badly formed file name\n");
-                       //#endif
+                       #if VERBOSE >= 2
+                       printf("Error: badly formed file name\n");
+                       printf("File Name: %s\n",filepath);
+                       #endif
                        return NULL;
                }
                lenOfSubgroup++;

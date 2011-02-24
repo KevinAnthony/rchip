@@ -42,14 +42,14 @@ int main(int argc, char** argv) {
 		settings_init();
 		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
 		struct playing_info_rb pInfo = {"Artist","Album","Song",0,3600,0};
-		#ifdef _DEBUG
-			print_playing_info_rb(pInfo);
+		#if VERBOSE >= 4
+		print_pilaying_info_rb(pInfo);
 		#endif
 		/*inits the dbus and get the first set of info*/
 		dbus_init();
 		pInfo = dbus_get_playing_info_rb();
-		#ifdef _DEBUG
-			print_playing_info_rb(pInfo);
+		#if VERBOSE >= 4
+		print_playing_info_rb(pInfo);
 		#endif
 	#endif
 	
@@ -69,8 +69,8 @@ int main(int argc, char** argv) {
 		get_next_cmd();
 		if (dbus_is_connected(TRUE)) {
 			struct playing_info_rb pInfo = dbus_get_playing_info_rb();
-			#ifdef _DEBUG
-				print_playing_info_rb(pInfo);
+			#if VERBOSE >= 4
+			print_playing_info_rb(pInfo);
 			#endif
 			char* hostname = malloc(size);
 			for (int i = 0; i < nelem; i++) {

@@ -27,31 +27,31 @@ void start_tray(){
 #if GTK_MAJOR_VERSION >= 3 
 void activate (GtkApplication *app)
 {
-	#ifdef _DEBUG
-                printf("Application Activated\n");
+	#if VERBOSE >= 3
+        printf("Application Activated\n");
         #endif
 	gtk_main();
 }
 #endif
 void tray_click(GtkStatusIcon *status_icon,gpointer user_data)
 {
-	#ifdef _DEBUG
-		printf("clicked on Icon\n");
+	#if VERBOSE >= 3
+	printf("clicked on Icon\n");
 	#endif
 }
 
 void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gpointer user_data)
 {
-	#ifdef _DEBUG
-		printf("clicked on menu\n");
+	#if VERBOSE >= 3
+	printf("clicked on menu\n");
 	#endif
 	GtkWidget *tray_menu = create_tray_menu(status_icon);
 	gtk_menu_popup (GTK_MENU (tray_menu), NULL, NULL,gtk_status_icon_position_menu,status_icon,button,activate_time);
 }
 
 void add_files(GtkWidget *widget, gpointer gdata){
- 	#ifdef _DEBUG
-                printf("addShows Clicked\n");
+ 	#if VERBOSE >= 3
+        printf("addShows Clicked\n");
 	#endif
 	GtkWidget *dialog;
 	dialog = gtk_file_chooser_dialog_new ("Open File",
@@ -71,7 +71,9 @@ void add_files(GtkWidget *widget, gpointer gdata){
 			char* p = filename;
 			while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
 			#endif
-			printf("%s\n",filename);
+			#if VERBOSE >= 3
+			printf("Adding Filename:%s\n",filename);
+			#endif
 			filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
 			add_file_to_playqueue(filename);
 			node=node->next;
@@ -83,8 +85,8 @@ void add_files(GtkWidget *widget, gpointer gdata){
 }
 
 void add_folders(GtkWidget *widget, gpointer gdata){
-        #ifdef _DEBUG
-                printf("addFolders Clicked\n");
+        #if VERBOSE >= 3
+        printf("addFolders Clicked\n");
         #endif
         GtkWidget *dialog;
         dialog = gtk_file_chooser_dialog_new ("Open File",
@@ -104,7 +106,9 @@ void add_folders(GtkWidget *widget, gpointer gdata){
                         char* p = filename;
                         while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
                         #endif
-                        printf("%s\n",filename);
+			#if VERBOSE >= 3
+                        printf("Adding Filename%s\n",filename);
+			#endif
                         filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
                         add_folder_to_playqueue(filename);
                         node=node->next;
@@ -160,8 +164,8 @@ int file_type(char *name){
 } 
  
 void about_box(GtkWidget *widget, gpointer gdata){
-	#ifdef _DEBUG
-		printf("about Clicked\n");
+	#if VERBOSE >= 3
+	printf("about Clicked\n");
 	#endif
 	GtkWidget *dialog, *label;
      

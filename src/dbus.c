@@ -39,9 +39,9 @@
 		GError *error = NULL;
 		conn = dbus_g_bus_get(DBUS_BUS_SESSION,&error);
 		if (error != NULL) {
-			#ifndef _SILENT	
-				printf("Somethings wrong:dbus_g_bus_get\n");
-				printf("%s\n",error->message);
+			#if VERBOSE >= 1
+			printf("Somethings wrong:dbus_g_bus_get\n");
+			printf("%s\n",error->message);
 			#endif
 			conn = NULL;
 			return FALSE;
@@ -52,9 +52,9 @@
  	                                             "/org/gnome/Rhythmbox/Shell",
         	                                      "org.gnome.Rhythmbox.Shell",&error);
 		if (error != NULL) {
-			#ifndef _SILENT
-                		printf("Somethings wrong:dbus_g_proxy_new_for_name_owner(SHELL)\n");
-                		printf("%s\n",error->message);
+			#if VERBOSE >= 1
+                	printf("Somethings wrong:dbus_g_proxy_new_for_name_owner(SHELL)\n");
+                	printf("%s\n",error->message);
 			#endif
 			conn =NULL;
 	                return FALSE;
@@ -64,9 +64,9 @@
                         	                       "/org/gnome/Rhythmbox/Player",
                                 	               "org.gnome.Rhythmbox.Player",&error);
 		if (error != NULL) {
-			#ifndef _SILENT
-	                	printf("Somethings wrong:dbus_g_proxy_new_for_name_owner(PLAYER)\n");
-	                	printf("%s\n",error->message);
+			#if VERBOSE >= 1
+                	printf("Somethings wrong:dbus_g_proxy_new_for_name_owner(PLAYER)\n");
+	                printf("%s\n",error->message);
 			#endif
 			conn = NULL;
 	                return FALSE;
@@ -77,8 +77,8 @@
 		GError *error = NULL;
 		dbus_g_proxy_call_with_timeout(player,command_name, DBUS_TIMEOUT, &error, G_TYPE_INVALID, G_TYPE_INVALID);
 		 if (error != NULL) {
-	         	#ifndef _SILENT
-	                	printf("Error with getPlaying: %s\n",error->message);
+	         	#if VERBOSE >= 1
+	                printf("Error with getPlaying: %s\n",error->message);
 	                #endif
 			return FALSE;
 		 } else {
@@ -90,8 +90,8 @@
 	        GError *error = NULL;
 	        dbus_g_proxy_call_with_timeout(player,command_name, DBUS_TIMEOUT, &error,type,argument, G_TYPE_INVALID, G_TYPE_INVALID);
 	         if (error != NULL) {
-	                #ifndef _SILENT
-	                        printf("Error with getPlaying: %s\n",error->message);
+	                #if VERBOSE >= 1
+	                printf("Error with getPlaying: %s\n",error->message);
         	        #endif
         	        return FALSE;
         	 } else {
@@ -111,8 +111,8 @@
 	        	                        G_TYPE_INVALID);
 			pInfo.isPlaying=playing;
 			if (error != NULL) {
-				#ifndef _SILENT
-					printf("Error with getPlaying: %s\n",error->message);
+				#if VERBOSE >= 1
+				printf("Error with getPlaying: %s\n",error->message);
 				#endif
 			}	
 			GHashTable *table;
@@ -127,13 +127,13 @@
 	        			pInfo.Duration = get_hash_uint(table, "duration");
 					dbus_g_proxy_call_with_timeout(player, "getElapsed", DBUS_TIMEOUT, NULL,G_TYPE_INVALID,G_TYPE_UINT, &pInfo.Elapised_time,  G_TYPE_INVALID);
 				} else {
-	        	                #ifndef _SILENT
-						printf("ERROR:%s\n",error->message);
+	        	                #if VERBOSE >= 1
+					printf("ERROR:%s\n",error->message);
 					#endif
 				}
 			} else {
-				#ifndef _SILENT
-					printf("ERROR:%s\n",error->message);
+				#if VERBOSE >= 1
+				printf("ERROR:%s\n",error->message);
 				#endif
 			}
 		}
@@ -145,8 +145,8 @@
 		GValue* value = (GValue*) g_hash_table_lookup(table, key);
 	        if (value != NULL && G_VALUE_HOLDS_STRING(value)) {
 			const char* src = g_value_get_string(value);	
-			#ifdef _DEBUG
-				printf("Got info for key '%s' is '%s'\n", key, src);
+			#if VERBOSE >= 4
+			printf("Got info for key '%s' is '%s'\n", key, src);
 			#endif
                 	return src;
         	}	
@@ -163,6 +163,8 @@
 	}
 	
 	void print_playing_info_rb(const struct playing_info_rb pInfo){
+		#if VERBOSE >= 4
 		printf("Artist\t\t%s\nAlbum\t\t%s\nSong\t\t%s\nElapised Time\t%i\nDuration\t%i\nIs Playing\t%i\n\n",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying);
+		#endif
 	}
 #endif

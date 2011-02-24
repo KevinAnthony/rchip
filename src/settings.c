@@ -25,7 +25,9 @@ char* get_setting(char* settingname){
     	doc = xmlReadFile(XMLFILE, NULL, 0);
 
     	if (doc == NULL) {
+		#if VERBOSE >= 1
         	printf("error: could not parse file %s\n", XMLFILE);
+		#endif
     	}
 
 	/*Get the root element node */
@@ -104,7 +106,7 @@ int new_xml_file() {
 }
 #else
 char* gets_setting(char* gigo) {
-    	#ifndef _SILENT
+    	#if VERBOSE >= 1
 	printf(stderr, "tree support not compiled in\n");
 	#endif
     	return NULL
@@ -127,34 +129,36 @@ void key_change_callback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpo
 	const GConfValue* value = NULL;
   	const gchar* keyname = NULL;
   	gchar* strValue = NULL;
-	#ifdef _DEBUG
-  		printf("keyChangeCallback invoked.\n");
+	#if VERBOSE >= 3
+  	printf("keyChangeCallback invoked.\n");
 	#endif
  	keyname = gconf_entry_get_key(entry);
 	if (keyname == NULL) {
-    		#ifndef _SILENT
-			printf("Couldn't get the key name!\n");
+    		#if VERBOSE >= 1
+		printf("Couldn't get the key name!\n");
 		#endif
 		return;
   	}
 	value = gconf_entry_get_value(entry);
   	g_assert(value != NULL);
 	if (!GCONF_VALUE_TYPE_VALID(value->type)) {
-    		#ifndef _SILENT
-			printf("Invalid type for gconfvalue!\n");
+    		#if VERBOSE >= 1
+		printf("Invalid type for gconfvalue!\n");
 		#endif
   	}
 	strValue = gconf_value_to_string(value);
-	#ifdef _DEBUG
-		if (strcmp(keyname, SERVICE_KEY_PATH_TO_VIDEO_ROOT) == 0) {
-			printf("Connection type setting changed: [%s]\n",strValue);
-  		} else {
-  	  		printf(":Unknown key: %s (value: [%s])\n", keyname,strValue);
-  		}
+	#if VERBOSE >= 1
+	if (strcmp(keyname, SERVICE_KEY_PATH_TO_VIDEO_ROOT) == 0) {
+		#if VERBOSE >= 3
+		printf("Connection type setting changed: [%s]\n",strValue);
+		#endif
+  	} else {
+  		printf(":Unknown key: %s (value: [%s])\n", keyname,strValue);
+  	}
 	#endif
   	g_free(strValue);
-	#ifdef _DEBUG
-  		printf("keyChangeCallback done.\n");
+	#if VERBOSE >= 3
+ 		printf("keyChangeCallback done.\n");
 	#endif
 }
 
@@ -195,9 +199,9 @@ char* get_setting( gchar* keyname) {
         valueStr = gconf_client_get_string(client,lookup, NULL);
 	g_free(lookup);
         if (valueStr == NULL) {
-        	//#ifndef _SILENT
+       		#if VERBOSE >= 2 	
 		printf("Error: No Value for %s",keyname);
-		//#endif
+		#endif
 		return NULL;
 	}
 	return valueStr;

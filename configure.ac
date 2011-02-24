@@ -1,11 +1,8 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
-
 AC_PREREQ([2.67])
-AC_INIT([msDaemon], [0.1.1.1], [kevin@nosideracing.com])
+AC_INIT([msDaemon], [0.1.2.0], [kevin@nosideracing.com])
 AC_CONFIG_SRCDIR([src/sql.h])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([msDaemon], [0.1.1.1])
+AM_INIT_AUTOMAKE([msDaemon], [0.1.2.0])
 
 # Checks for programs.
 AC_PROG_CC
@@ -24,13 +21,6 @@ AC_SUBST(GLIB_LIBS)
 if test "x$HAVE_GLIB" != xyes ; then
   AC_CHECK_LIB(glib-2.0, g_list_append, HAVE_GLIB="maybe", sweep_config_ok="no")
 fi
-
-#PKG_CHECK_MODULES(GTHREADS, gthread-2.0 >=  2.2.0, HAVE_GTHREADS="yes", sweep_config_ok="no")
-#AC_SUBST(GTHREADS_CFLAGS)
-#AC_SUBST(GTHREADS_LIBS)
-#if test "x$HAVE_GTHREADS" != xyes ; then
-#  AC_CHECK_LIB(gthread-2.0, g_thread_init, HAVE_GTHREADS="maybe", sweep_config_ok="no")
-#fi
 
 PKG_CHECK_MODULES(DBUS, dbus-glib-1 >= 0.70 dbus-1 >= 0.70)
 AC_SUBST(DBUS_CFLAGS)
@@ -73,8 +63,17 @@ AC_MSG_RESULT($MYSQL_INCLUDES)
 AC_MSG_CHECKING(for MySQL libraries)
 AC_MSG_RESULT($MYSQL_LIBS)
 
-AC_ARG_ENABLE(debugging,[  --enable-debugging      print verbose output for debuging],AC_DEFINE(_DEBUG,,"Verbose Outputting"),AC_DEFINE(_SILENT,,"Quiet Outpitting"))
-
+AC_ARG_ENABLE(debug,AS_HELP_STRING(--enable-debug={0-5},prints verbose output for debugging))
+case x"$enable_debug" in
+	x)	AC_DEFINE(VERBOSE,0,"Output Verbosity Level");;
+	x0)	AC_DEFINE(VERBOSE,0,"Output Verbosity Level");;
+	x1)	AC_DEFINE(VERBOSE,1,"Output Verbosity Level");;
+	x2)	AC_DEFINE(VERBOSE,2,"Output Verbosity Level");;
+	x3)	AC_DEFINE(VERBOSE,3,"Output Verbosity Level");;
+	x4)	AC_DEFINE(VERBOSE,4,"Output Verbosity Level");;
+	x5)	AC_DEFINE(VERBOSE,5,"Output Verbosity Level");;
+	*)	AC_MSG_ERROR([unexpected value $enable_debug for --enable-debug configure option]);;
+esac
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h])
 
