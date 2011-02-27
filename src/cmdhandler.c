@@ -42,7 +42,11 @@ void get_next_cmd() {
 		get_next_cmd_from_sql(hn,&cmdID,&cmd,&cmdTxt,&source);
 		#endif
 	#endif
+<<<<<<< HEAD
 	#if VERBOSE >= 3
+=======
+	#if VERBOSE >= 4
+>>>>>>> bb067a6f045848961572c601ba552932627abb35
 		printf("ID:%i\ncmd:%s\ncmdTxt:%s\n",cmdID,cmd,cmdTxt);
 	#endif
 	if (!(strcmp(cmd," "))){

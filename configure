@@ -609,8 +609,6 @@ LIBXML2_LIBS
 LIBXML2_CFLAGS
 DBUS_LIBS
 DBUS_CFLAGS
-GIO_LIBS
-GIO_CFLAGS
 GLIB_LIBS
 GLIB_CFLAGS
 GTK_LIBS
@@ -723,8 +721,6 @@ GTK_CFLAGS
 GTK_LIBS
 GLIB_CFLAGS
 GLIB_LIBS
-GIO_CFLAGS
-GIO_LIBS
 DBUS_CFLAGS
 DBUS_LIBS
 LIBXML2_CFLAGS
@@ -1373,8 +1369,6 @@ Some influential environment variables:
   GTK_LIBS    linker flags for GTK, overriding pkg-config
   GLIB_CFLAGS C compiler flags for GLIB, overriding pkg-config
   GLIB_LIBS   linker flags for GLIB, overriding pkg-config
-  GIO_CFLAGS  C compiler flags for GIO, overriding pkg-config
-  GIO_LIBS    linker flags for GIO, overriding pkg-config
   DBUS_CFLAGS C compiler flags for DBUS, overriding pkg-config
   DBUS_LIBS   linker flags for DBUS, overriding pkg-config
   LIBXML2_CFLAGS
@@ -4449,123 +4443,6 @@ fi
 
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GIO" >&5
-$as_echo_n "checking for GIO... " >&6; }
-
-if test -n "$GIO_CFLAGS"; then
-    pkg_cv_GIO_CFLAGS="$GIO_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gio-2.0 >=  2.0.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gio-2.0 >=  2.0.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GIO_CFLAGS=`$PKG_CONFIG --cflags "gio-2.0 >=  2.0.0" 2>/dev/null`
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GIO_LIBS"; then
-    pkg_cv_GIO_LIBS="$GIO_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gio-2.0 >=  2.0.0\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gio-2.0 >=  2.0.0") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GIO_LIBS=`$PKG_CONFIG --libs "gio-2.0 >=  2.0.0" 2>/dev/null`
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GIO_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "gio-2.0 >=  2.0.0" 2>&1`
-        else
-	        GIO_PKG_ERRORS=`$PKG_CONFIG --print-errors "gio-2.0 >=  2.0.0" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GIO_PKG_ERRORS" >&5
-
-	sweep_config_ok="no"
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	sweep_config_ok="no"
-else
-	GIO_CFLAGS=$pkg_cv_GIO_CFLAGS
-	GIO_LIBS=$pkg_cv_GIO_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-	HAVE_GIO="yes"
-fi
-
-
-if test "x$HAVE_GIO" != xyes ; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for g_dbus_get_sync in -lgio-2.0" >&5
-$as_echo_n "checking for g_dbus_get_sync in -lgio-2.0... " >&6; }
-if test "${ac_cv_lib_gio_2_0_g_dbus_get_sync+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lgio-2.0  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char g_dbus_get_sync ();
-int
-main ()
-{
-return g_dbus_get_sync ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_gio_2_0_g_dbus_get_sync=yes
-else
-  ac_cv_lib_gio_2_0_g_dbus_get_sync=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gio_2_0_g_dbus_get_sync" >&5
-$as_echo "$ac_cv_lib_gio_2_0_g_dbus_get_sync" >&6; }
-if test "x$ac_cv_lib_gio_2_0_g_dbus_get_sync" = x""yes; then :
-  HAVE_GIO="maybe"
-else
-  sweep_config_ok="no"
-fi
-
-fi
-
-
-
-pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for DBUS" >&5
 $as_echo_n "checking for DBUS... " >&6; }
 
@@ -4656,9 +4533,9 @@ fi
 
 
 if test "x$HAVE_DBUS" != xyes ; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dbus_g_bus_get in -ldbug-1" >&5
-$as_echo_n "checking for dbus_g_bus_get in -ldbug-1... " >&6; }
-if test "${ac_cv_lib_dbug_1_dbus_g_bus_get+set}" = set; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dbus_init in -ldbug-1" >&5
+$as_echo_n "checking for dbus_init in -ldbug-1... " >&6; }
+if test "${ac_cv_lib_dbug_1_dbus_init+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -4672,27 +4549,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char dbus_g_bus_get ();
+char dbus_init ();
 int
 main ()
 {
-return dbus_g_bus_get ();
+return dbus_init ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_dbug_1_dbus_g_bus_get=yes
+  ac_cv_lib_dbug_1_dbus_init=yes
 else
-  ac_cv_lib_dbug_1_dbus_g_bus_get=no
+  ac_cv_lib_dbug_1_dbus_init=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dbug_1_dbus_g_bus_get" >&5
-$as_echo "$ac_cv_lib_dbug_1_dbus_g_bus_get" >&6; }
-if test "x$ac_cv_lib_dbug_1_dbus_g_bus_get" = x""yes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dbug_1_dbus_init" >&5
+$as_echo "$ac_cv_lib_dbug_1_dbus_init" >&6; }
+if test "x$ac_cv_lib_dbug_1_dbus_init" = x""yes; then :
   HAVE_DBUS="maybe"
 else
   sweep_config_ok="no"

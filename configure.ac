@@ -23,19 +23,11 @@ if test "x$HAVE_GLIB" != xyes ; then
   AC_CHECK_LIB(glib-2.0, g_list_append, HAVE_GLIB="maybe", sweep_config_ok="no")
 fi
 
-PKG_CHECK_MODULES(GIO, gio-2.0 >=  2.0.0, HAVE_GIO="yes", sweep_config_ok="no")
-AC_SUBST(GIO_CFLAGS)
-AC_SUBST(GIO_LIBS)
-if test "x$HAVE_GIO" != xyes ; then
-  AC_CHECK_LIB(gio-2.0, g_dbus_get_sync, HAVE_GIO="maybe", sweep_config_ok="no")
-fi
-
-
 PKG_CHECK_MODULES(DBUS, dbus-glib-1 >= 0.70 dbus-1 >= 0.70)
 AC_SUBST(DBUS_CFLAGS)
 AC_SUBST(DBUS_LIBS)
 if test "x$HAVE_DBUS" != xyes ; then
-  AC_CHECK_LIB(dbug-1, dbus_g_bus_get, HAVE_DBUS="maybe", sweep_config_ok="no")
+  AC_CHECK_LIB(dbug-1, dbus_init, HAVE_DBUS="maybe", sweep_config_ok="no")
 fi
 
 LIBXML2_REQUIRED=2.5.10
