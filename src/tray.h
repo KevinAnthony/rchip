@@ -1,5 +1,5 @@
-#ifndef MSTRAY_H
-#define MSTRAY_H
+#ifndef TRAY_H
+#define TRAY_H
 
 #include <gtk/gtk.h>
 #include <dirent.h>

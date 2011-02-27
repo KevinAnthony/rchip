@@ -33,7 +33,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = msdaemon$(EXEEXT)
+bin_PROGRAMS = rchip$(EXEEXT)
 subdir = src
 DIST_COMMON = $(sourceinclude_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -50,11 +50,11 @@ am__installdirs = "$(DESTDIR)$(bindir)" \
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 =
 am__objects_2 = $(am__objects_1) cmdhandler.$(OBJEXT) dbus.$(OBJEXT) \
-	mstray.$(OBJEXT) notifications.$(OBJEXT) settings.$(OBJEXT) \
+	tray.$(OBJEXT) notifications.$(OBJEXT) settings.$(OBJEXT) \
 	showlist.$(OBJEXT) sql.$(OBJEXT) utils.$(OBJEXT)
-am_msdaemon_OBJECTS = $(am__objects_2) msdaemon.$(OBJEXT)
-msdaemon_OBJECTS = $(am_msdaemon_OBJECTS)
-msdaemon_DEPENDENCIES =
+am_rchip_OBJECTS = $(am__objects_2) main.$(OBJEXT)
+rchip_OBJECTS = $(am_rchip_OBJECTS)
+rchip_DEPENDENCIES =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -63,8 +63,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(msdaemon_SOURCES)
-DIST_SOURCES = $(msdaemon_SOURCES)
+SOURCES = $(rchip_SOURCES)
+DIST_SOURCES = $(rchip_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -113,11 +113,15 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GCONF_CFLAGS = @GCONF_CFLAGS@
 GCONF_LIBS = @GCONF_LIBS@
+GIO_CFLAGS = @GIO_CFLAGS@
+GIO_LIBS = @GIO_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
 GLIB_LIBS = @GLIB_LIBS@
 GREP = @GREP@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
+HAVE_BANSHEE = @HAVE_BANSHEE@
+HAVE_RHYTHMBOX = @HAVE_RHYTHMBOX@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -194,11 +198,11 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 AM_CFLAGS = $(CFLAGS) @GTK_CFLAGS@ @GLIB_CFLAGS@ @LIBXML2_CFLAGS@ @DBUS_CFLAGS@ @GCONF_CFLAGS@ @MYSQL_CFLAGS@
-sourceincludedir = $(includedir)/msdaemon/source
+sourceincludedir = $(includedir)/rchip/source
 sourceinclude_HEADERS = \
 	cmdhandler.h			\
 	dbus.h  			\
-	mstray.h			\
+	tray.h			\
 	notifications.h			\
 	settings.h  			\
 	showlist.h  			\
@@ -209,15 +213,15 @@ sourceinclude_SOURCE = \
 	$(sourceinclude_HEADERS) 	\
 	cmdhandler.c                    \
         dbus.c                          \
-        mstray.c                        \
+        tray.c                        \
         notifications.c                 \
         settings.c                      \
         showlist.c                      \
         sql.c                           \
         utils.c
 
-msdaemon_SOURCES = $(sourceinclude_SOURCE) msdaemon.c
-msdaemon_LDADD = @GTK_LIBS@ @GLIB_LIBS@ @DBUS_LIBS@ @LIBXML2_LIBS@ @GCONF_LIBS@ @MYSQL_LIBS@
+rchip_SOURCES = $(sourceinclude_SOURCE) main.c
+rchip_LDADD = @GTK_LIBS@ @GLIB_LIBS@ @DBUS_LIBS@ @LIBXML2_LIBS@ @GCONF_LIBS@ @MYSQL_LIBS@
 CLEANFILES = Makefile .deps/*
 all: all-am
 
@@ -290,9 +294,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-msdaemon$(EXEEXT): $(msdaemon_OBJECTS) $(msdaemon_DEPENDENCIES) 
-	@rm -f msdaemon$(EXEEXT)
-	$(LINK) $(msdaemon_OBJECTS) $(msdaemon_LDADD) $(LIBS)
+rchip$(EXEEXT): $(rchip_OBJECTS) $(rchip_DEPENDENCIES) 
+	@rm -f rchip$(EXEEXT)
+	$(LINK) $(rchip_OBJECTS) $(rchip_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -302,12 +306,12 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmdhandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dbus.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/msdaemon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mstray.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/notifications.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/settings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/showlist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sql.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
 
 .c.o:

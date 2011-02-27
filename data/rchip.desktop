@@ -1,0 +1,13 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Encoding=UTF-8
+Name=rchip
+GenericName=Remote Control
+X-GNOME-FullName=RCHIP
+Comment=Control Aspects of your Computer from a Remote Device
+Exec=rchip
+Terminal=false
+Type=Application
+Icon=rchip_client
+Categories=GTK;GNOME;Utility;

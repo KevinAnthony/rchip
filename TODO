@@ -1,8 +1,14 @@
-
-	* msdaemon prints something when _silent, when adding a file
+	
+	* change all rb to music, make way for ablility to use banshee instead
+		Kevin
+	
+	* Surround all refernaces to Rhythmbox with #ifdef _RHYTHMBOX and write referances to Banshee surroned by #ifdef _BANSHEE
+		Kevin
+	
+	* in mysql_init() we need to check for the tables existatnce, and if it's doesn't exist, create it
 		Kevin
 
-	* replace _DEBUG _SILENT with verbosity
+	* mysql server settings under gconf settings instead of hardcoded
 		Kevin
 
 	* mstray open window should open to VIDEO_PATH instead of random dir

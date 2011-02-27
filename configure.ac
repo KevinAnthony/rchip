@@ -1,14 +1,12 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
-
 AC_PREREQ([2.67])
-AC_INIT([msDaemon], [0.1.1.1], [kevin@nosideracing.com])
+AC_INIT([rchip], [0.1.4.0], [kevin@nosideracing.com])
 AC_CONFIG_SRCDIR([src/sql.h])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([msDaemon], [0.1.1.1])
+AM_INIT_AUTOMAKE([rchip], [0.1.4.0])
 
 # Checks for programs.
 AC_PROG_CC
+AC_HEADER_STDC
 
 # Checks for libraries.
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >=  2.10.0, HAVE_GTK="yes", sweep_config_ok="no")
@@ -25,18 +23,19 @@ if test "x$HAVE_GLIB" != xyes ; then
   AC_CHECK_LIB(glib-2.0, g_list_append, HAVE_GLIB="maybe", sweep_config_ok="no")
 fi
 
-#PKG_CHECK_MODULES(GTHREADS, gthread-2.0 >=  2.2.0, HAVE_GTHREADS="yes", sweep_config_ok="no")
-#AC_SUBST(GTHREADS_CFLAGS)
-#AC_SUBST(GTHREADS_LIBS)
-#if test "x$HAVE_GTHREADS" != xyes ; then
-#  AC_CHECK_LIB(gthread-2.0, g_thread_init, HAVE_GTHREADS="maybe", sweep_config_ok="no")
-#fi
+PKG_CHECK_MODULES(GIO, gio-2.0 >=  2.0.0, HAVE_GIO="yes", sweep_config_ok="no")
+AC_SUBST(GIO_CFLAGS)
+AC_SUBST(GIO_LIBS)
+if test "x$HAVE_GIO" != xyes ; then
+  AC_CHECK_LIB(gio-2.0, g_dbus_get_sync, HAVE_GIO="maybe", sweep_config_ok="no")
+fi
+
 
 PKG_CHECK_MODULES(DBUS, dbus-glib-1 >= 0.70 dbus-1 >= 0.70)
 AC_SUBST(DBUS_CFLAGS)
 AC_SUBST(DBUS_LIBS)
 if test "x$HAVE_DBUS" != xyes ; then
-  AC_CHECK_LIB(dbug-1, dbus_init, HAVE_DBUS="maybe", sweep_config_ok="no")
+  AC_CHECK_LIB(dbug-1, dbus_g_bus_get, HAVE_DBUS="maybe", sweep_config_ok="no")
 fi
 
 LIBXML2_REQUIRED=2.5.10
@@ -73,7 +72,47 @@ AC_MSG_RESULT($MYSQL_INCLUDES)
 AC_MSG_CHECKING(for MySQL libraries)
 AC_MSG_RESULT($MYSQL_LIBS)
 
-AC_ARG_ENABLE(debugging,[  --enable-debugging      print verbose output for debuging],AC_DEFINE(_DEBUG,,"Verbose Outputting"),AC_DEFINE(_SILENT,,"Quiet Outpitting"))
+AC_ARG_ENABLE(debug,AS_HELP_STRING(--enable-debug={0-5},prints verbose output for debugging))
+case "x$enable_debug" in
+	x)	AC_DEFINE(VERBOSE,0,"Output Verbosity Level");;
+	x0)	AC_DEFINE(VERBOSE,0,"Output Verbosity Level");;
+	x1)	AC_DEFINE(VERBOSE,1,"Output Verbosity Level");;
+	x2)	AC_DEFINE(VERBOSE,2,"Output Verbosity Level");;
+	x3)	AC_DEFINE(VERBOSE,3,"Output Verbosity Level");;
+	x4)	AC_DEFINE(VERBOSE,4,"Output Verbosity Level");;
+	x5)	AC_DEFINE(VERBOSE,5,"Output Verbosity Level");;
+	*)	AC_MSG_ERROR([unexpected value $enable_debug for --enable-debug configure option]);;
+esac
+
+#Check for Music Programs
+AC_ARG_ENABLE(banshee,AS_HELP_STRING(--enable-banshee,Enables using Banshee Music Program over Rhythmbox),[BANSHEE="yes"],[BANSHEE="no"])
+AC_ARG_ENABLE(dbus,AS_HELP_STRING(--disable-dbus,disables dbus interface preventing music remote from working),[DBUS="no"],[DBUS="yes"])
+
+AC_CHECK_PROG(HAVE_RHYTHMBOX, rhythmbox, true, false)
+AC_CHECK_PROG(HAVE_BANSHEE, banshee, true, false)
+
+if test "x$DBUS" != "xno"; then
+        if test "x$HAVE_RHYTHMBOX" = "xfalse" -a "x$HAVE_BANSHEE" = "xfalse" -a "x$DBUS" = "xyes"; then
+                AC_MSG_ERROR([*** dbus enabled but no music player found, please install either RHYTHMBOX or BANSHEE or use --disable-dbus])
+        else
+                if test "x$BANSHEE" = "xyes"; then
+			if test "x$HAVE_BANSHEE" = "xfalse"; then
+				AC_MSG_ERROR([*** --enable-banshee flag used, but BANSHEE not present, please install BANSHEE or do not use flag])
+			else
+				AC_DEFINE(BANSHEE,,"Enable Banshee")
+			fi
+		else
+			if test "x$HAVE_RHYTHMBOX" = "xfalse" ; then
+				AC_DEFINE(BANSHEE,,"Enable Banshee")
+			else
+              			AC_DEFINE(RHYTHMBOX,,"Enable Rhythmbox")
+			fi
+		fi
+        fi
+else
+	AC_DEFINE(DBUSOFF,,"Disable Dbus totally")
+fi
+
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h])
@@ -86,5 +125,8 @@ AC_HEADER_STDBOOL
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([strstr uname])
 
-AC_CONFIG_FILES([Makefile src/Makefile data/Makefile])
-AC_OUTPUT
+AC_OUTPUT([
+Makefile
+src/Makefile
+data/Makefile
+])

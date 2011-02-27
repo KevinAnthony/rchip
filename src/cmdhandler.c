@@ -5,7 +5,9 @@
 #include <stdio.h>
 #ifndef _WIN32
 	#include <sys/utsname.h>
+	#ifndef DBUSOFF
 	#include "dbus.h"
+	#endif
 #else
 	#include <windows.h>
 	#include <process.h>
@@ -40,35 +42,51 @@ void get_next_cmd() {
 		get_next_cmd_from_sql(hn,&cmdID,&cmd,&cmdTxt,&source);
 		#endif
 	#endif
-	#ifdef _DEBUG
+	#if VERBOSE >= 3
 		printf("ID:%i\ncmd:%s\ncmdTxt:%s\n",cmdID,cmd,cmdTxt);
 	#endif
 	if (!(strcmp(cmd," "))){
 		return;
 	}
 	if (!(strcmp(cmd,"STRB"))) {
+		#if VERBOSE >= 1
 		printf("Warning:STRB is deprecated");
+		#endif
 		#ifdef _SQL
 		delete_from_cmdQueue(cmdID);
 		#endif
 	} else if (!(strcmp(cmd,"SPRB"))) {
+		#if VERBOSE >= 1
 		printf("Warning:SPRB is deprecated");
+		#endif
 		#ifdef _SQL
 		delete_from_cmdQueue(cmdID);
 		#endif
 	} else if (!(strcmp(cmd,"NEXTRB"))) {
 		#ifndef _WIN32
-			if(send_command_to_rhythmbox("next"))
-			{
+			#ifndef DBUSOFF
+			#ifdef RHYTHMBOX
+			if(send_command_to_music_player("next")){
+			#endif
+			#ifdef BANSHEE
+			if(send_command_to_music_player_with_argument("Next","(b)","TRUE")){
+			#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
 			} else {
+				#if VERBOSE >= 2
 				printf("Could not Next\n");
+				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
 			}
+			#else
+			#ifdef _SQL
+                        delete_from_cmdQueue(cmdID);
+                        #endif
+			#endif
 		#else
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
@@ -76,17 +94,29 @@ void get_next_cmd() {
 		#endif
 	} else if (!(strcmp(cmd,"BACKRB"))) {
 		#ifndef _WIN32
-                	if(send_command_to_rhythmbox("previous"))  
-                	{
+                	#ifndef DBUSOFF
+			#ifdef RHYTHMBOX
+			if(send_command_to_music_player("previous"))  {
+			#endif
+			#ifdef BANSHEE
+			if(send_command_to_music_player_with_argument("Previous","(b)","TRUE"))  {
+			#endif
 				#ifdef _SQL
                 	        delete_from_cmdQueue(cmdID);
 				#endif
                 	} else {
+				#if VERBOSE >= 2
                 	        printf("Could not BACK\n");
+				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
                 	}
+			#else
+                        #ifdef _SQL
+                        delete_from_cmdQueue(cmdID);
+                        #endif
+                        #endif
 		#else
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
@@ -94,17 +124,29 @@ void get_next_cmd() {
 		#endif
 	} else if (!(strcmp(cmd,"PLAYRB"))) {
 		#ifndef _WIN32
-			if(send_command_to_rhythmbox_with_argument("playPause",G_TYPE_BOOLEAN,"TRUE"))  
-	                {
+			#ifndef DEBUS
+			#ifdef RHYTHMBOX
+			if(send_command_to_music_player_with_argument("playPause","(b)","TRUE")) {
+			#endif
+			#ifdef BANSHEE
+			if(send_command_to_music_player("Play")){
+			#endif
 				#ifdef _SQL
 	                        delete_from_cmdQueue(cmdID);
 				#endif
 	                } else {
+				#if VERBOSE >= 2
        		                printf("Could not PLAY\n");
+				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
                 	}
+			#else
+                        #ifdef _SQL
+                        delete_from_cmdQueue(cmdID);
+                        #endif
+                        #endif
 		#else
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
@@ -112,17 +154,30 @@ void get_next_cmd() {
 		#endif
 	} else if (!(strcmp(cmd,"STOPRB"))) {
         	#ifndef _WIN32
-		       	if(send_command_to_rhythmbox_with_argument("playPause",G_TYPE_BOOLEAN,"TRUE")) 
-			{
+			#ifndef DBUSOFF
+			#ifdef RHYTHMBOX
+                        if(send_command_to_music_player_with_argument("playPause","(b)","TRUE")) {
+                        #endif
+                        #ifdef BANSHEE
+                        if(send_command_to_music_player("Pause")){
+                        #endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
         	        } else {
+				#if VERBOSE >= 2
         	                printf("Could not STOP\n");
+				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
         	        }
+			#else
+                        #ifdef _SQL
+                        delete_from_cmdQueue(cmdID);
+                        #endif
+                        #endif
+
 		#else
 			#ifdef _SQL
 			delete_fvirom_cmdQueue(cmdID);
@@ -134,7 +189,9 @@ void get_next_cmd() {
 			delete_from_cmdQueue(cmdID);
 			#endif
 		} else {
-                	printf("Could not Play SMplayer\n");
+                	#if VERBOSE >= 2
+			printf("Could not Play SMplayer\n");
+			#endif
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
 			#endif
@@ -146,7 +203,9 @@ void get_next_cmd() {
 			delete_from_cmdQueue(cmdID);
 			#endif
                 } else {
+			#if VERBOSE >= 2
                         printf("Could not Stop SMplayer\n");
+			#endif
                         #ifdef _SQL
 			delete_from_cmdQueue(cmdID);
 			#endif
@@ -157,7 +216,9 @@ void get_next_cmd() {
 			delete_from_cmdQueue(cmdID);	
 			#endif
                 } else {
+			#if VERBOSE >= 2
                         printf("Could not Pause SMplayer\n");
+			#endif
 			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
 			#endif
@@ -169,7 +230,9 @@ void get_next_cmd() {
                         delete_from_cmdQueue(cmdID);
 			#endif
                 } else {
+			#if VERBOSE >= 2
                         printf("Could not Skip Foward SMplayer\n");
+			#endif
 			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
 			#endif
@@ -180,7 +243,9 @@ void get_next_cmd() {
                         delete_from_cmdQueue(cmdID);
                         #endif
 		} else {
+			#if VERBOSE >= 2
                         printf("Could not Skip Backwards SMplayer\n");
+			#endif
                         #ifdef _SQL
                         delete_from_cmdQueue(cmdID);
                         #endif
@@ -191,7 +256,9 @@ void get_next_cmd() {
                         delete_from_cmdQueue(cmdID);
                         #endif
                 } else {
+			#if VERBOSE >= 2
                         printf("Could not Fullscreen SMplayer\n");
+			#endif
                         #ifdef _SQL
                         delete_from_cmdQueue(cmdID);
                         #endif
@@ -202,7 +269,9 @@ void get_next_cmd() {
                         delete_from_cmdQueue(cmdID);
                         #endif
                 } else {
+			#if VERBOSE >= 2
                         printf("Could not Fullscreen off SMplayer\n");
+			#endif
                         #ifdef _SQL
                         delete_from_cmdQueue(cmdID);
                         #endif
@@ -227,9 +296,13 @@ void get_next_cmd() {
 		       	delete_from_cmdQueue(cmdID);
 			#endif
                 } else {
+			#if VERBOSE >= 2
                        	printf("Could not open SMplayer\n");
+			#endif
 			#ifdef _WIN32
+				#if VERBOSE >= 2
 				printf("Last error: %i\n",myerrno);
+				#endif
 			#endif
 			#ifdef _SQL
                        	delete_from_cmdQueue(cmdID);
@@ -242,7 +315,9 @@ void get_next_cmd() {
                         delete_from_cmdQueue(cmdID);
 			#endif
                 } else {
+			#if VERBOSE >= 2
                         printf("Could not Play SMplayer\n");
+			#endif
 			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
 			#endif
@@ -253,14 +328,17 @@ void get_next_cmd() {
                         delete_from_cmdQueue(cmdID);
 			#endif
                 } else {
-                        printf("Could not Play SMplayer\n");
+                        #if VERBOSE >= 2
+			printf("Could not Play SMplayer\n");
+			#endif
 			#ifdef _SQL
                         delete_from_cmdQueue(cmdID);
 			#endif
                 }
  	} else {
-
+		#if VERBOSE >= 2
 		printf("Command Not Recognized: ::%s::\n",cmd);
+		#endif
 		#ifdef _SQL
 		delete_from_cmdQueue(cmdID);
 		#endif

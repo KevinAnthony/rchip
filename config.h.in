@@ -1,5 +1,11 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* "Enable Banshee" */
+#undef BANSHEE
+
+/* "Disable Dbus totally" */
+#undef DBUSOFF
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -64,20 +70,20 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* "Enable Rhythmbox" */
+#undef RHYTHMBOX
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* "Output Verbosity Level" */
+#undef VERBOSE
 
 /* Version number of package */
 #undef VERSION
 
-/* "Verbose Outputting" */
-#undef _DEBUG
-
 /* "Turn OFF SQL Functionality" */
 #undef _NOSQL
-
-/* "Quiet Outpitting" */
-#undef _SILENT
 
 /* "Turn ON SQL Functionality" */
 #undef _SQL

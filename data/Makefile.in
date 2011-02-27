@@ -65,8 +65,9 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(pngdir)"
-DATA = $(png_DATA)
+am__installdirs = "$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(iconsdir)" \
+	"$(DESTDIR)$(pngdir)"
+DATA = $(desktop_DATA) $(icons_DATA) $(png_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -91,11 +92,15 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GCONF_CFLAGS = @GCONF_CFLAGS@
 GCONF_LIBS = @GCONF_LIBS@
+GIO_CFLAGS = @GIO_CFLAGS@
+GIO_LIBS = @GIO_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
 GLIB_LIBS = @GLIB_LIBS@
 GREP = @GREP@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
+HAVE_BANSHEE = @HAVE_BANSHEE@
+HAVE_RHYTHMBOX = @HAVE_RHYTHMBOX@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -170,20 +175,25 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+desktopdir = $(datadir)/applications
+desktop_DATA = rchip.desktop
 pngdir = $(datadir)/madsci/
 png_DATA = beaker_blue.png         \
 		beaker_red.png		\
 		flask_blue.png   	\
 		flask_red.png     	\
-		msdaemon.png		\
 		beaker_green.png  	\
 		beaker_yellow.png  	\
 		flask_green.png  	\
-		flask_yellow.png  	\
-		msremote.png
+		flask_yellow.png  	
 
-EXTRA_DIST = $(png_DATA)
-CLEANFILES = Makefile
+themedir = $(datadir)/icons/gnome
+size = scalable
+context = apps
+iconsdir = $(themedir)/$(size)/$(context)
+icons_DATA = rchip_client.svg
+XTRA_DIST = $(png_DATA) rchip.desktop
+CLEANFILES = Makefile 
 all: all-am
 
 .SUFFIXES:
@@ -217,6 +227,46 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+install-desktopDATA: $(desktop_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(desktopdir)" || $(MKDIR_P) "$(DESTDIR)$(desktopdir)"
+	@list='$(desktop_DATA)'; test -n "$(desktopdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(desktopdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(desktopdir)" || exit $$?; \
+	done
+
+uninstall-desktopDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(desktop_DATA)'; test -n "$(desktopdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(desktopdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(desktopdir)" && rm -f $$files
+install-iconsDATA: $(icons_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(iconsdir)" || $(MKDIR_P) "$(DESTDIR)$(iconsdir)"
+	@list='$(icons_DATA)'; test -n "$(iconsdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(iconsdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(iconsdir)" || exit $$?; \
+	done
+
+uninstall-iconsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(icons_DATA)'; test -n "$(iconsdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(iconsdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(iconsdir)" && rm -f $$files
 install-pngDATA: $(png_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(pngdir)" || $(MKDIR_P) "$(DESTDIR)$(pngdir)"
@@ -278,7 +328,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(pngdir)"; do \
+	for dir in "$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(iconsdir)" "$(DESTDIR)$(pngdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -327,7 +377,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-pngDATA
+install-data-am: install-desktopDATA install-iconsDATA install-pngDATA
 
 install-dvi: install-dvi-am
 
@@ -371,20 +421,22 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-pngDATA
+uninstall-am: uninstall-desktopDATA uninstall-iconsDATA \
+	uninstall-pngDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-pngDATA install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
-	uninstall-am uninstall-pngDATA
+	install install-am install-data install-data-am \
+	install-desktopDATA install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-iconsDATA \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-pngDATA install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-desktopDATA uninstall-iconsDATA uninstall-pngDATA
 
 
 createdirs:

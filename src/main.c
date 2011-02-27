@@ -2,7 +2,7 @@
 #include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include "mstray.h"
+#include "tray.h"
 #include "settings.h"
 #ifndef _WIN32
 	#include "dbus.h"
@@ -15,7 +15,7 @@
 gboolean daemon_loop(gpointer);
 gboolean update_active_devices(gpointer);
 #ifndef _WIN32
-	char* build_playing_info_sql_query(const struct playing_info_rb,char*);
+	char* build_playing_info_sql_query(const struct playing_info_music,char*);
 #endif
 size_t nelem;
 size_t size; 
@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 	/* defines the tray_icon, as well as init gtk*/
 	GtkStatusIcon *tray_icon;
 	gtk_init(&argc, &argv);
-	g_set_application_name("msDaemon");
+	g_set_application_name("rchip");
 	#ifndef _NOSQL
 		sql_init();
 		update_daemon_sql();
@@ -40,16 +40,18 @@ int main(int argc, char** argv) {
 	#ifndef _NOSQL
 	#ifndef _WIN32
 		settings_init();
+		
+		struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};	
 		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
-		struct playing_info_rb pInfo = {"Artist","Album","Song",0,3600,0};
-		#ifdef _DEBUG
-			print_playing_info_rb(pInfo);
+		#if VERBOSE >= 4
+		print_playing_info_music(pInfo);
 		#endif
 		/*inits the dbus and get the first set of info*/
 		dbus_init();
-		pInfo = dbus_get_playing_info_rb();
-		#ifdef _DEBUG
-			print_playing_info_rb(pInfo);
+
+		pInfo = dbus_get_playing_info_music();
+		#if VERBOSE >= 4
+		print_playing_info_music(pInfo);
 		#endif
 	#endif
 	
@@ -68,9 +70,9 @@ int main(int argc, char** argv) {
 		/*if the dbus is active, do the following, else try and connect*/
 		get_next_cmd();
 		if (dbus_is_connected(TRUE)) {
-			struct playing_info_rb pInfo = dbus_get_playing_info_rb();
-			#ifdef _DEBUG
-				print_playing_info_rb(pInfo);
+			struct playing_info_music pInfo = dbus_get_playing_info_music();
+			#if VERBOSE >= 4
+			print_playing_info_music(pInfo);
 			#endif
 			char* hostname = malloc(size);
 			for (int i = 0; i < nelem; i++) {
@@ -99,7 +101,7 @@ gboolean update_active_devices(gpointer data){
 	return TRUE;
 }
 #ifndef _WIN32
-	char* build_playing_info_sql_query(const struct playing_info_rb pInfo,char* hostname) {
+	char* build_playing_info_sql_query(const struct playing_info_music pInfo,char* hostname) {
 		char* query =(char *)malloc(1024);
 		sprintf(query,"INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
 		return query;

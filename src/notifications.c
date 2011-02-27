@@ -76,6 +76,8 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 #ifndef _WIN32
 	void get_torrent_info(DBusGProxy* proxy,char* torrent) 
 	{
-		printf("\n\n\n\n\n\n\n\n%s\n\n\n\n\n\n\n\n\n\n\n",torrent);
+		#if VERBOSE >= 4
+		printf("Torrent:%s",torrent);
+		#endif
 	}
 #endif
