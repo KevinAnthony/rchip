@@ -43,7 +43,6 @@ int main(int argc, char** argv) {
 		
 		struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};	
 		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
-<<<<<<< HEAD
 		#if VERBOSE >= 4
 		print_playing_info_music(pInfo);
 		#endif
@@ -53,17 +52,6 @@ int main(int argc, char** argv) {
 		pInfo = dbus_get_playing_info_music();
 		#if VERBOSE >= 4
 		print_playing_info_music(pInfo);
-=======
-		struct playing_info_rb pInfo = {"Artist","Album","Song",0,3600,0};
-		#if VERBOSE >= 4
-		print_pilaying_info_rb(pInfo);
-		#endif
-		/*inits the dbus and get the first set of info*/
-		dbus_init();
-		pInfo = dbus_get_playing_info_rb();
-		#if VERBOSE >= 4
-		print_playing_info_rb(pInfo);
->>>>>>> bb067a6f045848961572c601ba552932627abb35
 		#endif
 	#endif
 	
@@ -82,15 +70,9 @@ int main(int argc, char** argv) {
 		/*if the dbus is active, do the following, else try and connect*/
 		get_next_cmd();
 		if (dbus_is_connected(TRUE)) {
-<<<<<<< HEAD
 			struct playing_info_music pInfo = dbus_get_playing_info_music();
 			#if VERBOSE >= 4
 			print_playing_info_music(pInfo);
-=======
-			struct playing_info_rb pInfo = dbus_get_playing_info_rb();
-			#if VERBOSE >= 4
-			print_playing_info_rb(pInfo);
->>>>>>> bb067a6f045848961572c601ba552932627abb35
 			#endif
 			char* hostname = malloc(size);
 			for (int i = 0; i < nelem; i++) {

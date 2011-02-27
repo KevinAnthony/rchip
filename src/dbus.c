@@ -55,7 +55,6 @@
                                                      "/org/gnome/Rhythmbox/Shell",
                                                       "org.gnome.Rhythmbox.Shell",NULL,&error);
 		if (error != NULL) {
-<<<<<<< HEAD
                         #if VERBOSE >= 1
                         printf("Somethings wrong:dbus_g_proxy_new_for_name_owner(SHELL)\n");
                         printf("%s\n",error->message);
@@ -66,19 +65,6 @@
 		player = g_dbus_proxy_new_sync(conn, G_DBUS_CALL_FLAGS_NONE,NULL,"org.gnome.Rhythmbox",
                                                      "/org/gnome/Rhythmbox/Player",
                                                       "org.gnome.Rhythmbox.Player",NULL,&error);     
-=======
-			#if VERBOSE >= 1
-                	printf("Somethings wrong:dbus_g_proxy_new_for_name_owner(SHELL)\n");
-                	printf("%s\n",error->message);
-			#endif
-			conn =NULL;
-	                return FALSE;
-	        }
-       		player = dbus_g_proxy_new_for_name_owner(conn,
-                	                               "org.gnome.Rhythmbox",
-                        	                       "/org/gnome/Rhythmbox/Player",
-                                	               "org.gnome.Rhythmbox.Player",&error);
->>>>>>> bb067a6f045848961572c601ba552932627abb35
 		if (error != NULL) {
 			#if VERBOSE >= 1
                 	printf("Somethings wrong:dbus_g_proxy_new_for_name_owner(PLAYER)\n");
@@ -119,7 +105,6 @@
 	}
 	gboolean send_command_to_music_player(char* command_name) {
 		GError *error = NULL;
-<<<<<<< HEAD
 		printf("Got Here, no argument\n");
 		#ifdef RHYTHMBOX
 		g_dbus_proxy_call_sync(player,command_name,NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
@@ -130,10 +115,6 @@
                 #endif
 
 		if (error != NULL) {
-=======
-		dbus_g_proxy_call_with_timeout(player,command_name, DBUS_TIMEOUT, &error, G_TYPE_INVALID, G_TYPE_INVALID);
-		 if (error != NULL) {
->>>>>>> bb067a6f045848961572c601ba552932627abb35
 	         	#if VERBOSE >= 1
 	                printf("Error with getPlaying: %s\n",error->message);
 	                #endif
@@ -146,7 +127,6 @@
 	gboolean send_command_to_music_player_with_argument(char* command_name,char* type, char* argument) {
 		printf("We did something: %s\n",command_name);
 	        GError *error = NULL;
-<<<<<<< HEAD
 		#ifdef RHYTHMBOX
 		g_dbus_proxy_call_sync(player,command_name,g_variant_new (type,&argument),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 		#endif
@@ -155,10 +135,6 @@
 		g_dbus_proxy_call_sync(playbackController,command_name,g_variant_new (type,&argument),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 		#endif
 		if (error != NULL) {
-=======
-	        dbus_g_proxy_call_with_timeout(player,command_name, DBUS_TIMEOUT, &error,type,argument, G_TYPE_INVALID, G_TYPE_INVALID);
-	         if (error != NULL) {
->>>>>>> bb067a6f045848961572c601ba552932627abb35
 	                #if VERBOSE >= 1
 	                printf("Error with getPlaying: %s\n",error->message);
         	        #endif
@@ -189,7 +165,7 @@
                                 pInfo.Album = malloc(1024);
                                 pInfo.Song = malloc(1024);
                                 double doubleValue;
-                                GVariant* dict = g_variant_get_child_value(result,0);
+                                GVariant* dict = g_variant_get_child_value(results,0);
                                 g_variant_lookup(dict,"artist","s",&pInfo.Artist);
                                 g_variant_lookup(dict,"album","s",&pInfo.Album);
                                 g_variant_lookup(dict,"title","s",&pInfo.Song);
@@ -222,18 +198,12 @@
 				if (strcmp(g_variant_get_string(g_variant_get_child_value(result,0),NULL),"playing") != 0){
 					pInfo.isPlaying=FALSE;
 				} else {
-<<<<<<< HEAD
 					pInfo.isPlaying=TRUE;
 					result = g_dbus_proxy_call_sync(playerEngine,"GetPosition",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 	                                unsigned int c = g_variant_get_uint32(g_variant_get_child_value(result,0));
 	                                result = g_dbus_proxy_call_sync(playerEngine,"GetLength",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 	                                unsigned int t = g_variant_get_uint32(g_variant_get_child_value(result,0));
 	                                pInfo.Elapised_time = (c*pInfo.Duration)/t;
-=======
-	        	                #if VERBOSE >= 1
-					printf("ERROR:%s\n",error->message);
-					#endif
->>>>>>> bb067a6f045848961572c601ba552932627abb35
 				}
 
 			} else {
@@ -241,31 +211,12 @@
 				printf("ERROR:%s\n",error->message);
 				#endif
 			}
-<<<<<<< HEAD
-			
-=======
-		}
-		return pInfo;	
-	}
-
-	char* get_hash_str(GHashTable *table, const char *key)
-	{
-		GValue* value = (GValue*) g_hash_table_lookup(table, key);
-	        if (value != NULL && G_VALUE_HOLDS_STRING(value)) {
-			const char* src = g_value_get_string(value);	
-			#if VERBOSE >= 4
-			printf("Got info for key '%s' is '%s'\n", key, src);
->>>>>>> bb067a6f045848961572c601ba552932627abb35
 			#endif
 		}
 		return pInfo;	
 	}
 	
-<<<<<<< HEAD
 	void print_playing_info_music(const struct playing_info_music pInfo){
-=======
-	void print_playing_info_rb(const struct playing_info_rb pInfo){
->>>>>>> bb067a6f045848961572c601ba552932627abb35
 		#if VERBOSE >= 4
 		printf("Artist\t\t%s\nAlbum\t\t%s\nSong\t\t%s\nElapised Time\t%i\nDuration\t%i\nIs Playing\t%i\n\n",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying);
 		#endif
