@@ -6,6 +6,9 @@
 /* "Disable Dbus totally" */
 #undef DBUSOFF
 
+/* Whether we can use GSettings */
+#undef HAVE_GSETTINGS
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -72,6 +75,9 @@
 
 /* "Enable Rhythmbox" */
 #undef RHYTHMBOX
+
+/* The size of `long', as computed by sizeof. */
+#undef SIZEOF_LONG
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

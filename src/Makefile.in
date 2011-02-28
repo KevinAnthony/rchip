@@ -113,11 +113,18 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GCONF_CFLAGS = @GCONF_CFLAGS@
 GCONF_LIBS = @GCONF_LIBS@
+GDK_PIXBUF_CSOURCE = @GDK_PIXBUF_CSOURCE@
 GLIB_CFLAGS = @GLIB_CFLAGS@
+GLIB_COMPILE_SCHEMAS = @GLIB_COMPILE_SCHEMAS@
 GLIB_LIBS = @GLIB_LIBS@
 GREP = @GREP@
-GTK_CFLAGS = @GTK_CFLAGS@
-GTK_LIBS = @GTK_LIBS@
+GSETTINGS_CFLAGS = @GSETTINGS_CFLAGS@
+GSETTINGS_DISABLE_SCHEMAS_COMPILE = @GSETTINGS_DISABLE_SCHEMAS_COMPILE@
+GSETTINGS_LIBS = @GSETTINGS_LIBS@
+GTK2_CFLAGS = @GTK2_CFLAGS@
+GTK2_LIBS = @GTK2_LIBS@
+GTK3_CFLAGS = @GTK3_CFLAGS@
+GTK3_LIBS = @GTK3_LIBS@
 HAVE_BANSHEE = @HAVE_BANSHEE@
 HAVE_RHYTHMBOX = @HAVE_RHYTHMBOX@
 INSTALL = @INSTALL@
@@ -170,6 +177,7 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gsettingsschemadir = @gsettingsschemadir@
 host_alias = @host_alias@
 htmldir = @htmldir@
 includedir = @includedir@
@@ -195,7 +203,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-AM_CFLAGS = $(CFLAGS) @GTK_CFLAGS@ @GLIB_CFLAGS@ @LIBXML2_CFLAGS@ @DBUS_CFLAGS@ @GCONF_CFLAGS@ @MYSQL_CFLAGS@
+AM_CFLAGS = $(CFLAGS) @GTK2_CFLAGS@ @GTK3_CFLAGS@ @GLIB_CFLAGS@ @LIBXML2_CFLAGS@ @DBUS_CFLAGS@ @GCONF_CFLAGS@ @MYSQL_CFLAGS@
 sourceincludedir = $(includedir)/rchip/source
 sourceinclude_HEADERS = \
 	cmdhandler.h			\
@@ -219,7 +227,7 @@ sourceinclude_SOURCE = \
         utils.c
 
 rchip_SOURCES = $(sourceinclude_SOURCE) main.c
-rchip_LDADD = @GTK_LIBS@ @GLIB_LIBS@ @DBUS_LIBS@ @LIBXML2_LIBS@ @GCONF_LIBS@ @MYSQL_LIBS@
+rchip_LDADD = @GTK2_LIBS@ @GTK3_LIBS@ @GLIB_LIBS@ @DBUS_LIBS@ @LIBXML2_LIBS@ @GCONF_LIBS@ @MYSQL_LIBS@
 CLEANFILES = Makefile .deps/*
 all: all-am
 

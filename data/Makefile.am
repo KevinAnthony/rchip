@@ -1,27 +1,18 @@
+SUBDIRS = icons
+
+gsetings__SCHEMAS = apps.noside.rchip.gschema.xml
+@GSETTINGS_RULES@
+
 desktopdir = $(datadir)/applications
 desktop_DATA = rchip.desktop
 
-pngdir=$(datadir)/madsci/
+#if GSETTING_SCHEMAS_INSTALL
+#install-data-local: $(schema_DATA)
+#        GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(srcdir)/$(schema_DATA);
+#endif
 
-png_DATA = 	beaker_blue.png         \
-		beaker_red.png		\
-		flask_blue.png   	\
-		flask_red.png     	\
-		beaker_green.png  	\
-		beaker_yellow.png  	\
-		flask_green.png  	\
-		flask_yellow.png  	
 
-themedir = $(datadir)/icons/gnome
-size = scalable
-context = apps
+XTRA_DIST = 	$(desktop_DATA)
 
-iconsdir = $(themedir)/$(size)/$(context)
-icons_DATA = rchip_client.svg
-
-XTRA_DIST = $(png_DATA) rchip.desktop
-
-createdirs:
-	mkdir $(datadir)/madsci/
 
 CLEANFILES = Makefile 

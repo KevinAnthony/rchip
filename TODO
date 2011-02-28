@@ -1,3 +1,6 @@
+
+	* when library's don't exist, we need to bug out of the configure
+		Kevin
 	
 	* change all rb to music, make way for ablility to use banshee instead
 		Kevin

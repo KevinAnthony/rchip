@@ -13,7 +13,7 @@
 #include "settings.h"
 
 void start_tray(){
-	#if GTK_MAJOR_VERSION >= 3
+	#ifdef GTK3
 		GtkApplication *app;
 		gint status;
 		app = gtk_application_new("org.noside.rchip", 0);
@@ -182,9 +182,13 @@ void about_box(GtkWidget *widget, gpointer gdata){
                                   dialog);
      
         /* Add the label, and show everything we've added to the dialog. */
-     
+    	#ifdef GTK3
+	gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)),
+                           label);
+	#else 
         gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
                            label);
+	#endif
         gtk_widget_show_all (dialog);
 }
 
@@ -195,9 +199,15 @@ GtkStatusIcon* create_tray_icon() {
         g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
 	#ifdef PREFIX
 		#ifdef _WIN32
-        		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");
+			#if VERBOSE >= 5
+			printf ("Icon at: %s%s\n",PREFIX,"/share/rchip.png");
+        		#endif
+			gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");
 		#else
-			gtk_status_icon_set_from_file (tray_icon,PREFIX "/madsci/rchip.png");
+			#if VERBOSE >= 5
+			printf ("Icon at: %s%s\n",PREFIX,"/madsci/rchip_client.png");
+			#endif
+			gtk_status_icon_set_from_file (tray_icon,PREFIX "/madsci/rchip_server.png");
 		#endif
 	#else
 		gtk_status_icon_set_from_icon_name(tray_icon,GTK_STOCK_MEDIA_STOP);

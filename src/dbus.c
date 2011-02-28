@@ -7,6 +7,7 @@
 	#include        <stdio.h>
 	#include	<stdlib.h>
 	#include	<gio/gio.h>	
+	#include	<glib.h>
 	
 	/*we set the dbus timeout to 3 seconds*/
 	#define		DBUS_TIMEOUT	3000

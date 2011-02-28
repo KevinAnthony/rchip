@@ -39,8 +39,7 @@ int main(int argc, char** argv) {
 	tray_icon = create_tray_icon();
 	#ifndef _NOSQL
 	#ifndef _WIN32
-		settings_init();
-		
+		settings_init();	
 		struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};	
 		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
 		#if VERBOSE >= 4
@@ -54,7 +53,6 @@ int main(int argc, char** argv) {
 		print_playing_info_music(pInfo);
 		#endif
 	#endif
-	
 	g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
 	g_timeout_add (5000,(GSourceFunc) update_active_devices,NULL);
 	#endif
