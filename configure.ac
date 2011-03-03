@@ -1,8 +1,8 @@
 AC_PREREQ([2.67])
-AC_INIT([rchip], [0.1.5.1], [kevin@nosideracing.com])
+AC_INIT([rchip], [1.5.2], [kevin@nosideracing.com])
 AC_CONFIG_SRCDIR([src/sql.h])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([rchip], [0.1.5.1])
+AM_INIT_AUTOMAKE([rchip], [1.5.2])
 
 # Checks for programs.
 AC_PROG_CC
@@ -166,4 +166,5 @@ data/icons/hicolor/256x256/apps/Makefile
 data/icons/hicolor/scalable/Makefile
 data/icons/hicolor/scalable/apps/Makefile
 data/icons/src/Makefile
+data/ui/Makefile
 ])
