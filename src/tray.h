@@ -29,8 +29,8 @@
 #include <dirent.h>
 	enum {
 		FTDIR,
-  		FTFILE,
-  		FTDONOTPROC
+		FTFILE,
+		FTDONOTPROC
 	};
 	void start_tray();
 #ifdef GTK3

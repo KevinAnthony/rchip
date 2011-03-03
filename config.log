@@ -617,6 +617,7 @@ config.status:961: creating data/icons/hicolor/scalable/Makefile
 config.status:961: creating data/icons/hicolor/scalable/apps/Makefile
 config.status:961: creating data/icons/src/Makefile
 config.status:961: creating config.h
+config.status:1141: config.h is unchanged
 config.status:1189: executing depfiles commands
 
 ## ---------------- ##

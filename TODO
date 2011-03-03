@@ -1,6 +1,6 @@
-	* switch(again) form g_dbus to to gdbus
+	* switch from gconf to gsettings
 		Kevin
-	
+		
 	* in mysql_init() we need to check for the tables existatnce, and if it's doesn't exist, create it
 		Kevin
 
@@ -11,9 +11,6 @@
 		Kevin
 	
 	* Make callback functions under settings.c
-		Kevin
-
-	* Status Window!
 		Kevin
 
 	* Comments!
