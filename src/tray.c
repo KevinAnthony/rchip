@@ -11,6 +11,7 @@
 #include "showlist.h"
 #include "utils.h"
 #include "settings.h"
+#include "status.h"
 
 void start_tray(){
 	#ifdef GTK3
@@ -27,9 +28,9 @@ void start_tray(){
 #if GTK_MAJOR_VERSION >= 3 
 void activate (GtkApplication *app)
 {
-	#if VERBOSE >= 3
+	//#if VERBOSE >= 3
         printf("Application Activated\n");
-        #endif
+        //#endif
 	gtk_main();
 }
 #endif
@@ -38,6 +39,7 @@ void tray_click(GtkStatusIcon *status_icon,gpointer user_data)
 	#if VERBOSE >= 3
 	printf("clicked on Icon\n");
 	#endif
+	show_hide_window();
 }
 
 void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gpointer user_data)
@@ -194,24 +196,17 @@ void about_box(GtkWidget *widget, gpointer gdata){
 
 GtkStatusIcon* create_tray_icon() {
         GtkStatusIcon *tray_icon;
-        tray_icon = gtk_status_icon_new();
-        g_signal_connect(G_OBJECT(tray_icon), "activate",G_CALLBACK(tray_click), NULL);
-        g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
-	#ifdef PREFIX
-		#ifdef _WIN32
-			#if VERBOSE >= 5
-			printf ("Icon at: %s%s\n",PREFIX,"/share/rchip.png");
-        		#endif
-			gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");
-		#else
-			#if VERBOSE >= 5
-			printf ("Icon at: %s%s\n",PREFIX,"/madsci/rchip_client.png");
-			#endif
-			gtk_status_icon_set_from_file (tray_icon,PREFIX "/madsci/rchip_server.png");
-		#endif
+	#ifdef _WIN32
+		#if VERBOSE >= 5
+		printf ("Icon at: %s%s\n",PREFIX,"/share/rchip.png");
+        	#endif
+		tray_icon - gtk_status_icon_new();
+		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");
 	#else
-		gtk_status_icon_set_from_icon_name(tray_icon,GTK_STOCK_MEDIA_STOP);
+		tray_icon = gtk_status_icon_new_from_icon_name ("rchip_server");
 	#endif
+	g_signal_connect(G_OBJECT(tray_icon), "activate",G_CALLBACK(tray_click), NULL);
+        g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
 	gtk_status_icon_set_tooltip_text (tray_icon, "MS Daemon");
         gtk_status_icon_set_visible(tray_icon, TRUE);
         return tray_icon;

@@ -2,9 +2,9 @@
 #define UTILS_H
 
 struct playing_info_music{
-        const char *Artist;
-        const char *Album;
-        const char *Song;
+        char *Artist;
+        char *Album;
+        char *Song;
         int Elapised_time;
         int Duration;
         int isPlaying;

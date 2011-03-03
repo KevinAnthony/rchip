@@ -211,7 +211,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = . src data
+SUBDIRS = . data src
 CLEANFILES = Makefile config.log config.h config.h.in~ stamp-h1 autom4te.cache/* config-status
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

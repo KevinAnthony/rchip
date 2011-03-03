@@ -50,8 +50,9 @@ am__installdirs = "$(DESTDIR)$(bindir)" \
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 =
 am__objects_2 = $(am__objects_1) cmdhandler.$(OBJEXT) dbus.$(OBJEXT) \
-	tray.$(OBJEXT) notifications.$(OBJEXT) settings.$(OBJEXT) \
-	showlist.$(OBJEXT) sql.$(OBJEXT) utils.$(OBJEXT)
+	tray.$(OBJEXT) status.$(OBJEXT) notifications.$(OBJEXT) \
+	settings.$(OBJEXT) showlist.$(OBJEXT) sql.$(OBJEXT) \
+	utils.$(OBJEXT)
 am_rchip_OBJECTS = $(am__objects_2) main.$(OBJEXT)
 rchip_OBJECTS = $(am_rchip_OBJECTS)
 rchip_DEPENDENCIES =
@@ -203,12 +204,21 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-AM_CFLAGS = $(CFLAGS) @GTK2_CFLAGS@ @GTK3_CFLAGS@ @GLIB_CFLAGS@ @LIBXML2_CFLAGS@ @DBUS_CFLAGS@ @GCONF_CFLAGS@ @MYSQL_CFLAGS@
+AM_CFLAGS = $(CFLAGS) 		\
+		@GTK2_CFLAGS@ 		\
+		@GTK3_CFLAGS@		\
+		@GLIB_CFLAGS@		\
+		@LIBXML2_CFLAGS@	\
+		@DBUS_CFLAGS@		\
+		@GCONF_CFLAGS@		\
+		@MYSQL_CFLAGS@
+
 sourceincludedir = $(includedir)/rchip/source
 sourceinclude_HEADERS = \
 	cmdhandler.h			\
 	dbus.h  			\
-	tray.h			\
+	tray.h				\
+	status.h			\
 	notifications.h			\
 	settings.h  			\
 	showlist.h  			\
@@ -219,7 +229,8 @@ sourceinclude_SOURCE = \
 	$(sourceinclude_HEADERS) 	\
 	cmdhandler.c                    \
         dbus.c                          \
-        tray.c                        \
+        tray.c                       	\
+	status.c			\
         notifications.c                 \
         settings.c                      \
         showlist.c                      \
@@ -227,7 +238,14 @@ sourceinclude_SOURCE = \
         utils.c
 
 rchip_SOURCES = $(sourceinclude_SOURCE) main.c
-rchip_LDADD = @GTK2_LIBS@ @GTK3_LIBS@ @GLIB_LIBS@ @DBUS_LIBS@ @LIBXML2_LIBS@ @GCONF_LIBS@ @MYSQL_LIBS@
+rchip_LDADD = @GTK2_LIBS@		\
+		@GTK3_LIBS@		\
+		@GLIB_LIBS@		\
+		@DBUS_LIBS@		\
+		@LIBXML2_LIBS@		\
+		@GCONF_LIBS@		\
+		@MYSQL_LIBS@
+
 CLEANFILES = Makefile .deps/*
 all: all-am
 
@@ -317,6 +335,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/settings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/showlist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sql.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/status.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
 

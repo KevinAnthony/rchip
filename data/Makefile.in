@@ -72,8 +72,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(desktopdir)"
-DATA = $(desktop_DATA)
+am__installdirs = "$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(uidir)"
+DATA = $(desktop_DATA) $(ui_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -224,11 +224,8 @@ SUBDIRS = icons
 gsetings__SCHEMAS = apps.noside.rchip.gschema.xml
 desktopdir = $(datadir)/applications
 desktop_DATA = rchip.desktop
-
-#if GSETTING_SCHEMAS_INSTALL
-#install-data-local: $(schema_DATA)
-#        GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(srcdir)/$(schema_DATA);
-#endif
+uidir = $(datadir)/noside/ui
+ui_DATA = rchip_status_window.glade
 XTRA_DIST = $(desktop_DATA)
 CLEANFILES = Makefile 
 all: all-recursive
@@ -284,6 +281,26 @@ uninstall-desktopDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(desktopdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(desktopdir)" && rm -f $$files
+install-uiDATA: $(ui_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(uidir)" || $(MKDIR_P) "$(DESTDIR)$(uidir)"
+	@list='$(ui_DATA)'; test -n "$(uidir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(uidir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(uidir)" || exit $$?; \
+	done
+
+uninstall-uiDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(ui_DATA)'; test -n "$(uidir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(uidir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(uidir)" && rm -f $$files
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -483,7 +500,7 @@ check: check-recursive
 all-am: Makefile $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(desktopdir)"; do \
+	for dir in "$(DESTDIR)$(desktopdir)" "$(DESTDIR)$(uidir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -532,7 +549,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-desktopDATA
+install-data-am: install-desktopDATA install-uiDATA
 
 install-dvi: install-dvi-recursive
 
@@ -576,7 +593,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-desktopDATA
+uninstall-am: uninstall-desktopDATA uninstall-uiDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) ctags-recursive \
 	install-am install-strip tags-recursive
@@ -589,13 +606,14 @@ uninstall-am: uninstall-desktopDATA
 	install-dvi install-dvi-am install-exec install-exec-am \
 	install-html install-html-am install-info install-info-am \
 	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
+	install-ps-am install-strip install-uiDATA installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am \
-	uninstall-desktopDATA
+	uninstall-desktopDATA uninstall-uiDATA
 
 @GSETTINGS_RULES@
+		$(ui_DATA)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

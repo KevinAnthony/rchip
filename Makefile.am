@@ -1,4 +1,4 @@
-SUBDIRS = . src data
+SUBDIRS = . data src
 CLEANFILES = Makefile config.log config.h config.h.in~ stamp-h1 autom4te.cache/* config-status
 
 clean-local:

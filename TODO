@@ -1,11 +1,4 @@
-
 	* when library's don't exist, we need to bug out of the configure
-		Kevin
-	
-	* change all rb to music, make way for ablility to use banshee instead
-		Kevin
-	
-	* Surround all refernaces to Rhythmbox with #ifdef _RHYTHMBOX and write referances to Banshee surroned by #ifdef _BANSHEE
 		Kevin
 	
 	* in mysql_init() we need to check for the tables existatnce, and if it's doesn't exist, create it
@@ -18,6 +11,9 @@
 		Kevin
 	
 	* Make callback functions under settings.c
+		Kevin
+
+	* Status Window!
 		Kevin
 
 	* Comments!

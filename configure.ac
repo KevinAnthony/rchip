@@ -1,8 +1,8 @@
 AC_PREREQ([2.67])
-AC_INIT([rchip], [0.1.4.0], [kevin@nosideracing.com])
+AC_INIT([rchip], [0.1.5.0], [kevin@nosideracing.com])
 AC_CONFIG_SRCDIR([src/sql.h])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([rchip], [0.1.4.0])
+AM_INIT_AUTOMAKE([rchip], [0.1.5.0])
 
 # Checks for programs.
 AC_PROG_CC
@@ -101,6 +101,9 @@ case "x$enable_debug" in
 	*)	AC_MSG_ERROR([unexpected value $enable_debug for --enable-debug configure option]);;
 esac
 
+AC_DEFINE(COMPILE_YEAR,2011,"Year Compiled")
+AC_DEFINE(PROGRAMMERS_NAME,"Kevin Anthony","The Name of the Programmer")
+
 #Check for Music Programs
 AC_ARG_ENABLE(banshee,AS_HELP_STRING(--enable-banshee,Enables using Banshee Music Program over Rhythmbox),[BANSHEE="yes"],[BANSHEE="no"])
 AC_ARG_ENABLE(dbus,AS_HELP_STRING(--disable-dbus,disables dbus interface preventing music remote from working),[DBUS="no"],[DBUS="yes"])
@@ -148,5 +151,19 @@ src/Makefile
 data/Makefile
 data/icons/Makefile
 data/icons/hicolor/Makefile
-data/icons/svg/Makefile
+data/icons/hicolor/16x16/Makefile
+data/icons/hicolor/16x16/apps/Makefile
+data/icons/hicolor/22x22/Makefile
+data/icons/hicolor/22x22/apps/Makefile
+data/icons/hicolor/24x24/Makefile
+data/icons/hicolor/24x24/apps/Makefile
+data/icons/hicolor/32x32/Makefile
+data/icons/hicolor/32x32/apps/Makefile
+data/icons/hicolor/48x48/Makefile
+data/icons/hicolor/48x48/apps/Makefile
+data/icons/hicolor/256x256/Makefile
+data/icons/hicolor/256x256/apps/Makefile
+data/icons/hicolor/scalable/Makefile
+data/icons/hicolor/scalable/apps/Makefile
+data/icons/src/Makefile
 ])

@@ -8,7 +8,7 @@
 	#include	<stdlib.h>
 	#include	<gio/gio.h>	
 	#include	<glib.h>
-	
+	#include	<string.h>	
 	/*we set the dbus timeout to 3 seconds*/
 	#define		DBUS_TIMEOUT	3000
 	/* two proxies and the connection*/
@@ -106,12 +106,10 @@
 	}
 	gboolean send_command_to_music_player(char* command_name) {
 		GError *error = NULL;
-		printf("Got Here, no argument\n");
 		#ifdef RHYTHMBOX
 		g_dbus_proxy_call_sync(player,command_name,NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 		#endif
 		#ifdef BANSHEE
-		printf("Passing %s to banshee\n",command_name);
                 g_dbus_proxy_call_sync(playerEngine,command_name,NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
                 #endif
 
@@ -126,13 +124,11 @@
 	}
 	
 	gboolean send_command_to_music_player_with_argument(char* command_name,char* type, char* argument) {
-		printf("We did something: %s\n",command_name);
 	        GError *error = NULL;
 		#ifdef RHYTHMBOX
 		g_dbus_proxy_call_sync(player,command_name,g_variant_new (type,&argument),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 		#endif
                 #ifdef BANSHEE
-		printf("Passing %s to banshee\n",command_name);
 		g_dbus_proxy_call_sync(playbackController,command_name,g_variant_new (type,&argument),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 		#endif
 		if (error != NULL) {
@@ -149,70 +145,93 @@
 		struct playing_info_music pInfo;
 		GError *error = NULL;
 		if (dbus_is_connected(TRUE)) {
-			#ifdef RHYTHMBOX	
+			#ifdef RHYTHMBOX
 			gboolean playing;
 			GVariant* results =g_dbus_proxy_call_sync(player,"getPlaying",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 			if (error != NULL) {
 				#if VERBOSE >= 1
 				printf("Error with getPlaying: %s\n",error->message);
 				#endif
-			}	
+			}
 			playing = g_variant_get_boolean(g_variant_get_child_value(results,0));
-			results =g_dbus_proxy_call_sync(player,"getPlayingUri",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-			if (error == NULL) {
-				const char* uri = g_variant_get_string(g_variant_get_child_value(results,0),NULL);
-				results =g_dbus_proxy_call_sync(shell,"getSongProperties",g_variant_new ("(s)",uri),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-				pInfo.Artist = malloc(1024);
-                                pInfo.Album = malloc(1024);
-                                pInfo.Song = malloc(1024);
-                                double doubleValue;
-                                GVariant* dict = g_variant_get_child_value(results,0);
-                                g_variant_lookup(dict,"artist","s",&pInfo.Artist);
-                                g_variant_lookup(dict,"album","s",&pInfo.Album);
-                                g_variant_lookup(dict,"title","s",&pInfo.Song);
-                                g_variant_lookup(dict,"duration","d",&doubleValue);
-                                pInfo.Duration = doubleValue;
-				pInfo.isPlaying=playing;
-				results =g_dbus_proxy_call_sync(player,"getElapsed",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-				pInfo.Elapised_time = g_variant_get_uint32(g_variant_get_child_value(results,0));
+			if (playing){
+				results = NULL;
+				results =g_dbus_proxy_call_sync(player,"getPlayingUri",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+				if (error == NULL) {
+					const char* uri = g_variant_get_string(g_variant_get_child_value(results,0),NULL);
+					results = NULL;
+					results =g_dbus_proxy_call_sync(shell,"getSongProperties",g_variant_new ("(s)",uri),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+					char *tempval = malloc (8192);
+	                                double doubleValue;
+	                                GVariant* dict = g_variant_get_child_value(results,0);
+	                                g_variant_lookup(dict,"artist","s",&tempval);
+	                               	pInfo.Artist = malloc(strlen(tempval));
+					strcpy(pInfo.Artist,tempval); 
+					g_variant_lookup(dict,"album","s",&tempval);
+					pInfo.Album = malloc(strlen(tempval));
+	                                strcpy(pInfo.Album,tempval);
+	                                g_variant_lookup(dict,"title","s",&tempval);
+					pInfo.Song = malloc(strlen(tempval));
+	                                strcpy(pInfo.Song,tempval);
+	                                g_variant_lookup(dict,"duration","d",&doubleValue);
+					free(tempval);
+	                                pInfo.Duration = doubleValue;
+					pInfo.isPlaying=playing;
+					results =g_dbus_proxy_call_sync(player,"getElapsed",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+					pInfo.Elapised_time = g_variant_get_uint32(g_variant_get_child_value(results,0));
+				} else {
+	                        	#if VERBOSE >= 1
+	                                printf("ERROR:%s\n",error->message);
+	                                #endif
+	                        }
 			} else {
-                        	#if VERBOSE >= 1
-                                printf("ERROR:%s\n",error->message);
-                                #endif
-                        }
+				pInfo.Artist = "";
+				pInfo.Album = "";
+				pInfo.Song = "";
+				pInfo.Duration = 0;
+				pInfo.Elapised_time = 0;
+			}
 			#endif
 			
 			#ifdef BANSHEE
-                        GVariant* result =g_dbus_proxy_call_sync(playerEngine,"GetCurrentTrack",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-			if (error == NULL){
-				pInfo.Artist = malloc(1024);
-		                pInfo.Album = malloc(1024);
-        		        pInfo.Song = malloc(1024);
-				double doubleValue;
-				GVariant* dict = g_variant_get_child_value(result,0);
-				g_variant_lookup(dict,"artist","s",&pInfo.Artist);
-				g_variant_lookup(dict,"album","s",&pInfo.Album);
-				g_variant_lookup(dict,"name","s",&pInfo.Song);
-				g_variant_lookup(dict,"length","d",&doubleValue);
-				pInfo.Duration = doubleValue;
-				result = g_dbus_proxy_call_sync(playerEngine,"GetCurrentState",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-				if (strcmp(g_variant_get_string(g_variant_get_child_value(result,0),NULL),"playing") != 0){
-					pInfo.isPlaying=FALSE;
-				} else {
-					pInfo.isPlaying=TRUE;
-					result = g_dbus_proxy_call_sync(playerEngine,"GetPosition",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-	                                unsigned int c = g_variant_get_uint32(g_variant_get_child_value(result,0));
-	                                result = g_dbus_proxy_call_sync(playerEngine,"GetLength",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-	                                unsigned int t = g_variant_get_uint32(g_variant_get_child_value(result,0));
-	                                pInfo.Elapised_time = (c*pInfo.Duration)/t;
-				}
-
+                        GVariant* result = g_dbus_proxy_call_sync(playerEngine,"GetCurrentState",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+			if (strcmp(g_variant_get_string(g_variant_get_child_value(result,0),NULL),"playing") != 0){
+				pInfo.isPlaying=FALSE;
+				pInfo.Artist = "";
+                                pInfo.Album = "";
+                                pInfo.Song = "";
+                                pInfo.Duration = 0;
+                                pInfo.Elapised_time = 0;
 			} else {
-				#if VERBOSE >= 1
-				printf("ERROR:%s\n",error->message);
-				#endif
+				pInfo.isPlaying=TRUE;
+				result = g_dbus_proxy_call_sync(playerEngine,"GetPosition",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+                                unsigned int c = g_variant_get_uint32(g_variant_get_child_value(result,0));
+                                result = g_dbus_proxy_call_sync(playerEngine,"GetLength",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+                                unsigned int t = g_variant_get_uint32(g_variant_get_child_value(result,0));
+                                pInfo.Elapised_time = (c*pInfo.Duration)/t;
+				result =g_dbus_proxy_call_sync(playerEngine,"GetCurrentTrack",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+				char *tempval1 = malloc (8192);
+				double doubleValue;
+                                GVariant* dict = g_variant_get_child_value(result,0);
+                                g_variant_lookup(dict,"artist","s",&tempval1);
+                                pInfo.Artist = malloc(strlen(tempval1));
+                                strcpy(pInfo.Artist,tempval1);
+                                free(tempval1);
+				char *tempval2 = malloc (8192);
+				g_variant_lookup(dict,"album","s",&tempval2);
+                                pInfo.Album = malloc(strlen(tempval2));
+                                strcpy(pInfo.Album,tempval2);
+				free(tempval2);
+                                char *tempval3 = malloc (8192);
+				g_variant_lookup(dict,"name","s",&tempval3);
+                                pInfo.Song = malloc(strlen(tempval3));
+                                strcpy(pInfo.Song,tempval3);
+                                free(tempval3);
+                                g_variant_lookup(dict,"length","d",&doubleValue);
+                                pInfo.Duration = doubleValue;
+
 			}
-			#endif
+		#endif
 		}
 		return pInfo;	
 	}

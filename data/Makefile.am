@@ -6,13 +6,10 @@ gsetings__SCHEMAS = apps.noside.rchip.gschema.xml
 desktopdir = $(datadir)/applications
 desktop_DATA = rchip.desktop
 
-#if GSETTING_SCHEMAS_INSTALL
-#install-data-local: $(schema_DATA)
-#        GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(srcdir)/$(schema_DATA);
-#endif
-
+uidir = $(datadir)/noside/ui
+ui_DATA = rchip_status_window.glade
 
 XTRA_DIST = 	$(desktop_DATA)
-
+		$(ui_DATA)
 
 CLEANFILES = Makefile 

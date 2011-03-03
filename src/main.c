@@ -1,8 +1,10 @@
 #include <config.h>
-#include "config.h"
+
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "tray.h"
+#include "status.h"
 #include "settings.h"
 #ifndef _WIN32
 	#include "dbus.h"
@@ -12,6 +14,8 @@
 #include "cmdhandler.h"
 #endif
 
+void print_version();
+gboolean parse_command_line_options(int,char**);
 gboolean daemon_loop(gpointer);
 gboolean update_active_devices(gpointer);
 #ifndef _WIN32
@@ -20,13 +24,17 @@ gboolean update_active_devices(gpointer);
 size_t nelem;
 size_t size; 
 char* base;
+static gboolean version = FALSE;
+
+
 
 /*The Main Program*/
 int main(int argc, char** argv) {
 	/* defines the tray_icon, as well as init gtk*/
+	g_set_application_name(PACKAGE_NAME);
 	GtkStatusIcon *tray_icon;
+	parse_command_line_options(argc,argv);
 	gtk_init(&argc, &argv);
-	g_set_application_name("rchip");
 	#ifndef _NOSQL
 		sql_init();
 		update_daemon_sql();
@@ -56,6 +64,7 @@ int main(int argc, char** argv) {
 	g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
 	g_timeout_add (5000,(GSourceFunc) update_active_devices,NULL);
 	#endif
+	init_status_window(FALSE);
 	start_tray();
 	#ifndef _NOSQL
 		free(base);
@@ -80,7 +89,9 @@ int main(int argc, char** argv) {
 				sql_exec_quary(query);
 				free(query);
 			}
-				
+			free(pInfo.Artist);
+			free(pInfo.Album);
+			free(pInfo.Song);	
 			free(hostname);	
 		}
 		return TRUE;
@@ -91,6 +102,34 @@ int main(int argc, char** argv) {
 		return TRUE;
 	}
 #endif
+
+gboolean parse_command_line_options(int argc, char **argv) {
+	GError *error;
+	GOptionContext *context;
+        static const GOptionEntry options []  = {
+	{"version",'v',0, G_OPTION_ARG_NONE,&version,("Version Info"),NULL},
+	{NULL}
+	};
+	context = g_option_context_new (NULL);
+	g_option_context_add_main_entries (context, options, NULL);
+	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE) {
+                printf ("%s\nRun '%s --help' to see a full list of available command line options.\n",
+                         error->message, argv[0]);
+                g_error_free (error);
+                g_option_context_free (context);
+                return FALSE;
+        }
+        g_option_context_free (context);
+	if (version){
+		print_version();
+		exit(0);
+	}
+	return TRUE;
+}
+
+void print_version(){
+	printf("\n%s %s\n\nCopyright (C) %i Noside Racing, llc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten By %s\n",PACKAGE_NAME,PACKAGE_VERSION,COMPILE_YEAR,PROGRAMMERS_NAME);
+}
 
 gboolean update_active_devices(gpointer data){
 	size=get_size();

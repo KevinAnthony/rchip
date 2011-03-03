@@ -9,5 +9,5 @@ Comment=Control Aspects of your Computer from a Remote Device
 Exec=rchip
 Terminal=false
 Type=Application
-Icon=rchip_client
+Icon=rchip_server
 Categories=GTK;GNOME;Utility;

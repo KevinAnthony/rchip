@@ -1,1 +1,3 @@
-SUBDIRS = svg hicolor
+SUBDIRS = hicolor src
+
+CLEANFILES = Makefile
