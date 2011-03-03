@@ -1,4 +1,4 @@
-	* when library's don't exist, we need to bug out of the configure
+	* switch(again) form g_dbus to to gdbus
 		Kevin
 	
 	* in mysql_init() we need to check for the tables existatnce, and if it's doesn't exist, create it

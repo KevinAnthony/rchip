@@ -1,27 +1,29 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+*
+*    rchip, Remote Controlled Home Integration Program
+*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
 #include <config.h>
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
-
-
-void init_playing_info_music(struct playing_info_music *pInfo){
-	struct playing_info_music p = *pInfo;
-	p.Artist = malloc(1024);
-	p.Album = malloc(1024);
-	p.Song = malloc(1024);
-	*pInfo = p;
-}
-
-void free_playing_info_music(struct playing_info_music *pInfo){
-	struct playing_info_music p = *pInfo;	
-	//free(p.Artist);
-	//free(p.Album);
-	//free(p.Song);
-	*pInfo = p;
-}
-
 
 char* replace_str(char* str, char* orig, char* rep){
 	static char buffer[4096];

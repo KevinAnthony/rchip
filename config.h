@@ -66,7 +66,7 @@
 #define PACKAGE_NAME "rchip"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "rchip 0.1.5.0"
+#define PACKAGE_STRING "rchip 0.1.5.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "rchip"
@@ -75,7 +75,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.1.5.0"
+#define PACKAGE_VERSION "0.1.5.1"
 
 /* "The Name of the Programmer" */
 #define PROGRAMMERS_NAME "Kevin Anthony"
@@ -93,7 +93,7 @@
 #define VERBOSE 0
 
 /* Version number of package */
-#define VERSION "0.1.5.0"
+#define VERSION "0.1.5.1"
 
 /* "Turn OFF SQL Functionality" */
 /* #undef _NOSQL */

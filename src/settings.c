@@ -1,3 +1,23 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+*
+*    rchip, Remote Controlled Home Integration Program
+*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
 #include <config.h>
 
 #include "settings.h"
@@ -26,7 +46,7 @@ char* get_setting(char* settingname){
 
     	if (doc == NULL) {
 		#if VERBOSE >= 1
-        	printf("error: could not parse file %s\n", XMLFILE);
+		printf("error: could not parse file %s\n", XMLFILE);
 		#endif
     	}
 
@@ -59,8 +79,8 @@ int xml_file_exists()
 {
 	FILE * file = fopen(XMLFILE, "r");
 	if (file != NULL){
-        	fclose(file);
-        	return 1;
+		fclose(file);
+		return 1;
     	}
     	return 0;
 }
@@ -84,7 +104,7 @@ int new_xml_file() {
     	 */
     	dtd = xmlCreateIntSubset(doc, BAD_CAST "settings", NULL, BAD_CAST "msdeamon.dtdi");
     	xmlNewChild(root_node, NULL, BAD_CAST "pathToRoot",
-        	        BAD_CAST "/mnt/raid/");
+			BAD_CAST "/mnt/raid/");
 	
 	
 	 xmlSaveFormatFileEnc(XMLFILE, doc, "UTF-8", 1);
@@ -189,16 +209,16 @@ int callback_registered_functions(gchar* keyname){
 char* get_setting( gchar* keyname) {
 	/*
 	 * we search based on keyname, and return the value
-         */
+	 */
 	GConfClient* client = NULL;
 	client = gconf_client_get_default();
-        g_assert(GCONF_IS_CLIENT(client));
+	g_assert(GCONF_IS_CLIENT(client));
 	gchar* valueStr = NULL;
 	gchar* lookup = (gchar*) malloc(sizeof(keyname) + sizeof(SERVICE_GCONF_ROOT)+5);
 	sprintf(lookup,SERVICE_GCONF_ROOT "%s", keyname);
-        valueStr = gconf_client_get_string(client,lookup, NULL);
+	valueStr = gconf_client_get_string(client,lookup, NULL);
 	g_free(lookup);
-        if (valueStr == NULL) {
+	if (valueStr == NULL) {
        		#if VERBOSE >= 2 	
 		printf("Error: No Value for %s",keyname);
 		#endif

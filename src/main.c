@@ -1,3 +1,23 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+*
+*    rchip, Remote Controlled Home Integration Program
+*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
 #include <config.h>
 
 #include <stdlib.h>
@@ -106,20 +126,20 @@ int main(int argc, char** argv) {
 gboolean parse_command_line_options(int argc, char **argv) {
 	GError *error;
 	GOptionContext *context;
-        static const GOptionEntry options []  = {
+	static const GOptionEntry options []  = {
 	{"version",'v',0, G_OPTION_ARG_NONE,&version,("Version Info"),NULL},
 	{NULL}
 	};
 	context = g_option_context_new (NULL);
 	g_option_context_add_main_entries (context, options, NULL);
 	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE) {
-                printf ("%s\nRun '%s --help' to see a full list of available command line options.\n",
-                         error->message, argv[0]);
-                g_error_free (error);
-                g_option_context_free (context);
-                return FALSE;
-        }
-        g_option_context_free (context);
+		printf ("%s\nRun '%s --help' to see a full list of available command line options.\n",
+			 error->message, argv[0]);
+		g_error_free (error);
+		g_option_context_free (context);
+		return FALSE;
+	}
+	g_option_context_free (context);
 	if (version){
 		print_version();
 		exit(0);
@@ -133,7 +153,7 @@ void print_version(){
 
 gboolean update_active_devices(gpointer data){
 	size=get_size();
-        nelem=get_nelem();
+	nelem=get_nelem();
 	get_active_devices(base,size,nelem);
 	return TRUE;
 }

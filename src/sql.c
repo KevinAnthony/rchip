@@ -1,10 +1,30 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+*
+*    rchip, Remote Controlled Home Integration Program
+*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
 #include <config.h>
 
 #ifdef _SQL
 
 #ifdef _WIN32
 	#include 	<winsock.h>
-	#include        <mysql.h>
+	#include	<mysql.h>
 	#include 	<windows.h>
 #else
 	#include	<mysql/mysql.h>
@@ -90,33 +110,33 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 	query = (char*) malloc (sizeof("select * from cmdQueue where dest_hostname = '")+sizeof(hostname)+sizeof("';")+5);
 	sprintf(query,"select * from cmdQueue where dest_hostname = '%s';",hostname);
 	MYSQL_RES *res;
-        MYSQL_ROW row;
+	MYSQL_ROW row;
 	#if VERBOSE >= 4 
-        printf("Next Cmd Query:%s\n",query);
-        #endif	
-        if (!sql_init()){ return; }
+	printf("Next Cmd Query:%s\n",query);
+	#endif	
+	if (!sql_init()){ return; }
 	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
-                #if VERBOSE >= 1        
+		#if VERBOSE >= 1	
 		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
+		#endif
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
 		printf("Returning because real_connect failed in get_next_cmd_from_sql");
 		#endif
-                return;
-        } 
-        if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
-                #if VERBOSE >= 1
-                printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
+		return;
+	} 
+	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
+		#if VERBOSE >= 1
+		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
+		#endif
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
 		printf("Returning because real_query failed in get_next_cmd_from_sql");
 		#endif
-                return; 
-        }
+		return; 
+	}
 
 	res = mysql_use_result(mysql);
 	if (res == NULL) { 
@@ -132,7 +152,7 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 	
 		*cmd = (char*)malloc(1024);
 		*cmdTxt = (char*)malloc(1024);
-	        *source = (char*)malloc(1024);
+		*source = (char*)malloc(1024);
 		*cmdID = atoi(row[0] ? row[0] : NULL);
 		sprintf(*cmd,"%s",row[2] ? row[2] : NULL);
 		sprintf(*cmdTxt,"%s",row[3] ? row[3] : NULL);
@@ -152,31 +172,31 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 void delete_from_cmdQueue(int cmdID) {
 	char *delquery;
 	delquery = (char*) malloc (sizeof("delete from cmdQueue where id =;")+sizeof(cmdID));
-        sprintf(delquery,"delete from cmdQueue where id =%i;",cmdID);
+	sprintf(delquery,"delete from cmdQueue where id =%i;",cmdID);
 	#if VERBOSE >= 4
-        printf("Next Cmd Query:%s\n",delquery);
-        #endif
-        if (!sql_init()){ return; }
+	printf("Next Cmd Query:%s\n",delquery);
+	#endif
+	if (!sql_init()){ return; }
 	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
-                #if VERBOSE >= 1
-                printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
+		#if VERBOSE >= 1
+		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
+		#endif
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
 		printf("Returning because real_connect failed in delete_from_cmdQueue");
 		#endif
-                return;
-        }
-        if(mysql_real_query(mysql,delquery,(unsigned int)strlen(delquery))){
-                #if VERBOSE >= 1
-                printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
+		return;
+	}
+	if(mysql_real_query(mysql,delquery,(unsigned int)strlen(delquery))){
+		#if VERBOSE >= 1
+		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		printf("Returning because real_query failed in delete_from_cmdQueue");
 		#endif
 		mysql_close(mysql);
 		mysql=NULL;
-                return;
-        }
+		return;
+	}
 	mysql_close(mysql);
 	mysql=NULL;
 	free(delquery);
@@ -185,82 +205,82 @@ void delete_from_cmdQueue(int cmdID) {
 char* get_registered_devices_message(){
 	char* query = "select source_hostname from messageRegister where active = \"TRUE\"";
 	MYSQL_RES *res;
-        MYSQL_ROW row;
+	MYSQL_ROW row;
 	char* returnval = (char*) malloc(1024);
 	if (!sql_init()){ return NULL; }
 	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
-                #if VERBOSE >= 1
+		#if VERBOSE >= 1
 		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
+		#endif
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
 		printf("Returning because real_connect failed in get_registered_devices_message");
 		#endif
-                return NULL;
-        }
-        if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
-                #if VERBOSE >= 1        
+		return NULL;
+	}
+	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
+		#if VERBOSE >= 1	
 		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
+		#endif
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
 		printf("Returning because real_query failed in get_registered_devices_message");
 		#endif
-                return NULL;
-        }
+		return NULL;
+	}
 
-        res = mysql_use_result(mysql);
-        if (res == NULL) {
+	res = mysql_use_result(mysql);
+	if (res == NULL) {
 		//mysql_free_result(res);
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
 		printf("Returning because res == NULL in get_registered_devices_message");
 		#endif
-                return NULL;
-        }
+		return NULL;
+	}
 	row=mysql_fetch_row(res);
 	sprintf(returnval,"%s",row[0]);
 	while ((row = mysql_fetch_row(res))) {
 		returnval=strcat(returnval,row[0]);
 	}
 	//mysql_free_result(res);
-        mysql_close(mysql);
+	mysql_close(mysql);
 	mysql=NULL;
 	return returnval;
 }
 
 size_t get_nelem(){
 	char* query = "select hostname from remoteActiveDevices where active = \"TRUE\"";
-        MYSQL_RES *res;
+	MYSQL_RES *res;
 	if (!sql_init()){ return -1; }
 	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
-                #if VERBOSE >= 1  
+		#if VERBOSE >= 1  
 		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		printf("Returning because real_connect failed in get_nelem");
 		#endif
 		mysql_close(mysql);
 		mysql=NULL;
-                return -1;
-        }
+		return -1;
+	}
 
 	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
-                #if VERBOSE >= 1        
+		#if VERBOSE >= 1	
 		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
+		#endif
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
 		printf("Returning because real_query failed in get_nelem");
 		#endif
-                return -1;
-        }
-        res = mysql_store_result(mysql);
+		return -1;
+	}
+	res = mysql_store_result(mysql);
 	size_t retval = (int)mysql_num_rows(res);
 	//mysql_free_result(res);
-        mysql_close(mysql);
+	mysql_close(mysql);
 	mysql=NULL;
 	return retval;
 }
@@ -272,45 +292,45 @@ size_t get_size(){
 void get_active_devices(void* base, size_t size, size_t nelem)
 {	
 	char* query = "select hostname from remoteActiveDevices where active = \"TRUE\";";
-        MYSQL_RES *res;
-        MYSQL_ROW row;
-        char* hostname = (char*) malloc(HOSTNAME_MAX_SIZE);
+	MYSQL_RES *res;
+	MYSQL_ROW row;
+	char* hostname = (char*) malloc(HOSTNAME_MAX_SIZE);
 	if (!sql_init()){ return; }
-        if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
-                #if VERBOSE >= 1        
+	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+		#if VERBOSE >= 1	
 		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
-                mysql_close(mysql);
+		#endif
+		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
 		printf("Returning because real_connect failed in get_active_device");
 		#endif
 		return;
-        }
+	}
 	
 	
 	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
-                #if VERBOSE >= 1        
+		#if VERBOSE >= 1	
 		printf("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
-                #endif
+		#endif
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
-                printf("Returning because real_query failed in get_active_device");
+		printf("Returning because real_query failed in get_active_device");
 		#endif
 		return;
-        }
-        res = mysql_use_result(mysql);
+	}
+	res = mysql_use_result(mysql);
 
 	if (res == NULL) {
 		//mysql_free_result(res);
 		mysql_close(mysql);
 		mysql=NULL;
 		#if VERBOSE >= 1
-                printf("Returning because res == NULL in get_active_device");
+		printf("Returning because res == NULL in get_active_device");
 		#endif
 		return;
-        }
+	}
 	size_t len = 0;	
 	
 	while ((row = mysql_fetch_row(res)) != NULL){
@@ -329,37 +349,37 @@ void get_active_devices(void* base, size_t size, size_t nelem)
 	}
 	//mysql_free_result(res);
 	free(hostname);
-        mysql_close(mysql);
+	mysql_close(mysql);
 	mysql=NULL;
 }
 void update_daemon_sql(){
 	char *path = get_setting(VIDEO_ROOT);
-        char* name = NULL;
+	char* name = NULL;
 	if (path != NULL){
 	#ifndef _WIN32
-                struct utsname uts;
-                uname( &uts );
+		struct utsname uts;
+		uname( &uts );
 		name = malloc(strlen(uts.nodename)+2);
-               	int len = strlen(uts.nodename);
+	       	int len = strlen(uts.nodename);
 		char* p;
 		p=name;
-        	for (int i = 0; i<len; i++){*p++ = uts.nodename[i];}
+		for (int i = 0; i<len; i++){*p++ = uts.nodename[i];}
 	#else
-                char hn[500 + 1];
-                DWORD dwLen = 500;
-                GetComputerName(hn, &dwLen);
+		char hn[500 + 1];
+		DWORD dwLen = 500;
+		GetComputerName(hn, &dwLen);
 		name = malloc(strlen(hn)+2);
 		int len = strlen(hn);
-                char* p;
-                p=name;
-                for (int i = 0; i<len; i++){*p++=hn[i];}
+		char* p;
+		p=name;
+		for (int i = 0; i<len; i++){*p++=hn[i];}
 		*p='\0';
 
-        #endif
+	#endif
 		char* query =(char *)malloc(1024);
 		sprintf(query,"INSERT INTO daemonRegister (hostname,pathToRoot) VALUES (\"%s\",\"%s\") ON DUPLICATE KEY UPDATE hostname=\"%s\",pathToRoot=\"%s\";",name,path,name,path);
 		sql_exec_quary(query);
 		free(query);
-        }
+	}
 }
 #endif //#ifdef _SQL

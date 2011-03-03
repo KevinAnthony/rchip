@@ -1,8 +1,8 @@
 AC_PREREQ([2.67])
-AC_INIT([rchip], [0.1.5.0], [kevin@nosideracing.com])
+AC_INIT([rchip], [0.1.5.1], [kevin@nosideracing.com])
 AC_CONFIG_SRCDIR([src/sql.h])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([rchip], [0.1.5.0])
+AM_INIT_AUTOMAKE([rchip], [0.1.5.1])
 
 # Checks for programs.
 AC_PROG_CC

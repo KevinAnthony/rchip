@@ -1,3 +1,22 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+*
+*    rchip, Remote Controlled Home Integration Program
+*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
 #include <config.h>
 
 #include <glib.h>
@@ -84,8 +103,8 @@ void get_next_cmd() {
 			}
 			#else
 			#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
+			delete_from_cmdQueue(cmdID);
+			#endif
 			#endif
 		#else
 			#ifdef _SQL
@@ -94,7 +113,7 @@ void get_next_cmd() {
 		#endif
 	} else if (!(strcmp(cmd,"BACKRB"))) {
 		#ifndef _WIN32
-                	#ifndef DBUSOFF
+			#ifndef DBUSOFF
 			#ifdef RHYTHMBOX
 			if(send_command_to_music_player("previous"))  {
 			#endif
@@ -102,21 +121,21 @@ void get_next_cmd() {
 			if(send_command_to_music_player_with_argument("Previous","(b)","TRUE"))  {
 			#endif
 				#ifdef _SQL
-                	        delete_from_cmdQueue(cmdID);
+				delete_from_cmdQueue(cmdID);
 				#endif
-                	} else {
+			} else {
 				#if VERBOSE >= 2
-                	        printf("Could not BACK\n");
+				printf("Could not BACK\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
-                	}
+			}
 			#else
-                        #ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
-                        #endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+			#endif
 		#else
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
@@ -132,51 +151,51 @@ void get_next_cmd() {
 			if(send_command_to_music_player("Play")){
 			#endif
 				#ifdef _SQL
-	                        delete_from_cmdQueue(cmdID);
+				delete_from_cmdQueue(cmdID);
 				#endif
-	                } else {
+			} else {
 				#if VERBOSE >= 2
-       		                printf("Could not PLAY\n");
+				printf("Could not PLAY\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
-                	}
+		}
 			#else
-                        #ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
-                        #endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+			#endif
 		#else
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
 			#endif
 		#endif
 	} else if (!(strcmp(cmd,"STOPRB"))) {
-        	#ifndef _WIN32
+			#ifndef _WIN32
 			#ifndef DBUSOFF
 			#ifdef RHYTHMBOX
-                        if(send_command_to_music_player_with_argument("playPause","(b)","TRUE")) {
-                        #endif
-                        #ifdef BANSHEE
-                        if(send_command_to_music_player("Pause")){
-                        #endif
+			if(send_command_to_music_player_with_argument("playPause","(b)","TRUE")) {
+			#endif
+			#ifdef BANSHEE
+			if(send_command_to_music_player("Pause")){
+			#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
-        	        } else {
+			} else {
 				#if VERBOSE >= 2
-        	                printf("Could not STOP\n");
+				printf("Could not STOP\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
-        	        }
+			}
 			#else
-                        #ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
-                        #endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+			#endif
 
 		#else
 			#ifdef _SQL
@@ -189,93 +208,93 @@ void get_next_cmd() {
 			delete_from_cmdQueue(cmdID);
 			#endif
 		} else {
-                	#if VERBOSE >= 2
+			#if VERBOSE >= 2
 			printf("Could not Play SMplayer\n");
 			#endif
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
 			#endif
-                }
+		}
 
 	} else if (!(strcmp(cmd,"STOPSM"))) {
-               	if (system("smplayer -send-action stop")) {
+		if (system("smplayer -send-action stop")) {
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
 			#endif
-                } else {
-			#if VERBOSE >= 2
-                        printf("Could not Stop SMplayer\n");
-			#endif
-                        #ifdef _SQL
-			delete_from_cmdQueue(cmdID);
-			#endif
-                }
-	} else if (!(strcmp(cmd,"PAUSESM"))) {
-       	 	if (system("smplayer -send-action pause")) {
-                        #ifdef _SQL
-			delete_from_cmdQueue(cmdID);	
-			#endif
-                } else {
-			#if VERBOSE >= 2
-                        printf("Could not Pause SMplayer\n");
-			#endif
-			#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-			#endif
-                }
-
-       } else if (!(strcmp(cmd,"SKIPFSM"))) {
-               	if (system("smplayer -send-action forward1")) {
-			#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-			#endif
-                } else {
-			#if VERBOSE >= 2
-                        printf("Could not Skip Foward SMplayer\n");
-			#endif
-			#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-			#endif
-                }
-	} else if (!(strcmp(cmd,"SKIPBSM"))) {
-               	if (system("smplayer -send-action rewind1")) {
-                	#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
 		} else {
 			#if VERBOSE >= 2
-                        printf("Could not Skip Backwards SMplayer\n");
+			printf("Could not Stop SMplayer\n");
 			#endif
-                        #ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
-                }
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		}
+	} else if (!(strcmp(cmd,"PAUSESM"))) {
+		if (system("smplayer -send-action pause")) {
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);	
+			#endif
+		} else {
+			#if VERBOSE >= 2
+			printf("Could not Pause SMplayer\n");
+			#endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		}
+
+	} else if (!(strcmp(cmd,"SKIPFSM"))) {
+		if (system("smplayer -send-action forward1")) {
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		} else {
+			#if VERBOSE >= 2
+			printf("Could not Skip Foward SMplayer\n");
+			#endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		}
+	} else if (!(strcmp(cmd,"SKIPBSM"))) {
+		if (system("smplayer -send-action rewind1")) {
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		} else {
+			#if VERBOSE >= 2
+			printf("Could not Skip Backwards SMplayer\n");
+			#endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		}
 	} else if (!(strcmp(cmd,"FULLONSM"))) {
-               	if (system("smplayer -send-action fullscreen")) {
-                        #ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
-                } else {
-			#if VERBOSE >= 2
-                        printf("Could not Fullscreen SMplayer\n");
+		if (system("smplayer -send-action fullscreen")) {
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
 			#endif
-                        #ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
-                }
+		} else {
+			#if VERBOSE >= 2
+			printf("Could not Fullscreen SMplayer\n");
+			#endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		}
 	} else if (!(strcmp(cmd,"FULLOFFSM"))) {
-               	if (system("smplayer -send-action exit-fullscreen")) {
-                        #ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
-                } else {
-			#if VERBOSE >= 2
-                        printf("Could not Fullscreen off SMplayer\n");
+		if (system("smplayer -send-action exit-fullscreen")) {
+		#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
 			#endif
-                        #ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-                        #endif
-                }
+		} else {
+			#if VERBOSE >= 2
+			printf("Could not Fullscreen off SMplayer\n");
+			#endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		}
 	} else if (!(strcmp(cmd,"OPENSM"))) {
 		
 		char* command;
@@ -293,11 +312,11 @@ void get_next_cmd() {
 			if (system(command)) {
 		#endif
 			#ifdef _SQL
-		       	delete_from_cmdQueue(cmdID);
+			delete_from_cmdQueue(cmdID);
 			#endif
-                } else {
+		} else {
 			#if VERBOSE >= 2
-                       	printf("Could not open SMplayer\n");
+			printf("Could not open SMplayer\n");
 			#endif
 			#ifdef _WIN32
 				#if VERBOSE >= 2
@@ -305,36 +324,36 @@ void get_next_cmd() {
 				#endif
 			#endif
 			#ifdef _SQL
-                       	delete_from_cmdQueue(cmdID);
+			delete_from_cmdQueue(cmdID);
 			#endif
-                }
+		}
 		free(command);	
 	} else if (!(strcmp(cmd,"MUTESM"))) {
-               	if (system("smplayer -send-action mute")) {
+		if (system("smplayer -send-action mute")) {
 			#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
+			delete_from_cmdQueue(cmdID);
 			#endif
-                } else {
+		} else {
 			#if VERBOSE >= 2
-                        printf("Could not Play SMplayer\n");
-			#endif
-			#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-			#endif
-                }
-	} else if (!(strcmp(cmd,"QUITSM"))) {
-               	if (system("smplayer -send-action quit")) {
-			#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
-			#endif
-                } else {
-                        #if VERBOSE >= 2
 			printf("Could not Play SMplayer\n");
 			#endif
 			#ifdef _SQL
-                        delete_from_cmdQueue(cmdID);
+			delete_from_cmdQueue(cmdID);
 			#endif
-                }
+		}
+	} else if (!(strcmp(cmd,"QUITSM"))) {
+		if (system("smplayer -send-action quit")) {
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		} else {
+			#if VERBOSE >= 2
+			printf("Could not Play SMplayer\n");
+			#endif
+			#ifdef _SQL
+			delete_from_cmdQueue(cmdID);
+			#endif
+		}
  	} else {
 		#if VERBOSE >= 2
 		printf("Command Not Recognized: ::%s::\n",cmd);
@@ -353,18 +372,18 @@ void send_cmd(char* cmd, char* cmdTxt) {
 	size_t size;
 	char* base;
 	size=get_size();
-        nelem=get_nelem();
-        base = calloc(nelem,size);
-        get_active_devices(base,size,nelem);
+	nelem=get_nelem();
+	base = calloc(nelem,size);
+	get_active_devices(base,size,nelem);
 	char* hostname = malloc(size);
-                for (int i = 0; i < nelem; i++) {
-                        char* elem = base+(i*size);
-                        strcpy(hostname,elem);
-                        char* query = (char *)malloc(1024);
-                        sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",hostname);
+		for (int i = 0; i < nelem; i++) {
+			char* elem = base+(i*size);
+			strcpy(hostname,elem);
+			char* query = (char *)malloc(1024);
+			sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",hostname);
 			sql_exec_quary(query);
-                        free(query);
-                }
+			free(query);
+		}
 	free(hostname);
 	#endif
 }

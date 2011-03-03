@@ -1,3 +1,23 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+*
+*    rchip, Remote Controlled Home Integration Program
+*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
 #include <config.h>
 
 #include <gtk/gtk.h>
@@ -28,9 +48,9 @@ void start_tray(){
 #if GTK_MAJOR_VERSION >= 3 
 void activate (GtkApplication *app)
 {
-	//#if VERBOSE >= 3
-        printf("Application Activated\n");
-        //#endif
+	#if VERBOSE >= 3
+	printf("Application Activated\n");
+	#endif
 	gtk_main();
 }
 #endif
@@ -53,7 +73,7 @@ void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gp
 
 void add_files(GtkWidget *widget, gpointer gdata){
  	#if VERBOSE >= 3
-        printf("addShows Clicked\n");
+	printf("addShows Clicked\n");
 	#endif
 	GtkWidget *dialog;
 	dialog = gtk_file_chooser_dialog_new ("Open File",
@@ -87,39 +107,39 @@ void add_files(GtkWidget *widget, gpointer gdata){
 }
 
 void add_folders(GtkWidget *widget, gpointer gdata){
-        #if VERBOSE >= 3
-        printf("addFolders Clicked\n");
-        #endif
-        GtkWidget *dialog;
-        dialog = gtk_file_chooser_dialog_new ("Open File",
-                                      NULL,
-                                      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-                                      NULL);
-        gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog),TRUE);
-        if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){
-                char *filename;
-                GSList* filelist =  gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER (dialog));
-                GSList* node = filelist;
-                while (node != NULL){
-                        filename = (char*)node->data;
-                        #ifdef _WIN32
-                        char* p = filename;
-                        while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
-                        #endif
-			#if VERBOSE >= 3
-                        printf("Adding Filename%s\n",filename);
+	#if VERBOSE >= 3
+	printf("addFolders Clicked\n");
+	#endif
+	GtkWidget *dialog;
+	dialog = gtk_file_chooser_dialog_new ("Open File",
+				      NULL,
+				      GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				      NULL);
+	gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog),TRUE);
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){
+		char *filename;
+		GSList* filelist =  gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER (dialog));
+		GSList* node = filelist;
+		while (node != NULL){
+			filename = (char*)node->data;
+			#ifdef _WIN32
+			char* p = filename;
+			while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
 			#endif
-                        filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
-                        add_folder_to_playqueue(filename);
-                        node=node->next;
-                } 
-                g_slist_free(filelist);
-                //g_free (filename);  
-        }                             
-        gtk_widget_destroy (dialog);  
-                                      
+			#if VERBOSE >= 3
+			printf("Adding Filename%s\n",filename);
+			#endif
+			filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
+			add_folder_to_playqueue(filename);
+			node=node->next;
+		} 
+		g_slist_free(filelist);
+		//g_free (filename);  
+	}			     
+	gtk_widget_destroy (dialog);  
+				      
 }
 
 void add_folder_to_playqueue(char *dirFile){
@@ -140,15 +160,15 @@ void add_folder_to_playqueue(char *dirFile){
       				newDirFile = g_strdup_printf("%s/%s", dirFile, ep->d_name);  
 			#endif
       			switch(file_type(newDirFile)){
-        			case FTDIR:
-          				add_folder_to_playqueue(newDirFile);
-        				break;
-        			case FTFILE:
-					newDirFile = replace_str(newDirFile,get_setting(VIDEO_ROOT),"/mnt/raid/");
-        				add_file_to_playqueue(newDirFile);
+				case FTDIR:
+	  				add_folder_to_playqueue(newDirFile);
 					break;
-        			case FTDONOTPROC:
-        				break;
+				case FTFILE:
+					newDirFile = replace_str(newDirFile,get_setting(VIDEO_ROOT),"/mnt/raid/");
+					add_file_to_playqueue(newDirFile);
+					break;
+				case FTDONOTPROC:
+					break;
       			}
     		}
     		closedir(dp);
@@ -171,45 +191,45 @@ void about_box(GtkWidget *widget, gpointer gdata){
 	#endif
 	GtkWidget *dialog, *label;
      
-        /* Create the widgets */
+	/* Create the widgets */
      
-        dialog = gtk_dialog_new_with_buttons ("Message", NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_OK,  GTK_RESPONSE_NONE, NULL);
+	dialog = gtk_dialog_new_with_buttons ("Message", NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_OK,  GTK_RESPONSE_NONE, NULL);
        	label = gtk_label_new ("MSDaemon\nFancy Text here, maybe an icon...\nwho knows");
      
-        /* Ensure that the dialog box is destroyed when the user responds. */
+	/* Ensure that the dialog box is destroyed when the user responds. */
      
-        g_signal_connect_swapped (dialog,
-                                  "response",
-                                  G_CALLBACK (gtk_widget_destroy),
-                                  dialog);
+	g_signal_connect_swapped (dialog,
+				  "response",
+				  G_CALLBACK (gtk_widget_destroy),
+				  dialog);
      
-        /* Add the label, and show everything we've added to the dialog. */
+	/* Add the label, and show everything we've added to the dialog. */
     	#ifdef GTK3
 	gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)),
-                           label);
+			   label);
 	#else 
-        gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
-                           label);
+	gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
+			   label);
 	#endif
-        gtk_widget_show_all (dialog);
+	gtk_widget_show_all (dialog);
 }
 
 GtkStatusIcon* create_tray_icon() {
-        GtkStatusIcon *tray_icon;
+	GtkStatusIcon *tray_icon;
 	#ifdef _WIN32
 		#if VERBOSE >= 5
 		printf ("Icon at: %s%s\n",PREFIX,"/share/rchip.png");
-        	#endif
-		tray_icon - gtk_status_icon_new();
+		#endif
+		tray_icon = gtk_status_icon_new();
 		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");
 	#else
 		tray_icon = gtk_status_icon_new_from_icon_name ("rchip_server");
 	#endif
 	g_signal_connect(G_OBJECT(tray_icon), "activate",G_CALLBACK(tray_click), NULL);
-        g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
+	g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
 	gtk_status_icon_set_tooltip_text (tray_icon, "MS Daemon");
-        gtk_status_icon_set_visible(tray_icon, TRUE);
-        return tray_icon;
+	gtk_status_icon_set_visible(tray_icon, TRUE);
+	return tray_icon;
 }
 
 GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {

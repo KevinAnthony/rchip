@@ -1,3 +1,23 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+*
+*    rchip, Remote Controlled Home Integration Program
+*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
+
 #include <config.h>
 
 #include <gtk/gtk.h>
@@ -25,9 +45,9 @@ void add_file_to_playqueue(char* filepath){
 char* live_action(char* filepath){
 	char* posOfLastSlash=filepath;
 	int fnamelen=0;
-        int lenOfName=0;
-        int lenOfEpsNumber=0;
-        int lenOfEpsName=0;
+	int lenOfName=0;
+	int lenOfEpsNumber=0;
+	int lenOfEpsName=0;
 	int totallen=0;
 	char* ptr = filepath;
 	char* sptr = filepath;
@@ -66,15 +86,15 @@ char* live_action(char* filepath){
 	*ptr++='|';
 	sptr++;
 	for (int i = 0; i < lenOfEpsNumber; i++){
-                *ptr++=*sptr++;
-        }
-        *ptr++='|';
-        sptr++;
+		*ptr++=*sptr++;
+	}
+	*ptr++='|';
+	sptr++;
 	for (int i = 0; i < lenOfEpsName; i++){
-                *ptr++=*sptr++;
-        }
-        *ptr++='|';
-        sptr=filepath;
+		*ptr++=*sptr++;
+	}
+	*ptr++='|';
+	sptr=filepath;
 	for (int i = 0; i < fnamelen; i++){
 		*ptr++=*sptr++;
 	}
@@ -88,120 +108,120 @@ char* live_action(char* filepath){
 char* anime(char* filepath){
 	if (strstr(filepath,"One_Piece") != NULL) {
 		return std_anime(filepath,"One_Piece");
-        } else if (strstr(filepath,"Fairy_Tail") != NULL) {
-                return std_anime(filepath,"Fairy_Tail");
-        } else {
-                return other(filepath);
-        }
+	} else if (strstr(filepath,"Fairy_Tail") != NULL) {
+		return std_anime(filepath,"Fairy_Tail");
+	} else {
+		return other(filepath);
+	}
 
 
 }
 
 char* other(char* filepath){
 	char* posOfLastSlash=filepath;
-        int fnamelen=0;
-        int lenOfName=0;
-        int totallen=0;
+	int fnamelen=0;
+	int lenOfName=0;
+	int totallen=0;
 	char* ptr = filepath;
-        char* sptr = filepath;
+	char* sptr = filepath;
 	for (; *ptr != '\0';ptr++) {
 		if (*ptr == '/') {
-                        posOfLastSlash = ptr;
-                }
-                fnamelen++;
-        }
-	ptr = posOfLastSlash +1;
-        for (; *ptr != '\0'; ptr++){
-        	lenOfName++;
+			posOfLastSlash = ptr;
+		}
+		fnamelen++;
 	}
-        totallen=fnamelen+lenOfName+5;
-        char* retval = malloc(totallen+5);
-        ptr=retval;
+	ptr = posOfLastSlash +1;
+	for (; *ptr != '\0'; ptr++){
+		lenOfName++;
+	}
+	totallen=fnamelen+lenOfName+5;
+	char* retval = malloc(totallen+5);
+	ptr=retval;
 	sptr = posOfLastSlash+1;
 	char* other = "Other";
 	for (int i = 0; i < 5; i++) {
 		*ptr++=*other++;
 	}
 	*ptr++='|';
-        for (int i = 0; i < lenOfName; i++){
-                *ptr++=*sptr++;
-        }
-        *ptr++='|';
-        *ptr++='|';
-        sptr=filepath;
+	for (int i = 0; i < lenOfName; i++){
+		*ptr++=*sptr++;
+	}
+	*ptr++='|';
+	*ptr++='|';
+	sptr=filepath;
 	for (int i = 0; i < fnamelen; i++){
 		*ptr++=*sptr++;
-        }
-        *ptr='\0';
-        return retval;
+	}
+	*ptr='\0';
+	return retval;
 
 }
 
 char* std_anime(char* filepath,char* name){
 	char* posOfLastSlash=filepath;
-        int fnamelen=0;
-        int lenOfName=strlen(name);
-        int lenOfEpsNumber=0;
-        int lenOfSubgroup=0;
-        int totallen=0;
-        char* ptr = filepath;
-        char* sptr = filepath;
-        for (; *ptr != '\0';ptr++) {
+	int fnamelen=0;
+	int lenOfName=strlen(name);
+	int lenOfEpsNumber=0;
+	int lenOfSubgroup=0;
+	int totallen=0;
+	char* ptr = filepath;
+	char* sptr = filepath;
+	for (; *ptr != '\0';ptr++) {
 		if (*ptr == '/') {
 			posOfLastSlash = ptr;
-                }
-                fnamelen++;
-        }
-        ptr = posOfLastSlash+1;
-        ptr = ptr+lenOfName+1;
-        sptr=ptr;
-        for (; *ptr!='_' ; ptr++){
-        	if (*ptr == '\0'){
-                        #if VERBOSE >= 2
-                        printf("Error: badly formed file name\n");
-                        printf("File Name: %s\n",filepath);
-                        #endif
-                        return NULL;
-             	}
+		}
+		fnamelen++;
+	}
+	ptr = posOfLastSlash+1;
+	ptr = ptr+lenOfName+1;
+	sptr=ptr;
+	for (; *ptr!='_' ; ptr++){
+		if (*ptr == '\0'){
+			#if VERBOSE >= 2
+			printf("Error: badly formed file name\n");
+			printf("File Name: %s\n",filepath);
+			#endif
+			return NULL;
+	     	}
 		lenOfEpsNumber++;
-        }
-        ptr++;
+	}
 	ptr++;
-        for (; *ptr!=']' ; ptr++){
-               if (*ptr == '\0'){
-                       #if VERBOSE >= 2
-                       printf("Error: badly formed file name\n");
-                       printf("File Name: %s\n",filepath);
-                       #endif
-                       return NULL;
-               }
-               lenOfSubgroup++;
+	ptr++;
+	for (; *ptr!=']' ; ptr++){
+	       if (*ptr == '\0'){
+		       #if VERBOSE >= 2
+		       printf("Error: badly formed file name\n");
+		       printf("File Name: %s\n",filepath);
+		       #endif
+		       return NULL;
+	       }
+	       lenOfSubgroup++;
        }
 
 	if (*ptr == '\0'){ lenOfSubgroup = 0;}
-        totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfSubgroup;
-        char* retval = malloc(totallen+5);
-        ptr = retval;
+	totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfSubgroup;
+	char* retval = malloc(totallen+5);
+	ptr = retval;
 	sptr=name;
-        for (int i = 0; i < lenOfName; i++){
-                *ptr++=*sptr++;
-        }
-        *ptr++='|';
-        sptr=posOfLastSlash+lenOfName+2;
-        for (int i = 0; i < lenOfEpsNumber; i++){
-                *ptr++=*sptr++;
-        }
-        *ptr++='|';
-        while (*sptr++ != '['){ lenOfSubgroup--; }
+	for (int i = 0; i < lenOfName; i++){
+		*ptr++=*sptr++;
+	}
+	*ptr++='|';
+	sptr=posOfLastSlash+lenOfName+2;
+	for (int i = 0; i < lenOfEpsNumber; i++){
+		*ptr++=*sptr++;
+	}
+	*ptr++='|';
+	while (*sptr++ != '['){ lenOfSubgroup--; }
 	lenOfSubgroup++;	
-        for (int i = 0; i < lenOfSubgroup; i++){
-                *ptr++=*sptr++;
-        }
-        *ptr++='|';
-        sptr=filepath;
+	for (int i = 0; i < lenOfSubgroup; i++){
+		*ptr++=*sptr++;
+	}
+	*ptr++='|';
+	sptr=filepath;
 	for (int i = 0; i < fnamelen; i++){
 	      	*ptr++=*sptr++;
-        }
-        *ptr='\0';
+	}
+	*ptr='\0';
 	return retval;
 }
