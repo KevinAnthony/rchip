@@ -1,6 +1,30 @@
 SUBDIRS = . data src
-CLEANFILES = Makefile config.log config.h config.h.in~ stamp-h1 autom4te.cache/* config-status
+
+CLEANFILES = \
+	*.tar.gz
+
+DISTCLEANFILES = \
+        *.bak \
+        *~ \
+        *.pidb
+
+MAINTAINERCLEANFILES = \
+        compile \
+        INSTALL \
+        config.h.in \
+        aclocal.m4 \
+        ltmain.sh \
+        Makefile.in \
+        depcomp \
+        missing \
+        install-sh \
+        configure \
+        config.sub \
+        config.guess \
+        mkinstalldirs
 
 clean-local:
-	-rmdir autom4te.cache
+	rm -rf bin
 
+deb:
+	checkinstall

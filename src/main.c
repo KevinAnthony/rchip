@@ -17,12 +17,10 @@
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-
 #include <config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "tray.h"
 #include "status.h"
 #include "settings.h"
@@ -91,6 +89,36 @@ int main(int argc, char** argv) {
 	#endif
 	return 0;
 }
+
+gboolean parse_command_line_options(int argc, char **argv) {
+        GError *error;
+        GOptionContext *context;
+        static const GOptionEntry options []  = {
+        {"version",'v',0, G_OPTION_ARG_NONE,&version,("Version Info"),NULL},
+        {NULL}
+        };
+        context = g_option_context_new (NULL);
+        g_option_context_add_main_entries (context, options, NULL);
+        if (g_option_context_parse (context, &argc, &argv, &error) == FALSE) {
+                printf ("%s\nRun '%s --help' to see a full list of available command line options.\n",
+                         error->message, argv[0]);
+                g_error_free (error);
+                g_option_context_free (context);
+                return FALSE;
+        }
+        g_option_context_free (context);
+        if (version){
+                print_version();
+                exit(0);
+        }
+        return TRUE;
+}
+void print_version(){
+        printf("\n%s %s\n\nCopyright (C) %i Noside Racing, llc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten By %s\n",PACKAGE_NAME,PACKAGE_VERSION,COMPILE_YEAR,PROGRAMMERS_NAME);
+}
+
+
+
 #ifndef _NOSQL
 #ifndef _WIN32
 	gboolean daemon_loop(gpointer data) {
@@ -122,34 +150,6 @@ int main(int argc, char** argv) {
 		return TRUE;
 	}
 #endif
-
-gboolean parse_command_line_options(int argc, char **argv) {
-	GError *error;
-	GOptionContext *context;
-	static const GOptionEntry options []  = {
-	{"version",'v',0, G_OPTION_ARG_NONE,&version,("Version Info"),NULL},
-	{NULL}
-	};
-	context = g_option_context_new (NULL);
-	g_option_context_add_main_entries (context, options, NULL);
-	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE) {
-		printf ("%s\nRun '%s --help' to see a full list of available command line options.\n",
-			 error->message, argv[0]);
-		g_error_free (error);
-		g_option_context_free (context);
-		return FALSE;
-	}
-	g_option_context_free (context);
-	if (version){
-		print_version();
-		exit(0);
-	}
-	return TRUE;
-}
-
-void print_version(){
-	printf("\n%s %s\n\nCopyright (C) %i Noside Racing, llc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten By %s\n",PACKAGE_NAME,PACKAGE_VERSION,COMPILE_YEAR,PROGRAMMERS_NAME);
-}
 
 gboolean update_active_devices(gpointer data){
 	size=get_size();

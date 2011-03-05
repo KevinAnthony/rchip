@@ -215,8 +215,8 @@
 				pInfo.Album = "";
 				pInfo.Song = "";
 				pInfo.isPlaying=playing;
-				pInfo.Elapised_time = 0
-				pInfo.Duration = 0
+				pInfo.Elapised_time = 0;
+				pInfo.Duration = 0;
 			}
 			#endif
 			

@@ -1,8 +1,41 @@
+m4_define([rchip_version_major], [1])
+m4_define([rchip_version_minor], [5])
+m4_define([rchip_version_micro], [2])
+
+dnl set to 0 when doing an official release
+m4_define([rchip_version_pre_release], [2])
+
+m4_define([concat], $1$2$3$4)
+
+dnl create base version string
+m4_define([rchip_version], concat(
+        rchip_version_major.,
+        rchip_version_minor.,
+        rchip_version_micro))
+
+dnl create the release version
+m4_define([rchip_version],
+        m4_if(rchip_version_pre_release, [0],
+                rchip_version,
+                concat(rchip_version., rchip_version_pre_release)))
+
+m4_define([rchip_api_version],
+        [rchip_version_major.rchip_version_minor])
+
+m4_define([rchip_asm_version],
+        [rchip_api_version.0.0])
+
+
+
 AC_PREREQ([2.67])
-AC_INIT([rchip], [1.5.2], [kevin@nosideracing.com])
+AC_INIT([rchip], rchip_version, [kevin@nosideracing.com])
 AC_CONFIG_SRCDIR([src/sql.h])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE([rchip], [1.5.2])
+AM_INIT_AUTOMAKE([rchip], rchip_version)
+#for internatioanl suppoert
+#IT_PROG_INTLTOOL([0.35.0])
+AC_PROG_LIBTOOL
+AC_PROG_INSTALL
 
 # Checks for programs.
 AC_PROG_CC
@@ -28,9 +61,11 @@ if test "x$HAVE_GTK3" = "xyes" ; then
 	AC_SUBST(GTK3_CFLAGS)
     	AC_SUBST(GTK3_LIBS)
     	AC_CHECK_LIB(gtk-x11-3.0, gtk_init, HAVE_GTK="maybe", sweep_config_ok="no")
+	AC_DEFINE(GTK3,,"We are using GTK 3")
 else
 	PKG_CHECK_MODULES(GTK2, gtk+-2.0 >=  2.10.0, HAVE_GTK="yes", sweep_config_ok="no")
 	if test "x$HAVE_GTK" = "xyes" ; then
+		AC_DEFINE(GTK2,,"We are using GTK 2")
 		AC_MSG_NOTICE([USING GTK2])
 		AC_SUBST(GTK2_CFLAGS)
 		AC_SUBST(GTK2_LIBS)
@@ -149,22 +184,6 @@ AC_OUTPUT([
 Makefile
 src/Makefile
 data/Makefile
-data/icons/Makefile
-data/icons/hicolor/Makefile
-data/icons/hicolor/16x16/Makefile
-data/icons/hicolor/16x16/apps/Makefile
-data/icons/hicolor/22x22/Makefile
-data/icons/hicolor/22x22/apps/Makefile
-data/icons/hicolor/24x24/Makefile
-data/icons/hicolor/24x24/apps/Makefile
-data/icons/hicolor/32x32/Makefile
-data/icons/hicolor/32x32/apps/Makefile
-data/icons/hicolor/48x48/Makefile
-data/icons/hicolor/48x48/apps/Makefile
-data/icons/hicolor/256x256/Makefile
-data/icons/hicolor/256x256/apps/Makefile
-data/icons/hicolor/scalable/Makefile
-data/icons/hicolor/scalable/apps/Makefile
-data/icons/src/Makefile
+data/icons-hicolor/Makefile
 data/ui/Makefile
 ])

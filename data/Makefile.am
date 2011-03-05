@@ -1,4 +1,4 @@
-SUBDIRS = icons ui
+SUBDIRS = icons-hicolor ui
 
 gsetings__SCHEMAS = apps.noside.rchip.gschema.xml
 @GSETTINGS_RULES@
@@ -8,4 +8,8 @@ desktop_DATA = rchip.desktop
 
 XTRA_DIST = 	$(desktop_DATA)
 
-CLEANFILES = Makefile 
+CLEANFILES = Makefile
+
+MAINTAINERCLEANFILES = \
+        Makefile.in
+ 

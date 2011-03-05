@@ -45,7 +45,8 @@ rchip_LDADD = 	@GTK2_LIBS@		\
 		@GCONF_LIBS@		\
 		@MYSQL_LIBS@
 
-CLEANFILES = Makefile .deps/*
+MAINTAINERCLEANFILES = \
+        Makefile.in
 
-clean-local:
-	-rmdir .deps
+flean-local:
+	rm -rf .deps

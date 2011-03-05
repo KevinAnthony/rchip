@@ -20,11 +20,6 @@
 
 #ifndef TRAY_H
 #define TRAY_H
-#if GTK_MAJOR_VERSION >= 3
-#define GTK3
-#else
-#define GTK2
-#endif
 #include <gtk/gtk.h>
 #include <dirent.h>
 	enum {
