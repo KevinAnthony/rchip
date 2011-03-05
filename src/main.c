@@ -137,9 +137,11 @@ void print_version(){
 				sql_exec_quary(query);
 				free(query);
 			}
+			#ifdef BANSHEE
 			free(pInfo.Artist);
 			free(pInfo.Album);
-			free(pInfo.Song);	
+			free(pInfo.Song);
+			#endif
 			free(hostname);	
 		}
 		return TRUE;

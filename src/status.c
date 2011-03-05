@@ -30,7 +30,6 @@ void init_status_window (gboolean showWindow){
 	builder = gtk_builder_new ();
 	gtk_builder_add_from_file (builder, PREFIX "/noside/ui/rchip_status_window.glade", NULL);
 	window = GTK_WIDGET (gtk_builder_get_object (builder, "statusWindow"));
-	//g_object_unref (G_OBJECT (builder));
 	init_info_labels();
 	init_status_labels();
 	init_buttons();
@@ -77,6 +76,7 @@ void init_buttons(){
 }
 
 void window_destroyed(GtkWidget *widget, gpointer gdata){
+	g_object_unref (G_OBJECT (builder));
 	window=NULL;
 }
 void close_window(GtkWidget *widget, gpointer gdata){

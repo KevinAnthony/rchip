@@ -25,6 +25,3 @@ MAINTAINERCLEANFILES = \
 
 clean-local:
 	rm -rf bin
-
-deb:
-	checkinstall
