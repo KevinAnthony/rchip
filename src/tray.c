@@ -248,7 +248,7 @@ GtkStatusIcon* create_tray_icon() {
 		tray_icon = gtk_status_icon_new();
 		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");
 	#else
-		tray_icon = gtk_status_icon_new_from_icon_name ("rchip_server");
+		tray_icon = gtk_status_icon_new_from_icon_name ("rchip-server");
 	#endif
 	g_signal_connect(G_OBJECT(tray_icon), "activate",G_CALLBACK(tray_click), NULL);
 	g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
