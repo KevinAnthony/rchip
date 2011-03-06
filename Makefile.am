@@ -18,7 +18,6 @@ MAINTAINERCLEANFILES = \
         depcomp \
         missing \
         install-sh \
-        configure \
         config.sub \
         config.guess \
         mkinstalldirs

@@ -45,14 +45,12 @@ AC_CHECK_SIZEOF(long)
 
 AC_PATH_PROG(GDK_PIXBUF_CSOURCE, gdk-pixbuf-csource)
 
-GLIB_GSETTINGS
-
 # Checks for libraries.
 
 PKG_CHECK_MODULES([GSETTINGS],[gio-2.0 >= 2.25.0],[HAVE_GSETTINGS=yes],[HAVE_GSETTINGS=no])
-if test "x$have_gsettings" = "xyes"; then
-   AC_DEFINE([HAVE_GSETTINGS], 1, [Whether we can use GSettings])
-   GLIB_GSETTINGS
+if test "x$HAVE_GSETTINGS" = "xyes"; then
+	AC_DEFINE([HAVE_GSETTINGS], 1, [Whether we can use GSettings])
+	GLIB_GSETTINGS
 fi
 
 PKG_CHECK_MODULES(GTK3, gtk+-3.0 >=  3.00.0, HAVE_GTK3="yes", HAVE_GTK3="no")
