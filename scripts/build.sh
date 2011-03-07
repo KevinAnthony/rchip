@@ -4,7 +4,7 @@ if [ ! -f "configure.ac" ]; then
 	echo "Script must be run from project root"
 	exit 1
 fi
-sudo echo
+sudo echo -ne
 if [ -f "Makefile" ] ; then
 	make maintainer-clean
 	if [ "$?" -ne "0" ]; then
