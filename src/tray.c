@@ -20,6 +20,8 @@
 #include <config.h>
 
 #include <gtk/gtk.h>
+#include <glib.h>
+#include <glib/gprintf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,7 +60,7 @@ void start_tray(){
 void activate (GtkApplication *app)
 {
 	#if VERBOSE >= 3
-	printf("Application Activated\n");
+	g_printf("Application Activated\n");
 	#endif
 	gtk_main();
 }
@@ -67,7 +69,7 @@ void tray_click(GtkStatusIcon *status_icon,gpointer user_data)
 {
 	/* on primary click(default:left) we either show or hide the status window */
 	#if VERBOSE >= 3
-	printf("clicked on Icon\n");
+	g_printf("clicked on Icon\n");
 	#endif
 	show_hide_window();
 }
@@ -76,7 +78,7 @@ void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gp
 {
 	/* on secondary clicks(default:right) we show the menu */
 	#if VERBOSE >= 3
-	printf("clicked on menu\n");
+	g_printf("clicked on menu\n");
 	#endif
 	GtkWidget *tray_menu = create_tray_menu(status_icon);
 	gtk_menu_popup (GTK_MENU (tray_menu), NULL, NULL,gtk_status_icon_position_menu,status_icon,button,activate_time);
@@ -85,7 +87,7 @@ void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gp
 void add_files(GtkWidget *widget, gpointer gdata){
 	/*Add Show files to remote watch list*/
  	#if VERBOSE >= 3
-	printf("addShows Clicked\n");
+	g_printf("addShows Clicked\n");
 	#endif
 	GtkWidget *dialog;
 	dialog = gtk_file_chooser_dialog_new ("Open File",
@@ -113,7 +115,7 @@ void add_files(GtkWidget *widget, gpointer gdata){
 			while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
 			#endif
 			#if VERBOSE >= 3
-			printf("Adding Filename:%s\n",filename);
+			g_printf("Adding Filename:%s\n",filename);
 			#endif
 			/* because the user may not use the same machine to watch as they did to add, we replace the local path with a server absoulte path*/
 			filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
@@ -129,7 +131,7 @@ void add_files(GtkWidget *widget, gpointer gdata){
 void add_folders(GtkWidget *widget, gpointer gdata){
 	/* this works the same as the add_files above, but recursivly adds folders instead of single or multiple files in 1 folder */
 	#if VERBOSE >= 3
-	printf("addFolders Clicked\n");
+	g_printf("addFolders Clicked\n");
 	#endif
 	GtkWidget *dialog;
 	dialog = gtk_file_chooser_dialog_new ("Open File",
@@ -151,7 +153,7 @@ void add_folders(GtkWidget *widget, gpointer gdata){
 			while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
 			#endif
 			#if VERBOSE >= 3
-			printf("Adding Filename%s\n",filename);
+			g_printf("Adding Filename%s\n",filename);
 			#endif
 			filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
 			add_folder_to_playqueue(filename);
@@ -211,7 +213,7 @@ int file_type(char *name){
  
 void about_box(GtkWidget *widget, gpointer gdata){
 	#if VERBOSE >= 3
-	printf("about Clicked\n");
+	g_printf("about Clicked\n");
 	#endif
 	GtkWidget *dialog, *label;
 
@@ -243,7 +245,7 @@ GtkStatusIcon* create_tray_icon() {
 	GtkStatusIcon *tray_icon;
 	#ifdef _WIN32
 		#if VERBOSE >= 5
-		printf ("Icon at: %s%s\n",PREFIX,"/share/rchip.png");
+		g_printf ("Icon at: %s%s\n",PREFIX,"/share/rchip.png");
 		#endif
 		tray_icon = gtk_status_icon_new();
 		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");

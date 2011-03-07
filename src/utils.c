@@ -23,6 +23,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <glib.h>
+#include <glib/gprintf.h>
 #include "utils.h"
 
 char* replace_str(char* str, char* orig, char* rep){
@@ -32,6 +34,6 @@ char* replace_str(char* str, char* orig, char* rep){
     		return str;
   	strncpy(buffer, str, p-str); // Copy characters from 'str' start to 'orig' st$
   	buffer[p-str] = '\0';
-  	sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
+  	g_sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
   	return buffer;
 }

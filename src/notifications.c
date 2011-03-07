@@ -27,6 +27,7 @@
 	#include	<dbus/dbus-glib.h>
 #endif
 #include	<glib.h>
+#include	<glib/gprintf.h>
 #include	<stdlib.h>
 #include	<stdio.h>
 #include	<string.h>
@@ -51,15 +52,15 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	nelem=get_nelem();
 	base = calloc(nelem,size);
 	get_active_devices(base,size,nelem);
-	char* msg = (char *)malloc(sizeof(tickerString)+sizeof(notificationTitle)+sizeof(notificationText)+5);
-	sprintf(msg,"%s|%s|%s",tickerString,notificationTitle,notificationText);
+	char* msg = (char *)g_malloc(sizeof(tickerString)+sizeof(notificationTitle)+sizeof(notificationText)+5);
+	g_sprintf(msg,"%s|%s|%s",tickerString,notificationTitle,notificationText);
 	char* cmd = "TMSG";
-	char* recipt = malloc(size);
+	char* recipt = g_malloc(size);
 	char* name = NULL;
 	#ifndef _WIN32
 		struct utsname uts;
 		uname( &uts );
-		name = malloc(strlen(uts.nodename)+2);
+		name = g_malloc(strlen(uts.nodename)+2);
 		int len = strlen(uts.nodename);
 		char* p;
 		p=name;
@@ -68,7 +69,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 		char hn[500 + 1];
 		DWORD dwLen = 500;
 		GetComputerName(hn, &dwLen);
-		name = malloc(strlen(hn)+2);
+		name = g_malloc(strlen(hn)+2);
 		int len = strlen(hn);
 		char* p;
 		p=name;
@@ -79,15 +80,15 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	for (int i = 0; i < nelem; i++) {
 		char* elem = base+(i*size);
 		strcpy(recipt,elem);
-		char* query = (char *)malloc(sizeof(msg)+sizeof(recipt)+sizeof(cmd)+sizeof(name)+sizeof("Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"\",\"\",\"\",\"\")")+5);
-		sprintf(query,"Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\")",cmd,msg,name,recipt);
+		char* query = (char *)g_malloc(sizeof(msg)+sizeof(recipt)+sizeof(cmd)+sizeof(name)+sizeof("Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"\",\"\",\"\",\"\")")+5);
+		g_sprintf(query,"Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\")",cmd,msg,name,recipt);
 		sql_exec_quary(query);
-		free(query);
+		g_free(query);
 	}
-	free(recipt);
-	free(msg);
-	free(name);
-	free(base);
+	g_free(recipt);
+	g_free(msg);
+	g_free(name);
+	g_free(base);
 	return TRUE;
 	#else
 	return FALSE;
@@ -97,7 +98,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	void get_torrent_info(DBusGProxy* proxy,char* torrent) 
 	{
 		#if VERBOSE >= 4
-		printf("Torrent:%s",torrent);
+		g_printf("Torrent:%s",torrent);
 		#endif
 	}
 #endif

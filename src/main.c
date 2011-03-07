@@ -21,6 +21,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <glib.h>
+#include <glib/gprintf.h>
 #include "tray.h"
 #include "status.h"
 #include "settings.h"
@@ -85,7 +87,7 @@ int main(int argc, char** argv) {
 	init_status_window(FALSE);
 	start_tray();
 	#ifndef _NOSQL
-		free(base);
+		g_free(base);
 	#endif
 	return 0;
 }
@@ -100,7 +102,7 @@ gboolean parse_command_line_options(int argc, char **argv) {
         context = g_option_context_new (NULL);
         g_option_context_add_main_entries (context, options, NULL);
         if (g_option_context_parse (context, &argc, &argv, &error) == FALSE) {
-                printf ("%s\nRun '%s --help' to see a full list of available command line options.\n",
+                g_printf ("%s\nRun '%s --help' to see a full list of available command line options.\n",
                          error->message, argv[0]);
                 g_error_free (error);
                 g_option_context_free (context);
@@ -114,7 +116,7 @@ gboolean parse_command_line_options(int argc, char **argv) {
         return TRUE;
 }
 void print_version(){
-        printf("\n%s %s\n\nCopyright (C) %i Noside Racing, llc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten By %s\n",PACKAGE_NAME,PACKAGE_VERSION,COMPILE_YEAR,PROGRAMMERS_NAME);
+        g_printf("\n%s %s\n\nCopyright (C) %i Noside Racing, llc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten By %s\n",PACKAGE_NAME,PACKAGE_VERSION,COMPILE_YEAR,PROGRAMMERS_NAME);
 }
 
 
@@ -129,20 +131,20 @@ void print_version(){
 			#if VERBOSE >= 4
 			print_playing_info_music(pInfo);
 			#endif
-			char* hostname = malloc(size);
+			char* hostname = g_malloc(size);
 			for (int i = 0; i < nelem; i++) {
 				char* elem = base+(i*size);
 				strcpy(hostname,elem);
 				char* query = build_playing_info_sql_query(pInfo,hostname);
 				sql_exec_quary(query);
-				free(query);
+				g_free(query);
 			}
 			#ifdef BANSHEE
-			free(pInfo.Artist);
-			free(pInfo.Album);
-			free(pInfo.Song);
+			g_free(pInfo.Artist);
+			g_free(pInfo.Album);
+			g_free(pInfo.Song);
 			#endif
-			free(hostname);	
+			g_free(hostname);	
 		}
 		return TRUE;
 	}
@@ -161,8 +163,8 @@ gboolean update_active_devices(gpointer data){
 }
 #ifndef _WIN32
 	char* build_playing_info_sql_query(const struct playing_info_music pInfo,char* hostname) {
-		char* query =(char *)malloc(1024);
-		sprintf(query,"INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
+		char* query =(char *)g_malloc(1024);
+		g_sprintf(query,"INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
 		return query;
 	}
 #endif

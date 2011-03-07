@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <glib.h>
+#include <glib/gprintf.h>
 #include "showlist.h"
 #include "cmdhandler.h"
 #include "settings.h"
@@ -65,8 +67,8 @@ char* live_action(char* filepath){
 			if (*ptr == '\0'){
 				if (i == 2){ break; }
 				#if VERBOSE >= 2
-				printf("Error: badly formed file name\n");
-				printf("File Name: %s\n",filepath);
+				g_warning("Error: badly formed file name\n");
+				g_warning("File Name: %s\n",filepath);
 				#endif
 				return NULL;
 			}
@@ -78,7 +80,7 @@ char* live_action(char* filepath){
 	}
 	if (*ptr == '\0'){ lenOfEpsName = 0;}
 	totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfEpsName;
-	char* retval = malloc(totallen+5);
+	char* retval = g_malloc(totallen+5);
 	ptr = retval;
 	for (int i = 0; i < lenOfName; i++){
 		*ptr++=*sptr++;
@@ -100,7 +102,7 @@ char* live_action(char* filepath){
 	}
 	*ptr='\0';
 	#if VERBOSE >= 4
-		printf("returnValue of live_action in showlist.c\n%s\n",retval);
+		g_printf("returnValue of live_action in showlist.c\n%s\n",retval);
 	#endif
 	return retval;
 }
@@ -135,7 +137,7 @@ char* other(char* filepath){
 		lenOfName++;
 	}
 	totallen=fnamelen+lenOfName+5;
-	char* retval = malloc(totallen+5);
+	char* retval = g_malloc(totallen+5);
 	ptr=retval;
 	sptr = posOfLastSlash+1;
 	char* other = "Other";
@@ -200,7 +202,7 @@ char* std_anime(char* filepath,char* name){
 
 	if (*ptr == '\0'){ lenOfSubgroup = 0;}
 	totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfSubgroup;
-	char* retval = malloc(totallen+5);
+	char* retval = g_malloc(totallen+5);
 	ptr = retval;
 	sptr=name;
 	for (int i = 0; i < lenOfName; i++){

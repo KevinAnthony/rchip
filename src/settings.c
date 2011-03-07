@@ -22,7 +22,8 @@
 
 #include "settings.h"
 #include <string.h>
-
+#include <glib.h>
+#include <glib/gprintf.h>
 #ifdef _WIN32
 #include <parser.h>
 #include <tree.h>
@@ -46,7 +47,7 @@ char* get_setting(char* settingname){
 
     	if (doc == NULL) {
 		#if VERBOSE >= 1
-		printf("error: could not parse file %s\n", XMLFILE);
+		g_error("error: could not parse file %s\n", XMLFILE);
 		#endif
     	}
 
@@ -127,7 +128,7 @@ int new_xml_file() {
 #else
 char* gets_setting(char* gigo) {
     	#if VERBOSE >= 1
-	printf(stderr, "tree support not compiled in\n");
+	g_errorf(stderr, "tree support not compiled in\n");
 	#endif
     	return NULL
 }
@@ -150,12 +151,12 @@ void key_change_callback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpo
   	const gchar* keyname = NULL;
   	gchar* strValue = NULL;
 	#if VERBOSE >= 3
-  	printf("keyChangeCallback invoked.\n");
+  	g_printf("keyChangeCallback invoked.\n");
 	#endif
  	keyname = gconf_entry_get_key(entry);
 	if (keyname == NULL) {
     		#if VERBOSE >= 1
-		printf("Couldn't get the key name!\n");
+		g_error("Couldn't get the key name!\n");
 		#endif
 		return;
   	}
@@ -163,22 +164,24 @@ void key_change_callback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpo
   	g_assert(value != NULL);
 	if (!GCONF_VALUE_TYPE_VALID(value->type)) {
     		#if VERBOSE >= 1
-		printf("Invalid type for gconfvalue!\n");
+		g_error("Invalid type for gconfvalue!\n");
 		#endif
   	}
 	strValue = gconf_value_to_string(value);
 	#if VERBOSE >= 1
 	if (strcmp(keyname, SERVICE_KEY_PATH_TO_VIDEO_ROOT) == 0) {
 		#if VERBOSE >= 3
-		printf("Connection type setting changed: [%s]\n",strValue);
+		g_error("Connection type setting changed: [%s]\n",strValue);
 		#endif
   	} else {
-  		printf(":Unknown key: %s (value: [%s])\n", keyname,strValue);
+		#if VERBOSE >= 2
+  		g_warning(":Unknown key: %s (value: [%s])\n", keyname,strValue);
+		#endif
   	}
 	#endif
   	g_free(strValue);
 	#if VERBOSE >= 3
- 		printf("keyChangeCallback done.\n");
+ 		g_printf("keyChangeCallback done.\n");
 	#endif
 }
 
@@ -214,13 +217,13 @@ char* get_setting( gchar* keyname) {
 	client = gconf_client_get_default();
 	g_assert(GCONF_IS_CLIENT(client));
 	gchar* valueStr = NULL;
-	gchar* lookup = (gchar*) malloc(sizeof(keyname) + sizeof(SERVICE_GCONF_ROOT)+5);
-	sprintf(lookup,SERVICE_GCONF_ROOT "%s", keyname);
+	gchar* lookup = (gchar*) g_malloc(sizeof(keyname) + sizeof(SERVICE_GCONF_ROOT)+5);
+	g_sprintf(lookup,SERVICE_GCONF_ROOT "%s", keyname);
 	valueStr = gconf_client_get_string(client,lookup, NULL);
 	g_free(lookup);
 	if (valueStr == NULL) {
        		#if VERBOSE >= 2 	
-		printf("Error: No Value for %s",keyname);
+		g_error("Error: No Value for %s",keyname);
 		#endif
 		return NULL;
 	}

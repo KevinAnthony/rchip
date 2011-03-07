@@ -20,6 +20,7 @@
 #include <config.h>
 
 #include <glib.h>
+#include <glib/gprintf.h>
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef _WIN32
@@ -67,7 +68,7 @@ void get_next_cmd() {
 		#endif
 	#endif
 	#if VERBOSE >= 4
-		printf("ID:%i\ncmd:%s\ncmdTxt:%s\n",cmdID,cmd,cmdTxt);
+		g_print("ID:%i\ncmd:%s\ncmdTxt:%s\n",cmdID,cmd,cmdTxt);
 	#endif
 	/*command has to be valid*/
 	if (!(strcmp(cmd," "))){
@@ -77,14 +78,14 @@ void get_next_cmd() {
 	if (cmdID != 0){
 		if (!(strcmp(cmd,"STRB"))) {
 			#if VERBOSE >= 1
-			printf("Warning:STRB is deprecated");
+			g_warning("Warning:STRB is deprecated");
 			#endif
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
 			#endif
 		} else if (!(strcmp(cmd,"SPRB"))) {
 			#if VERBOSE >= 1
-			printf("Warning:SPRB is deprecated");
+			g_warning("Warning:SPRB is deprecated");
 			#endif
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
@@ -103,7 +104,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Next\n");
+				g_error("Could not Next\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -133,7 +134,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not BACK\n");
+				g_error("Could not BACK\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -163,7 +164,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not PLAY\n");
+				g_error("Could not PLAY\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -193,7 +194,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not STOP\n");
+				g_error("Could not STOP\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -217,7 +218,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Play SMplayer\n");
+				g_warning("Could not Play SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -231,7 +232,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Stop SMplayer\n");
+				g_warning("Could not Stop SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -244,7 +245,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Pause SMplayer\n");
+				g_warning("Could not Pause SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -258,7 +259,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Skip Foward SMplayer\n");
+				g_warning("Could not Skip Foward SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -271,7 +272,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Skip Backwards SMplayer\n");
+				g_warning("Could not Skip Backwards SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -284,7 +285,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Fullscreen SMplayer\n");
+				g_warning("Could not Fullscreen SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -297,7 +298,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Fullscreen off SMplayer\n");
+				g_warning("Could not Fullscreen off SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -310,13 +311,13 @@ void get_next_cmd() {
 			char* filename = cmdTxt;
 			char* cmd= "smplayer.exe";
 			char* path="c:\\Program Files\\smplayer\\smplayer.exe";
-			command = malloc(1);
+			//command = malloc(1);
 			while (*filename++ != '\0') {if (*filename == '/') { *filename = '\\';} }
 			if(spawnl(P_NOWAIT, path ,cmd ,cmdTxt,NULL) >= 0) {
 			#else
 			char* text = "smplayer ";
-			command = malloc(strlen(cmdTxt)+strlen(text)+1);
-			sprintf(command,"%s%s&",text,cmdTxt);
+			command = g_malloc(strlen(cmdTxt)+strlen(text)+1);
+			g_sprintf(command,"%s%s&",text,cmdTxt);
 			#endif
 			if (system(command)) {
 				#ifdef _SQL
@@ -324,18 +325,18 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not open SMplayer\n");
+				g_warning("Could not open SMplayer\n");
 				#endif
 				#ifdef _WIN32
 				#if VERBOSE >= 2
-				printf("Last error: %i\n",myerrno);
+				g_printf("Last error: %i\n",myerrno);
 				#endif
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
 				#endif
 			}
-			free(command);	
+			g_free(command);	
 		} else if (!(strcmp(cmd,"MUTESM"))) {
 			if (system("smplayer -send-action mute")) {
 				#ifdef _SQL
@@ -343,7 +344,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Play SMplayer\n");
+				g_warning("Could not Play SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -356,7 +357,7 @@ void get_next_cmd() {
 				#endif
 			} else {
 				#if VERBOSE >= 2
-				printf("Could not Play SMplayer\n");
+				g_warning("Could not Play SMplayer\n");
 				#endif
 				#ifdef _SQL
 				delete_from_cmdQueue(cmdID);
@@ -364,15 +365,15 @@ void get_next_cmd() {
 			}
  		} else {
 			#if VERBOSE >= 2
-			printf("Command Not Recognized: ::%s::\n",cmd);
+			g_printf("Command Not Recognized: ::%s::\n",cmd);
 			#endif
 			#ifdef _SQL
 			delete_from_cmdQueue(cmdID);
 			#endif
 		}
-		free(cmd);
-		free(cmdTxt);
-		free(source);
+		g_free(cmd);
+		g_free(cmdTxt);
+		g_free(source);
 	}
 }
 void send_cmd(char* cmd, char* cmdTxt) {
@@ -384,15 +385,15 @@ void send_cmd(char* cmd, char* cmdTxt) {
 	nelem=get_nelem();
 	base = calloc(nelem,size);
 	get_active_devices(base,size,nelem);
-	char* hostname = malloc(size);
+	char* hostname = g_malloc(size);
 		for (int i = 0; i < nelem; i++) {
 			char* elem = base+(i*size);
 			strcpy(hostname,elem);
-			char* query = (char *)malloc(1024);
-			sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",hostname);
+			char* query = (char *)g_malloc(1024);
+			g_sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",hostname);
 			sql_exec_quary(query);
-			free(query);
+			g_free(query);
 		}
-	free(hostname);
+	g_free(hostname);
 	#endif
 }
