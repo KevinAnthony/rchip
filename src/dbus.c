@@ -24,8 +24,7 @@
 	#include 	"dbus.h"
 	#include	"utils.h"
 	#include	"notifications.h"
-	#include	<stdio.h>
-	#include	<stdlib.h>
+	#include	<string.h>
 	#include	<gio/gio.h>	
 	#include	<glib.h>
 	#include	<glib/gprintf.h>

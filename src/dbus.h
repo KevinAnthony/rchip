@@ -23,7 +23,6 @@
 #define DBUS_H
 
 #include	<gio/gio.h>
-#include        <string.h>
 #include 	"utils.h"
 
 gboolean dbus_is_connected(gboolean);

@@ -22,8 +22,8 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <glib/gprintf.h>
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 #include <string.h>
 #ifdef _WIN32
 #include <windows.h>

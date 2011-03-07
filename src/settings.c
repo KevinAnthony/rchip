@@ -21,7 +21,6 @@
 #include <config.h>
 
 #include "settings.h"
-#include <string.h>
 #include <glib.h>
 #include <glib/gprintf.h>
 #ifdef _WIN32
@@ -142,9 +141,6 @@ int xml_file_exists(){return 0;}
 
 #include <glib.h>
 #include <gconf/gconf-client.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 
 void key_change_callback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpointer userData) {
 	const GConfValue* value = NULL;
@@ -185,28 +181,28 @@ void key_change_callback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpo
 	#endif
 }
 
-int register_settings_changed_callback( void (*regesterFunction) (void),gchar* registerKey){
+gboolean register_settings_changed_callback( void (*regesterFunction) (void),gchar* registerKey){
 	/*
 	 * Here we would register a function to a list or something
 	 * I'm unsure if how to prototype this
 	 * The secound value is which key the function should respond to
 	 */
-	return true;
+	return TRUE;
 }
 
-int unregister_settings_changed_callback( void (*unregesterFunction) (gchar*)){
+gboolean unregister_settings_changed_callback( void (*unregesterFunction) (gchar*)){
 	/*
 	 * here we would unregister the function, just like above
 	 */
-	return true;
+	return TRUE;
 }
 
-int callback_registered_functions(gchar* keyname){
+gboolean callback_registered_functions(gchar* keyname){
 	/*
 	 * we need to search the reigsteredFunctions by keyname, 
 	 * and callback the function based on which key it called
 	 */
-	return true;
+	return TRUE;
 }
 
 char* get_setting( gchar* keyname) {
@@ -238,7 +234,7 @@ void populate_defaults(GConfClient* client){
 		}
 	}
 }
-int settings_init(){
+gboolean settings_init(){
 	//This section sould run, but need's error checking
 	
 	GConfClient* client = NULL;
@@ -249,6 +245,6 @@ int settings_init(){
 	gconf_client_add_dir(client, SERVICE_GCONF_ROOT, GCONF_CLIENT_PRELOAD_NONE, &error);
 	gconf_client_notify_add(client, SERVICE_GCONF_ROOT,key_change_callback, NULL, NULL, &error);
 	populate_defaults(client);
-	return true;
+	return TRUE;
 }
 #endif //ifdef win32

@@ -33,7 +33,6 @@
 #include 	<glib.h>
 #include	<glib/gprintf.h>
 #include	<string.h>
-#include	<stdio.h>
 #include	<stdlib.h>
 #include 	"sql.h"
 #include	"settings.h"

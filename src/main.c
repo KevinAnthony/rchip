@@ -20,9 +20,9 @@
 #include <config.h>
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <glib.h>
 #include <glib/gprintf.h>
+#include <string.h>
 #include "tray.h"
 #include "status.h"
 #include "settings.h"
@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 		update_daemon_sql();
 		size=get_size();
 		nelem=get_nelem();
-		base = calloc(nelem,size);
+		base = g_malloc0(nelem*size);
 		get_active_devices(base,size,nelem);
 	#endif
 	/*sets the tray icon from the create_tray_icon*/

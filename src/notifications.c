@@ -28,8 +28,6 @@
 #endif
 #include	<glib.h>
 #include	<glib/gprintf.h>
-#include	<stdlib.h>
-#include	<stdio.h>
 #include	<string.h>
 #ifdef _WIN32
 	#include	<winsock.h>
@@ -50,7 +48,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	char* base;
 	size=get_size();
 	nelem=get_nelem();
-	base = calloc(nelem,size);
+	base = g_malloc(nelem*size);
 	get_active_devices(base,size,nelem);
 	char* msg = (char *)g_malloc(sizeof(tickerString)+sizeof(notificationTitle)+sizeof(notificationText)+5);
 	g_sprintf(msg,"%s|%s|%s",tickerString,notificationTitle,notificationText);

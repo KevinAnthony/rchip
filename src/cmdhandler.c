@@ -22,7 +22,7 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <stdlib.h>
-#include <stdio.h>
+#include <string.h>
 #ifndef _WIN32
 	/*for hostname on unix and unix-like systems*/
 	#include <sys/utsname.h>
@@ -383,7 +383,7 @@ void send_cmd(char* cmd, char* cmdTxt) {
 	char* base;
 	size=get_size();
 	nelem=get_nelem();
-	base = calloc(nelem,size);
+	base = g_malloc(nelem*size);
 	get_active_devices(base,size,nelem);
 	char* hostname = g_malloc(size);
 		for (int i = 0; i < nelem; i++) {

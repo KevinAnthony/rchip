@@ -41,16 +41,19 @@ if [ "$?" -ne "0" ]; then
 fi 
 git add *
 if [ "$?" -ne "0" ]; then
+	git reset
         echo "git add failed"
         exit 1
 fi  
 git commit -a
 if [ "$?" -ne "0" ]; then
+	git reset
         echo "git commit failed"
         exit 1
 fi
 git push
 if [ "$?" -ne "0" ]; then
+	git reset
         echo "git push failed"
         exit 1
 fi

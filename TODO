@@ -7,9 +7,6 @@
 	* mysql server settings under gconf settings instead of hardcoded
 		Kevin
 
-	* mstray open window should open to VIDEO_PATH instead of random dir
-		Kevin
-	
 	* Make callback functions under settings.c
 		Kevin
 
