@@ -34,18 +34,9 @@
 	#include <glib.h>
 	#include <gconf/gconf-client.h>
 
-	#define SERVICE_GCONF_ROOT "/apps/noside/msdaemon"
+	#define VIDEO_ROOT "raidroot"
 	
-	#define VIDEO_ROOT "/videoroot"
-	#define SERVICE_KEY_PATH_TO_VIDEO_ROOT \
-	        SERVICE_GCONF_ROOT "/videoroot"
-	
-	void key_change_callback(GConfClient*,guint,GConfEntry*,gpointer);
-	gboolean register_callback( void (*) (void),gchar*);
-	gboolean unregister_callback( void (*) (gchar*));
-	gboolean callback_registered_functions(gchar*);
-	char* get_setting( gchar*);
-	void populate_defaults(GConfClient*);
+	char* get_setting_str( gchar*);
 	gboolean settings_init();
 
 #endif // # ifdef _WIN32

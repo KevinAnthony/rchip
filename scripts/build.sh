@@ -2,6 +2,7 @@
 
 USAGE="Usage: `basename $0` [-hvs] args"
 i=0
+debug=true
 while getopts hvsi: OPT; do
     case "$OPT" in
         h)
@@ -18,6 +19,7 @@ while getopts hvsi: OPT; do
 		;;
 	i)
 		install=true
+		debug=false
 		i=$(($i+1))
 		;;
         \?)
@@ -36,12 +38,18 @@ for cmd in $@; do
 		cmds=$new
 	fi
 done
-
+if [ $debug ];then
+	new=$cmds" --enable-debug=3"
+	cmds=$new
+fi
 if [ ! -f "configure.ac" ]; then
 	echo "Script must be run from project root"
 	exit 1
 fi
-sudo echo -ne
+# if we are installing, sudo early to get super use privilages in the begining
+if [ $install ]; then
+	sudo echo -ne
+fi
 if [ -f "Makefile" ] ; then
 	if [ $silent ] ; then
 		make -s maintainer-clean

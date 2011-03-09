@@ -41,11 +41,35 @@
 #include "settings.h"
 #include "utils.h"
 
-
+/* returns the next hostname, from a pointer based array */
 char* get_next_host(void* base,size_t size, size_t next){
 	return base+(next*size);
 }
 
+/*
+ * get the next command from database and handle it's exececution
+ * TODO:
+ * I'm playing with the idea of of switching to an XML based command system
+ * looking like this
+ * <command>
+ *   <name>MUSICPLAY</name>
+ *   <type>SYSTEM|DBUS</type>
+ *   <dbus_command>org.banshee.banshee.PlayerEngine.play</dbus_command>
+ *   <system_command>smplayer --play</system_command>
+ *   <argument_type>IN_G_VARIANT_FORMAT or nothing</argument_type>
+ *   <argument>argument</argument>
+ *   <commant>Something not included in the command</command>
+ * </command>
+ * and then find in xml where cmd=name
+ * if type = dbus
+ * execute proxy(dbus_command,argument_type, argument)
+ * or proxy(dbus_command)
+ * if type = system
+ * execute(%s%s, system_command, argument)
+ * reducing the code by much, maybe even manymuch, line
+ * 
+ * (insert mad scientist type laughter here)
+ */
 void get_next_cmd() {
 	char* cmd = "";
 	char* cmdTxt = "";
@@ -76,6 +100,7 @@ void get_next_cmd() {
 	}
 	/* make sure it's a valid command*/
 	if (cmdID != 0){
+		/* process the command */
 		if (!(strcmp(cmd,"STRB"))) {
 			#if VERBOSE >= 1
 			g_warning("Warning:STRB is deprecated");
@@ -363,7 +388,7 @@ void get_next_cmd() {
 				delete_from_cmdQueue(cmdID);
 				#endif
 			}
- 		} else {
+		} else {
 			#if VERBOSE >= 2
 			g_printf("Command Not Recognized: ::%s::\n",cmd);
 			#endif
@@ -376,24 +401,32 @@ void get_next_cmd() {
 		g_free(source);
 	}
 }
+
+/* insert command and command text into cmdQueue, once per hsotname*/
 void send_cmd(char* cmd, char* cmdTxt) {
 	#ifdef _SQL
-	size_t nelem;
-	size_t size;
+	/* Number of elements in array */
+	size_t nelem = get_nelem();
+	/* Size (in bytes) of each element */
+	size_t size = get_size();   
+	/* Size (in bytes) of each element */
 	char* base;
-	size=get_size();
-	nelem=get_nelem();
+	/* allocate array to size number of elements * size of elements */
 	base = g_malloc(nelem*size);
+	/* get list of active devices */
 	get_active_devices(base,size,nelem);
-	char* hostname = g_malloc(size);
+	char* deviceName = g_malloc(size);
 		for (int i = 0; i < nelem; i++) {
-			char* elem = base+(i*size);
-			strcpy(hostname,elem);
+			/* current element = (itterator*size)+initial memeory location */
+			char* elem = base+(i*size); 
+			 /* TODO:replace this and g_sprintf with self allocating memory commands :) */
+			strcpy(deviceName,elem);    
 			char* query = (char *)g_malloc(1024);
-			g_sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",hostname);
+			g_sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",deviceName);
+			/*  Always free your pointers before they go out of scope */
 			sql_exec_quary(query);
 			g_free(query);
 		}
-	g_free(hostname);
+	g_free(deviceName);
 	#endif
 }

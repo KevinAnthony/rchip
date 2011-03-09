@@ -141,82 +141,16 @@ int xml_file_exists(){return 0;}
 
 #include <glib.h>
 #include <gconf/gconf-client.h>
+#include <gio/gio.h>
+GSettings *settings;
 
-void key_change_callback(GConfClient* client,guint cnxn_id,GConfEntry* entry,gpointer userData) {
-	const GConfValue* value = NULL;
-  	const gchar* keyname = NULL;
-  	gchar* strValue = NULL;
-	#if VERBOSE >= 3
-  	g_printf("keyChangeCallback invoked.\n");
-	#endif
- 	keyname = gconf_entry_get_key(entry);
-	if (keyname == NULL) {
-    		#if VERBOSE >= 1
-		g_error("Couldn't get the key name!\n");
-		#endif
-		return;
-  	}
-	value = gconf_entry_get_value(entry);
-  	g_assert(value != NULL);
-	if (!GCONF_VALUE_TYPE_VALID(value->type)) {
-    		#if VERBOSE >= 1
-		g_error("Invalid type for gconfvalue!\n");
-		#endif
-  	}
-	strValue = gconf_value_to_string(value);
-	#if VERBOSE >= 1
-	if (strcmp(keyname, SERVICE_KEY_PATH_TO_VIDEO_ROOT) == 0) {
-		#if VERBOSE >= 3
-		g_error("Connection type setting changed: [%s]\n",strValue);
-		#endif
-  	} else {
-		#if VERBOSE >= 2
-  		g_warning(":Unknown key: %s (value: [%s])\n", keyname,strValue);
-		#endif
-  	}
-	#endif
-  	g_free(strValue);
-	#if VERBOSE >= 3
- 		g_printf("keyChangeCallback done.\n");
-	#endif
-}
-
-gboolean register_settings_changed_callback( void (*regesterFunction) (void),gchar* registerKey){
-	/*
-	 * Here we would register a function to a list or something
-	 * I'm unsure if how to prototype this
-	 * The secound value is which key the function should respond to
-	 */
-	return TRUE;
-}
-
-gboolean unregister_settings_changed_callback( void (*unregesterFunction) (gchar*)){
-	/*
-	 * here we would unregister the function, just like above
-	 */
-	return TRUE;
-}
-
-gboolean callback_registered_functions(gchar* keyname){
-	/*
-	 * we need to search the reigsteredFunctions by keyname, 
-	 * and callback the function based on which key it called
-	 */
-	return TRUE;
-}
-
-char* get_setting( gchar* keyname) {
+char* get_setting_str( gchar* keyname) {
 	/*
 	 * we search based on keyname, and return the value
 	 */
-	GConfClient* client = NULL;
-	client = gconf_client_get_default();
-	g_assert(GCONF_IS_CLIENT(client));
-	gchar* valueStr = NULL;
-	gchar* lookup = (gchar*) g_malloc(sizeof(keyname) + sizeof(SERVICE_GCONF_ROOT)+5);
-	g_sprintf(lookup,SERVICE_GCONF_ROOT "%s", keyname);
-	valueStr = gconf_client_get_string(client,lookup, NULL);
-	g_free(lookup);
+	char* valueStr = NULL;
+	valueStr = g_settings_get_string (settings,keyname);
+
 	if (valueStr == NULL) {
        		#if VERBOSE >= 2 	
 		g_error("Error: No Value for %s",keyname);
@@ -225,26 +159,18 @@ char* get_setting( gchar* keyname) {
 	}
 	return valueStr;
 }
-
-void populate_defaults(GConfClient* client){
- 	gchar* valueStr = NULL;
-  	valueStr = gconf_client_get_string(client, SERVICE_KEY_PATH_TO_VIDEO_ROOT, NULL);
-  	if (valueStr == NULL) {	
-		if (!gconf_client_set_string(client, SERVICE_KEY_PATH_TO_VIDEO_ROOT, "/media/Tamatebako/",NULL)) {
-		}
+void settings_unref(){
+	if (settings){
+		g_object_unref(settings);
 	}
 }
 gboolean settings_init(){
 	//This section sould run, but need's error checking
 	
-	GConfClient* client = NULL;
-	GError* error = NULL;
-	g_type_init();
-	client = gconf_client_get_default();
-	g_assert(GCONF_IS_CLIENT(client));
-	gconf_client_add_dir(client, SERVICE_GCONF_ROOT, GCONF_CLIENT_PRELOAD_NONE, &error);
-	gconf_client_notify_add(client, SERVICE_GCONF_ROOT,key_change_callback, NULL, NULL, &error);
-	populate_defaults(client);
+	GSettings* settings;
+	//g_type_init();
+	settings = g_settings_new("apps.noside.rchip.settings");
+	/* catch emitted signal "changed" here*/	
 	return TRUE;
 }
 #endif //ifdef win32

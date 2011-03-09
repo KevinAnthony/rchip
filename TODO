@@ -7,8 +7,5 @@
 	* mysql server settings under gconf settings instead of hardcoded
 		Kevin
 
-	* Make callback functions under settings.c
-		Kevin
-
 	* Comments!
 		Kevin

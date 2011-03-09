@@ -97,7 +97,7 @@ void add_files(GtkWidget *widget, gpointer gdata){
 				GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 				NULL);
 	/* default to the VIDEO ROOT path */
-	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),get_setting(VIDEO_ROOT));	
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),get_setting_str(VIDEO_ROOT));	
 	gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog),TRUE);
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){
 		char *filename;
@@ -118,7 +118,7 @@ void add_files(GtkWidget *widget, gpointer gdata){
 			g_printf("Adding Filename:%s\n",filename);
 			#endif
 			/* because the user may not use the same machine to watch as they did to add, we replace the local path with a server absoulte path*/
-			filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
+			filename = replace_str(filename,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
 			add_file_to_playqueue(filename);
 			node=node->next;
 		}
@@ -140,7 +140,7 @@ void add_folders(GtkWidget *widget, gpointer gdata){
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 				NULL);
-	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),get_setting(VIDEO_ROOT));
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),get_setting_str(VIDEO_ROOT));
 	gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog),TRUE);
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){
 		char *filename;
@@ -155,7 +155,7 @@ void add_folders(GtkWidget *widget, gpointer gdata){
 			#if VERBOSE >= 3
 			g_printf("Adding Filename%s\n",filename);
 			#endif
-			filename = replace_str(filename,get_setting(VIDEO_ROOT),"/mnt/raid/");
+			filename = replace_str(filename,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
 			add_folder_to_playqueue(filename);
 			node=node->next;
 		} 
@@ -173,7 +173,7 @@ void add_folder_to_playqueue(char *dirFile){
 	char *newDirFile;
 	
 	if ((dp=opendir(dirFile))==NULL) {
-		dirFile = replace_str(dirFile,get_setting(VIDEO_ROOT),"/mnt/raid/");
+		dirFile = replace_str(dirFile,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
 		add_file_to_playqueue(dirFile);
 	} else {
 		while((ep=readdir(dp))) {
@@ -189,7 +189,7 @@ void add_folder_to_playqueue(char *dirFile){
 					add_folder_to_playqueue(newDirFile);
 					break;
 				case FTFILE:
-					newDirFile = replace_str(newDirFile,get_setting(VIDEO_ROOT),"/mnt/raid/");
+					newDirFile = replace_str(newDirFile,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
 					add_file_to_playqueue(newDirFile);
 					break;
 				case FTDONOTPROC:

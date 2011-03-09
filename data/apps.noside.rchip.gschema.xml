@@ -1,33 +1,31 @@
 <schemalist>
-	<schema id="apps.noside.rchip.generalsettings" path="/apps/noside/rchip/generalsettings/">
+	<schema id="apps.noside.rchip.settings" path="/apps/noside/rchip/settings/">
 		<key name="raidroot" type="s">
 			<default>"Tamatebako"</default>
 			<summary>Path</summary>
 			<description>The Path to the root directory of the raid server.</description>
 		</key>
-	</schema>
-	<schema id="apps.noside.rchip.sqlsettings" path="/apps/noside/rchip/sqlsettings/">
-		<key name="hostname" type="s">
+		<key name="sql-hostname" type="s">
 			<default>"192.168.1.3"</default>
 			<summary>HostName</summary>
 			<description>The Hostname or IP address of the sql server.</description>
 		</key>
-		<key name="username" type="s">
+		<key name="sql-username" type="s">
 			<default>"nTesla"</default>
 			<summary>Username</summary>
 			<description>The Username for the SQL server.</description>
 		</key>
-		<key name="passwd" type="s">
+		<key name="sql-passwd" type="s">
 			<default>"deathray"</default>
 			<summary>Password</summary>
 			<description>The Password for the SQL server.</description>
 		</key>
-		<key name="db" type="s">
+		<key name="sql-db" type="s">
 			<default>"madSci"</default>
 			<summary>Database</summary>
 			<description>The default database.</description>
 		</key>
-		<key name="hostnamesize" type="i">
+		<key name="sql-hostnamesize" type="i">
 			<default>256</default>
 			<summary>Max HostName Size</summary>
 			<description>The largest number of charicters hostname can contain.</description>

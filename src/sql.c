@@ -350,7 +350,7 @@ void get_active_devices(void* base, size_t size, size_t nelem)
 	mysql=NULL;
 }
 void update_daemon_sql(){
-	char *path = get_setting(VIDEO_ROOT);
+	char *path = get_setting_str(VIDEO_ROOT);
 	char* name = NULL;
 	if (path != NULL){
 	#ifndef _WIN32
