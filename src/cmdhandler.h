@@ -17,15 +17,15 @@
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-#ifndef CMDHANDLER_H
-#define CMDHANDLER_H
+#ifndef 			CMDHANDLER_H
+#define 			CMDHANDLER_H
 
-#include <glib.h>
+#include 			<glib.h>
 
-gboolean delete_from_hosts(char*);
-char* get_next_host(void*,size_t,size_t);
-void print_list();
-void get_next_cmd();
-void send_cmd(char*,char*);
+gboolean			delete_from_hosts				( char* );
+char*				get_next_host					( void*,size_t,size_t );
+void				print_list					( void );
+void				get_next_cmd					( void );
+void				send_cmd					( char*,char* );
 
 #endif

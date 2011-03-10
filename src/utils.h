@@ -20,15 +20,15 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-struct playing_info_music{
-        char *Artist;
-        char *Album;
-        char *Song;
-        int Elapised_time;
-        int Duration;
-        int isPlaying;
-};
+struct 				playing_info_music				{
+        									char 	*Artist;
+        									char 	*Album;
+        									char 	*Song;
+        									int 	Elapised_time;
+        									int 	Duration;
+        									int 	isPlaying;
+										};
 
-char* replace_str(char*, char*, char*);
+char* 				replace_str					( char*, char*, char* );
 
 #endif

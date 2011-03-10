@@ -18,26 +18,37 @@
 *
 */
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef 			SETTINGS_H
+#define 			SETTINGS_H
 
-#ifdef _WIN32
-	#include <libxml/parser.h>
-	#include <libxml/tree.h>
-	#define XMLFILE PREFIX"/share/settings.xml"
-	char* get_setting(char*);
-	char* find_element_names(xmlNode*,char*);
-	int xml_file_exists();
-	int new_xml_file();
+#ifdef 				_WIN32
+
+#include 			<libxml/parser.h>
+#include 			<libxml/tree.h>
+
+#define 			XMLFILE 					PREFIX"/share/settings.xml"
+
+char* 				get_setting					( char* );
+char* 				find_element_names				( xmlNode*,char* );
+int 				xml_file_exists					( void );
+int 				new_xml_file					( void );
 
 #else
-	#include <glib.h>
-	#include <gconf/gconf-client.h>
 
-	#define VIDEO_ROOT "raidroot"
-	
-	char* get_setting_str( gchar*);
-	gboolean settings_init();
+#include 			<glib.h>
+#include 			<gconf/gconf-client.h>
+
+#define 			VIDEO_ROOT 					"raidroot"
+#define 			SQL_SERVER 					"sql-server"
+#define				SQL_USERNAME					"sql-username"
+#define				SQL_PASSWORD					"sql-passwd"
+#define				SQL_DATABASE					"sql-db"
+#define				SQL_MAX_NAME					"sql-hostnamesize"
+
+char* 				get_setting_str					( gchar* );
+int				get_setting_int					( gchar* );
+void				settings_unref					( void );
+gboolean 			settings_init					( void );
 
 #endif // # ifdef _WIN32
 #endif

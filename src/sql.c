@@ -37,11 +37,11 @@
 #include 	"sql.h"
 #include	"settings.h"
 
-#define		HOSTNAME		"192.168.1.3"
-#define 	USERNAME		"nTesla"
-#define		PASSWORD		"deathray"
-#define		DATABASE		"madSci"
-#define		HOSTNAME_MAX_SIZE	256
+char*		sqlServer;
+char*	 	sqlUsername;
+char*		sqlPassword;
+char*		database;
+int		hostnameMaxSize;
 /*  
  *  Here we would if tryOnDisconneced is true, and we are Disconneced
  *  We would try and connect
@@ -59,6 +59,11 @@ gboolean sql_is_connected (int tryOnDisconneced) {
 
 gboolean sql_init ()
 {
+	sqlServer = get_setting_str(SQL_SERVER);
+	sqlUsername = get_setting_str(SQL_USERNAME);
+	sqlPassword = get_setting_str(SQL_PASSWORD);
+	database = get_setting_str(SQL_DATABASE);
+	hostnameMaxSize = get_setting_int(SQL_MAX_NAME);
 	if (mysql!=NULL){
 		mysql_close(mysql);
 		mysql=NULL;
@@ -79,7 +84,7 @@ void sql_exec_quary (char* query) {
 	g_printf("Query:%s\n",query);	
 	#endif
 	if (!sql_init()){ return; }
-	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+	if (mysql_real_connect(mysql,sqlServer,sqlUsername,sqlPassword,database,0,NULL,0) == NULL) {
 		#if VERBOSE >= 1	
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		#endif
@@ -115,7 +120,7 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 	g_printf("Next Cmd Query:%s\n",query);
 	#endif	
 	if (!sql_init()){ return; }
-	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+	if (mysql_real_connect(mysql,sqlServer,sqlUsername,sqlPassword,database,0,NULL,0) == NULL) {
 		#if VERBOSE >= 1	
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		#endif
@@ -176,7 +181,7 @@ void delete_from_cmdQueue(int cmdID) {
 	g_printf("Next Cmd Query:%s\n",delquery);
 	#endif
 	if (!sql_init()){ return; }
-	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+	if (mysql_real_connect(mysql,sqlServer,sqlUsername,sqlPassword,database,0,NULL,0) == NULL) {
 		#if VERBOSE >= 1
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		#endif
@@ -207,7 +212,7 @@ char* get_registered_devices_message(){
 	MYSQL_ROW row;
 	char* returnval = (char*) g_malloc(1024);
 	if (!sql_init()){ return NULL; }
-	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+	if (mysql_real_connect(mysql,sqlServer,sqlUsername,sqlPassword,database,0,NULL,0) == NULL) {
 		#if VERBOSE >= 1
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		#endif
@@ -254,7 +259,7 @@ size_t get_nelem(){
 	char* query = "select hostname from remoteActiveDevices where active = \"TRUE\"";
 	MYSQL_RES *res;
 	if (!sql_init()){ return -1; }
-	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+	if (mysql_real_connect(mysql,sqlServer,sqlUsername,sqlPassword,database,0,NULL,0) == NULL) {
 		#if VERBOSE >= 1  
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		g_error("Returning because real_connect failed in get_nelem");
@@ -284,7 +289,7 @@ size_t get_nelem(){
 }
 
 size_t get_size(){
-	return HOSTNAME_MAX_SIZE;
+	return hostnameMaxSize;
 }
 
 void get_active_devices(void* base, size_t size, size_t nelem)
@@ -292,9 +297,9 @@ void get_active_devices(void* base, size_t size, size_t nelem)
 	char* query = "select hostname from remoteActiveDevices where active = \"TRUE\";";
 	MYSQL_RES *res;
 	MYSQL_ROW row;
-	char* hostname = (char*) g_malloc(HOSTNAME_MAX_SIZE);
+	char* hostname = (char*) g_malloc(hostnameMaxSize);
 	if (!sql_init()){ return; }
-	if (mysql_real_connect(mysql,HOSTNAME,USERNAME,PASSWORD,DATABASE,0,NULL,0) == NULL) {
+	if (mysql_real_connect(mysql,sqlServer,sqlUsername,sqlPassword,database,0,NULL,0) == NULL) {
 		#if VERBOSE >= 1	
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
 		#endif

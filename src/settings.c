@@ -148,9 +148,14 @@ char* get_setting_str( gchar* keyname) {
 	/*
 	 * we search based on keyname, and return the value
 	 */
+	#if VERBOSE >= 3
+	printf("Trying to get Setting for Value:%s\n",keyname);
+	#endif
 	char* valueStr = NULL;
 	valueStr = g_settings_get_string (settings,keyname);
-
+	#if VERBOSE >= 4
+	printf("Value for key is:%s\n",valueStr);
+	#endif
 	if (valueStr == NULL) {
        		#if VERBOSE >= 2 	
 		g_error("Error: No Value for %s",keyname);
@@ -159,17 +164,41 @@ char* get_setting_str( gchar* keyname) {
 	}
 	return valueStr;
 }
+
+int get_setting_int( gchar* keyname) {
+        /*
+         * we search based on keyname, and return the value
+         */
+	#if VERBOSE >= 3
+        printf("Trying to get Setting for Value:%s\n",keyname);
+        #endif
+        int valueInt = 0;
+        valueInt = g_settings_get_int(settings,keyname);
+	#if VERBOSE >= 4
+        printf("Value for key is:%s\n",valueInt);
+        #endif
+        if (valueInt == 0) {
+                #if VERBOSE >= 2        
+                g_error("Error: No Value for %s",keyname);
+                #endif
+                return -1;
+        }
+        return valueInt;
+}
+
+
 void settings_unref(){
 	if (settings){
 		g_object_unref(settings);
 	}
 }
+
 gboolean settings_init(){
 	//This section sould run, but need's error checking
 	
-	GSettings* settings;
 	//g_type_init();
 	settings = g_settings_new("apps.noside.rchip.settings");
+	
 	/* catch emitted signal "changed" here*/	
 	return TRUE;
 }

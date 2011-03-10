@@ -55,6 +55,9 @@ int main(int argc, char** argv) {
 	GtkStatusIcon *tray_icon;
 	parse_command_line_options(argc,argv);
 	gtk_init(&argc, &argv);
+	#ifndef _WIN32
+		settings_init();
+	#endif
 	#ifndef _NOSQL
 		sql_init();
 		update_daemon_sql();
@@ -67,7 +70,6 @@ int main(int argc, char** argv) {
 	tray_icon = create_tray_icon();
 	#ifndef _NOSQL
 	#ifndef _WIN32
-		settings_init();	
 		struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};	
 		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
 		#if VERBOSE >= 4
@@ -139,11 +141,11 @@ void print_version(){
 				sql_exec_quary(query);
 				g_free(query);
 			}
-			#ifdef BANSHEE
-			g_free(pInfo.Artist);
-			g_free(pInfo.Album);
-			g_free(pInfo.Song);
-			#endif
+			if (pInfo.isPlaying){
+				if (pInfo.Artist != ""){g_free(pInfo.Artist);}
+				if (pInfo.Album != ""){g_free(pInfo.Album);}
+				if (pInfo.Song != ""){g_free(pInfo.Song);}
+			}
 			g_free(hostname);	
 		}
 		return TRUE;
