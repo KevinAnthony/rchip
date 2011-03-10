@@ -12,7 +12,7 @@ AM_CFLAGS = 	$(CFLAGS) 		\
 		@GCONF_CFLAGS@		\
 		@MYSQL_CFLAGS@
 
-sourceincludedir = $(includedir)/rchip/source
+sourceincludedir = $(includedir)/@PACKAGE@/source
 sourceinclude_HEADERS = 		\
 	cmdhandler.h			\
 	dbus.h  			\
@@ -44,6 +44,8 @@ rchip_LDADD = 	@GTK2_LIBS@		\
 		@LIBXML2_LIBS@		\
 		@GCONF_LIBS@		\
 		@MYSQL_LIBS@
+
+CLEANFILES = Makefile
 
 MAINTAINERCLEANFILES = \
         Makefile.in

@@ -194,11 +194,7 @@ void settings_unref(){
 }
 
 gboolean settings_init(){
-	//This section sould run, but need's error checking
-	
-	//g_type_init();
 	settings = g_settings_new("apps.noside.rchip.settings");
-	
 	/* catch emitted signal "changed" here*/	
 	return TRUE;
 }

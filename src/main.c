@@ -142,9 +142,9 @@ void print_version(){
 				g_free(query);
 			}
 			if (pInfo.isPlaying){
-				if (pInfo.Artist != ""){g_free(pInfo.Artist);}
-				if (pInfo.Album != ""){g_free(pInfo.Album);}
-				if (pInfo.Song != ""){g_free(pInfo.Song);}
+				if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
+				if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
+				if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
 			}
 			g_free(hostname);	
 		}

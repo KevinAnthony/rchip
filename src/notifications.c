@@ -23,26 +23,38 @@
 #include	"sql.h"
 #include	"notifications.h" 
 #ifndef _WIN32
-	#include 	<dbus/dbus.h>
-	#include	<dbus/dbus-glib.h>
+#include 	<dbus/dbus.h>
+#include	<dbus/dbus-glib.h>
 #endif
 #include	<glib.h>
 #include	<glib/gprintf.h>
 #include	<string.h>
 #ifdef _WIN32
-	#include	<winsock.h>
-	#include	<mysql.h>
-	#include	<windows.h>
+#include	<winsock.h>
+#include	<mysql.h>
+#include	<windows.h>
 #else
-	#include	<mysql/mysql.h>
-	#include	<sys/utsname.h>
+#include	<mysql/mysql.h>
+#include	<sys/utsname.h>
 #endif
 
 
 
-
+/* 
+ * pass notifcations to host devices
+ *
+ * Ticker String is the text that is displayed on the menu bar when the message is first receaved
+ * Notification title is the bold, usally short, title of the notification when you pull down the notification bar
+ * Notification text is the text unter the title, more descriptive
+ *
+ */
 gboolean set_notification(char* tickerString,char* notificationTitle,char* notificationText) {
 	#ifdef _SQL
+	/* 
+	 * nelem is the number of elements in the array
+	 * size is the size in bytes of each element
+	 * base is a pointer to the first byte of the first element of the array
+	 */
 	size_t nelem;
 	size_t size;
 	char* base;
@@ -50,11 +62,14 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	nelem=get_nelem();
 	base = g_malloc(nelem*size);
 	get_active_devices(base,size,nelem);
+	/* we allocate and build the message, when passed to a device they are pipe | delineated */
 	char* msg = (char *)g_malloc(sizeof(tickerString)+sizeof(notificationTitle)+sizeof(notificationText)+5);
 	g_sprintf(msg,"%s|%s|%s",tickerString,notificationTitle,notificationText);
+	/* TMSG command tells the device to display the notification*/	
 	char* cmd = "TMSG";
 	char* recipt = g_malloc(size);
 	char* name = NULL;
+	/* we get the current hostname of the PC this program is running on */
 	#ifndef _WIN32
 		struct utsname uts;
 		uname( &uts );
@@ -75,6 +90,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 		*p='\0';
 
 	#endif
+	/* For each element in the array, we build a query, and send it to the device */
 	for (int i = 0; i < nelem; i++) {
 		char* elem = base+(i*size);
 		strcpy(recipt,elem);
@@ -83,6 +99,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 		sql_exec_quary(query);
 		g_free(query);
 	}
+	/* And we free everything */
 	g_free(recipt);
 	g_free(msg);
 	g_free(name);
@@ -92,6 +109,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	return FALSE;
 	#endif
 }
+/* I'm really not sure what this does, other then make this more then a one function */
 #ifndef _WIN32
 	void get_torrent_info(DBusGProxy* proxy,char* torrent) 
 	{

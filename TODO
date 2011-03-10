@@ -1,6 +1,6 @@
-	* switch from gconf to gsettings
+	* switch from coded based to xml based soap command handling
 		Kevin
-		
+	
 	* in mysql_init() we need to check for the tables existatnce, and if it's doesn't exist, create it
 		Kevin
 
@@ -9,3 +9,7 @@
 
 	* Comments!
 		Kevin
+
+
+
+It occered to me, that i'm putting 'Kevin' after every upgrade, because i'm the only supporter.  I would love a partner...

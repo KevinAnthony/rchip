@@ -1,0 +1,12 @@
+RCHIP
+
+installs rchip in the /usr/bin folder
+
+as of now, you need an sql table already set up.
+
+it requires an active mysql server
+
+KNOWN BUGS
+None yet.
+
+
