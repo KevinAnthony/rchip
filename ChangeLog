@@ -1,3 +1,314 @@
+2011-03-19  KevinAnthony <Kevin@nosideracing.com>
+
+  * Makefile.am, configure, configure.ac, data/Makefile.am,
+  data/apps.noside.rchip.gschema.xml, data/icons-hicolor/Makefile.am,
+  data/pluggable-xml/Makefile.am, data/pluggable-xml/banshee.music.xml,
+  data/pluggable-xml/rhythmbox.music.xml,
+  data/pluggable-xml/smplayer.video.xml, data/settings-xml/Makefile.am,
+  data/settings-xml/apps.noside.rchip.gschema.xml, data/settings-xml/music.txt,
+  data/settings-xml/test.xml, data/ui/Makefile.am, doc/Makefile.am,
+  doc/PLUGABLEXML, man/Makefile.am, src/Makefile.am, src/cmdhandler.c,
+  src/cmdhandler.h, src/dbus.c, src/dbus.h, src/main.c, src/notifications.c,
+  src/notifications.h, src/settings.c, src/settings.h, src/sql.c, src/tray.c,
+  src/tray.h, src/xml.c, src/xml.h: Now supports plugableXML for commands, see
+  doc/PLUGGABLE for more info
+
+2011-03-10  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * Makefile.am, TODO, configure, configure.ac, doc/Makefile.am, doc/OVERVIEW,
+  man/Makefile.am, man/rchip.1, src/Makefile.am, src/main.c,
+  src/notifications.c, src/settings.c: Added doc and man
+
+2011-03-09  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * data/apps.noside.rchip.gschema.xml, src/cmdhandler.h, src/dbus.h,
+  src/main.c, src/notifications.h, src/settings.c, src/settings.h,
+  src/showlist.h, src/sql.c, src/sql.h, src/status.h, src/tray.h, src/utils.h:
+  fixed a bug with free(pInfo) and gsettings not getting set properly
+
+2011-03-08  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * configure, configure.ac: small bug fix
+
+  * TODO, autogen.sh, configure, configure.ac,
+  data/apps.noside.rchip.gschema.xml, scripts/build.sh, src/cmdhandler.c,
+  src/dbus.c, src/main.c, src/resource.rc, src/settings.c, src/settings.h,
+  src/sql.c, src/tray.c: finally made the switch to gsettings
+
+2011-03-07  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * scripts/build.sh: Added build commands -s(silent) -i(install)
+
+2011-03-06  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * TODO, configure, configure.ac, scripts/build.sh, src/cmdhandler.c,
+  src/dbus.c, src/dbus.h, src/main.c, src/notifications.c, src/resource.rc,
+  src/settings.c, src/settings.h, src/sql.c, src/tray.c, src/utils.c: cleaned
+  up includes
+
+2011-03-06  KevinAnthony <Kevin@nosideracing.com>
+
+  * scripts/build.sh: fixed a small bug in build.sh
+
+  * configure, configure.ac, scripts/build.sh, src/cmdhandler.c, src/dbus.c,
+  src/main.c, src/notifications.c, src/settings.c, src/showlist.c, src/sql.c,
+  src/tray.c, src/utils.c: moved from stdlib to glib for malloc, free printf
+
+2011-03-05  Kevin.Anthony <Kevin@nosideracing.com>
+
+  * Makefile.am, configure.ac, data/Makefile.am, data/ui/Makefile.am: Fixed a
+  gsetting install bug, ready to migrate to gsettings
+
+2011-03-05  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * configure.ac, data/rchip.desktop, src/tray.c: fixed small bug with tray
+  icon
+
+2011-03-04  Kevin <kevin.s.anthony@gmail.com>
+
+  * Makefile.am, configure.ac, description-pak, doc-pak/AUTHORS,
+  doc-pak/COPYING, doc-pak/ChangeLog, doc-pak/INSTALL, doc-pak/README,
+  doc-pak/TODO, src/main.c, src/status.c: fixed a small error when
+  -disable-mysql --enable-banshee
+
+  * INSTALL, Makefile.am, Makefile.in, aclocal.m4, autogen.sh,
+  build/icon-theme-installer, config.h.in, config.status, configure,
+  configure.ac, data/Makefile.am, data/Makefile.in,
+  data/icons-hicolor/Makefile.am, data/icons-hicolor/rchip-server-16.png,
+  data/icons-hicolor/rchip-server-192.png,
+  data/icons-hicolor/rchip-server-22.png,
+  data/icons-hicolor/rchip-server-24.png,
+  data/icons-hicolor/rchip-server-256.png,
+  data/icons-hicolor/rchip-server-32.png,
+  data/icons-hicolor/rchip-server-48.png,
+  data/icons-hicolor/src/rchip_client.svg,
+  data/icons-hicolor/src/rchip_server.svg, data/icons/Makefile.am,
+  data/icons/Makefile.in, data/icons/hicolor/16x16/Makefile.am,
+  data/icons/hicolor/16x16/Makefile.in,
+  data/icons/hicolor/16x16/apps/Makefile.am,
+  data/icons/hicolor/16x16/apps/Makefile.in,
+  data/icons/hicolor/16x16/apps/rchip_server.png,
+  data/icons/hicolor/22x22/Makefile.am, data/icons/hicolor/22x22/Makefile.in,
+  data/icons/hicolor/22x22/apps/Makefile.am,
+  data/icons/hicolor/22x22/apps/Makefile.in,
+  data/icons/hicolor/22x22/apps/rchip_server.png,
+  data/icons/hicolor/24x24/Makefile.am, data/icons/hicolor/24x24/Makefile.in,
+  data/icons/hicolor/24x24/apps/Makefile.am,
+  data/icons/hicolor/24x24/apps/Makefile.in,
+  data/icons/hicolor/24x24/apps/rchip_server.png,
+  data/icons/hicolor/256x256/Makefile.am,
+  data/icons/hicolor/256x256/Makefile.in,
+  data/icons/hicolor/256x256/apps/Makefile.am,
+  data/icons/hicolor/256x256/apps/Makefile.in,
+  data/icons/hicolor/256x256/apps/rchip_server.png,
+  data/icons/hicolor/32x32/Makefile.am, data/icons/hicolor/32x32/Makefile.in,
+  data/icons/hicolor/32x32/apps/Makefile.am,
+  data/icons/hicolor/32x32/apps/Makefile.in,
+  data/icons/hicolor/32x32/apps/rchip_server.png,
+  data/icons/hicolor/48x48/Makefile.am, data/icons/hicolor/48x48/Makefile.in,
+  data/icons/hicolor/48x48/apps/Makefile.am,
+  data/icons/hicolor/48x48/apps/Makefile.in,
+  data/icons/hicolor/48x48/apps/rchip_server.png,
+  data/icons/hicolor/Makefile.am, data/icons/hicolor/Makefile.in,
+  data/icons/hicolor/scalable/Makefile.am,
+  data/icons/hicolor/scalable/Makefile.in,
+  data/icons/hicolor/scalable/apps/Makefile.am,
+  data/icons/hicolor/scalable/apps/Makefile.in,
+  data/icons/hicolor/scalable/apps/rchip_server.svg, data/icons/src/Makefile,
+  data/icons/src/Makefile.am, data/icons/src/Makefile.in,
+  data/icons/src/rchip_client.svg, data/icons/src/rchip_server.svg,
+  data/ui/Makefile.am, data/ui/Makefile.in, depcomp, description-pak,
+  doc-pak/AUTHORS, doc-pak/COPYING, doc-pak/ChangeLog, doc-pak/INSTALL,
+  doc-pak/README, doc-pak/TODO, install-sh, missing, scripts/change_log_create,
+  scripts/changelogCreate, scripts/gnu_file.sh, scripts/icon_search,
+  src/Makefile.am, src/Makefile.in, src/cmdhandler.c, src/dbus.c, src/main.c,
+  src/tray.h: flattned the icon process, made some nice changes to the automake
+  commands. Fixed some warnings in cmdhandler when compileing with nosql
+  support
+
+2011-03-03  Kevin <kevin.s.anthony@gmail.com>
+
+  * Makefile, autom4te.cache/output.0, autom4te.cache/output.1,
+  autom4te.cache/requests, autom4te.cache/traces.0, autom4te.cache/traces.1,
+  config.h, config.h.in~, config.log, config.status, configure, configure.ac,
+  data/Makefile.am, data/Makefile.in, data/icons/src/Makefile,
+  data/rchip_status_window.glade, data/ui/Makefile.am, data/ui/Makefile.in,
+  data/ui/rchip_status_window.glade, stamp-h1: fix a make clean error, moved
+  .glade files to own subdir
+
+  * TODO, config.log, src/tray.c, src/tray.h: added some comments to tray.c
+
+  * Makefile, TODO, autom4te.cache/output.0, autom4te.cache/output.1,
+  autom4te.cache/requests, autom4te.cache/traces.0, autom4te.cache/traces.1,
+  config.h, config.log, config.status, configure, configure.ac,
+  data/icons/Makefile, data/icons/hicolor/beaker_blue.png,
+  data/icons/hicolor/beaker_green.png, data/icons/hicolor/beaker_red.png,
+  data/icons/hicolor/beaker_yellow.png, data/icons/hicolor/flask_blue.png,
+  data/icons/hicolor/flask_green.png, data/icons/hicolor/flask_red.png,
+  data/icons/hicolor/flask_yellow.png, data/icons/hicolor/rchip_client.png,
+  data/icons/hicolor/rchip_server.png, data/icons/src/Makefile,
+  data/icons/svg/Makefile.am, data/icons/svg/Makefile.in,
+  data/icons/svg/rchip_client.svg, data/icons/svg/rchip_server.svg,
+  src/.tray.c.swp, src/cmdhandler.c, src/cmdhandler.h, src/dbus.bak.c,
+  src/dbus.c, src/dbus.h, src/main.c, src/notifications.c, src/notifications.h,
+  src/settings.c, src/settings.h, src/showlist.c, src/showlist.h, src/sql.c,
+  src/sql.h, src/status.c, src/status.h, src/tray.c, src/tray.h, src/utils.c,
+  src/utils.h: Added GLN copyright to top of all src files
+
+  * Makefile, Makefile.am, Makefile.in, TODO, aclocal.m4,
+  autom4te.cache/output.0, autom4te.cache/output.1, autom4te.cache/requests,
+  autom4te.cache/traces.0, autom4te.cache/traces.1, config.h, config.h.in,
+  config.h.in~, config.log, config.status, configure, configure.ac,
+  data/Makefile.am, data/Makefile.in, data/icons/Makefile.am,
+  data/icons/Makefile.in, data/icons/hicolor/16x16/Makefile.am,
+  data/icons/hicolor/16x16/Makefile.in,
+  data/icons/hicolor/16x16/apps/Makefile.am,
+  data/icons/hicolor/16x16/apps/Makefile.in,
+  data/icons/hicolor/16x16/apps/rchip_server.png,
+  data/icons/hicolor/22x22/Makefile.am, data/icons/hicolor/22x22/Makefile.in,
+  data/icons/hicolor/22x22/apps/Makefile.am,
+  data/icons/hicolor/22x22/apps/Makefile.in,
+  data/icons/hicolor/22x22/apps/rchip_server.png,
+  data/icons/hicolor/24x24/Makefile.am, data/icons/hicolor/24x24/Makefile.in,
+  data/icons/hicolor/24x24/apps/Makefile.am,
+  data/icons/hicolor/24x24/apps/Makefile.in,
+  data/icons/hicolor/24x24/apps/rchip_server.png,
+  data/icons/hicolor/256x256/Makefile.am,
+  data/icons/hicolor/256x256/Makefile.in,
+  data/icons/hicolor/256x256/apps/Makefile.am,
+  data/icons/hicolor/256x256/apps/Makefile.in,
+  data/icons/hicolor/256x256/apps/rchip_server.png,
+  data/icons/hicolor/32x32/Makefile.am, data/icons/hicolor/32x32/Makefile.in,
+  data/icons/hicolor/32x32/apps/Makefile.am,
+  data/icons/hicolor/32x32/apps/Makefile.in,
+  data/icons/hicolor/32x32/apps/rchip_server.png,
+  data/icons/hicolor/48x48/Makefile.am, data/icons/hicolor/48x48/Makefile.in,
+  data/icons/hicolor/48x48/apps/Makefile.am,
+  data/icons/hicolor/48x48/apps/Makefile.in,
+  data/icons/hicolor/48x48/apps/rchip_server.png,
+  data/icons/hicolor/Makefile.am, data/icons/hicolor/Makefile.in,
+  data/icons/hicolor/scalable/Makefile.am,
+  data/icons/hicolor/scalable/Makefile.in,
+  data/icons/hicolor/scalable/apps/Makefile.am,
+  data/icons/hicolor/scalable/apps/Makefile.in,
+  data/icons/hicolor/scalable/apps/rchip_server.svg, data/icons/src/Makefile,
+  data/icons/src/Makefile.am, data/icons/src/Makefile.in,
+  data/icons/src/rchip_client.svg, data/icons/src/rchip_server.svg,
+  data/rchip.desktop, data/rchip_status_window.glade, src/.tray.c.swp,
+  src/Makefile.am, src/Makefile.in, src/dbus.c, src/main.c, src/status.c,
+  src/status.h, src/tray.c, src/utils.h, stamp-h1: GNU complice build
+
+2011-02-28  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * Makefile.in, TODO, aclocal.m4, config.h.in, config.status, configure,
+  configure.ac, data/Makefile.am, data/Makefile.in,
+  data/apps.noside.rchip.gschema.xml, data/beaker_blue.png,
+  data/beaker_green.png, data/beaker_red.png, data/beaker_yellow.png,
+  data/flask_blue.png, data/flask_green.png, data/flask_red.png,
+  data/flask_yellow.png, data/icons/Makefile, data/icons/Makefile.am,
+  data/icons/Makefile.in, data/icons/hicolor/Makefile.am,
+  data/icons/hicolor/Makefile.in, data/icons/hicolor/beaker_blue.png,
+  data/icons/hicolor/beaker_green.png, data/icons/hicolor/beaker_red.png,
+  data/icons/hicolor/beaker_yellow.png, data/icons/hicolor/flask_blue.png,
+  data/icons/hicolor/flask_green.png, data/icons/hicolor/flask_red.png,
+  data/icons/hicolor/flask_yellow.png, data/icons/hicolor/rchip_client.png,
+  data/icons/hicolor/rchip_server.png, data/icons/svg/Makefile.am,
+  data/icons/svg/Makefile.in, data/icons/svg/rchip_client.svg,
+  data/icons/svg/rchip_server.svg, data/rchip_client.png,
+  data/rchip_client.svg, data/rchip_server.png, data/rchip_server.svg,
+  src/Makefile.am, src/Makefile.in, src/dbus.c, src/main.c, src/tray.c,
+  src/tray.h: moved some files around, created a schema file
+
+2011-02-26  Kevin <kevin.s.anthony@gmail.com>
+
+  * src/cmdhandler.c, src/dbus.c, src/main.c: Fixed a small error
+
+  * COPYING, Makefile.in, TODO, config.h.in, config.status, configure,
+  configure.ac, data/Makefile.am, data/Makefile.in, data/msdaemon.desktop,
+  data/msdaemon.exe.lnk, data/msdaemon.ico, data/msdaemon.png,
+  data/msdaemon.svg, data/msremote.png, data/msremote.svg, data/rchip.desktop,
+  data/rchip.exe.lnk, data/rchip.ico, data/rchip_client.png,
+  data/rchip_client.svg, data/rchip_server.png, data/rchip_server.svg,
+  scripts/winInstaller.nsi, src/.dbus.c.swp, src/Makefile.am, src/Makefile.in,
+  src/cmdhandler.c, src/dbus.bak.c, src/dbus.c, src/dbus.h, src/main.c,
+  src/msDaemon.nsi, src/msdaemon.c, src/mstray.c, src/mstray.h,
+  src/notifications.c, src/settings.c, src/showlist.c, src/sql.c, src/tray.c,
+  src/tray.h, src/utils.c, src/utils.h: Upgraded from dbus-glib to GDbus and
+  music now suports banshee
+
+2011-02-23  Kevin <kevin.s.anthony@gmail.com>
+
+  * config.h.in, config.status, configure, configure.ac, src/cmdhandler.c,
+  src/dbus.c, src/msdaemon.c, src/mstray.c, src/notifications.c,
+  src/settings.c, src/showlist.c, src/sql.c, src/utils.c: Added verbose output
+  settings(0-5) rather then binary _DEBUG or _SILENT
+
+2011-02-23  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * TODO, config.status, src/mstray.c, src/mstray.h, src/notifications.c,
+  src/notifications.h, src/settings.c, src/settings.h, src/sql.c: normilized
+  funtion names
+
+2011-02-23  Kevin <kevin.s.anthony@gmail.com>
+
+  * configure.ac: :)
+
+  * TODO: :)
+
+  * Makefile.in, config.status, configure, configure.ac, src/msdaemon.c,
+  src/notifications.c, src/settings.h: Notifications now uses the list from
+  sql.h of known hosts to report it's adds to.  Also it uses the computers
+  hostname, rather then being hardcoded.
+
+2011-02-22  Kevin <kevin.s.anthony@gmail.com>
+
+  * config.status, configure, src/msdaemon.c, src/mstray.c, src/sql.c: changed
+  "pathToRoot" to VIDEO_ROOT defined in settings.h
+
+  * src/settings.c, src/settings.h: wrote the getsetting fuction
+
+  * src/notifications.c: Changed the way malloc works, so large file names
+  don't crash to program
+
+  * TODO: New file, to track what needs to be done
+
+  * configure.ac, src/mstray.c: Bug Fix with about box
+
+  * config.status: changed file permissions
+
+  * src/settings.c: Added a false return so the program works, for now
+
+  * Makefile.am, Makefile.in: We were deleting a file on make clean we
+  shouldn't have been
+
+2011-02-22  KevinAnthony <Kevin.S.Anthony@gmail.com>
+
+  * src/dbus.c, src/msdaemon.c, src/notifications.c, src/settings.c,
+  src/showlist.c, src/utils.c: Added <config.h> include
+
+  * src/mstray.h: surrouned activate with #if GTK >= 3
+
+  * src/mstray.c: included <config.h> and fixed link to icon file
+
+  * src/sql.c, src/sql.h: surrouned the entire file with #ifdef _SQL allowing
+  for the use of --disable-mysql
+
+  * scripts/changelogCreate: Changed location of ChangeLog so that it was in
+  the root directory
+
+  * src/cmdhandler.c: Put #ifdef _SQL around all calls to sql.h  This allows
+  for --disable-sql to funciton properly
+
+  * autogen.sh: small script to automaticlly reload automake confiuration
+
+  * AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am, Makefile.in,
+  config.h.in, config.status, configure, configure.ac, data/Makefile.am,
+  data/Makefile.in, depcomp, install-sh, missing, src/Makefile.am,
+  src/Makefile.in: New Files used for automake
+
+  * Makefile.inc, src/Makefile, src/Makefile.win: Removed because we are now
+  using automake
+
 2011-02-21  Kevin <kevin.s.anthony@gmail.com>
 
   * src/mstray.c, src/mstray.h: We now use GtkApplication so that you can't

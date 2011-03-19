@@ -1,2 +1,8 @@
-Something intresting here...
-eventually
+General Information
+===================
+
+rchip stands for Remote Controlled Home automation Integration Program.  Using a MySQL database to hold the command queue, almost any front end can send commands to this program.
+
+for example, the MySQL database can be populated by a SOAP frontend, receving commands from a phone, it can be populated by a timer program on another machine, or even an ardiuino with a tempature sensor.  anything that can connect to MySQL either directly or threw a secondary program, can be used to control your music and video's.
+
+

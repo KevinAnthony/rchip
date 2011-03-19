@@ -1,0 +1,6 @@
+What's New
+==========================
+
+Now supports loading XML files(buggy) for dbus and system commands for scripting your music and video programs
+
+see doc/PLUGGABLEXML for more info or look at data/pluggable-xml for examples
