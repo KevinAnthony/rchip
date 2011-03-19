@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MUSIC>
+	<connection>
+		<type>DBUS</type> 
+		<bus_name>org.bansheeproject.Banshee</bus_name>
+	        <bus_path>/org/bansheeproject/Banshee/PlayerEngine</bus_path>
+	</connection>
+	<command>
+	        <name>NEXTRB</name>
+	        <type>DBUS</type>
+	        <dbus_command>org.bansheeproject.Banshee.PlaybackController.Next</dbus_command>
+		<argument_type>(b)</argument_type>
+		<argument>1</argument>
+	</command>
+	<command>
+	        <name>BACKRB</name>
+	        <type>DBUS</type>
+	        <dbus_command>org.bansheeproject.Banshee.PlaybackController.Previous</dbus_command>
+		<argument_type>(b)</argument_type>
+	        <argument>1</argument>
+	</command>
+	<command>
+	        <name>PLAYRB</name>
+	        <type>DBUS</type>
+	        <dbus_command>org.bansheeproject.Banshee.PlayerEngine.Play</dbus_command>
+	</command>
+	<command>
+	        <name>STOPRB</name>
+	        <type>DBUS</type>
+	        <dbus_command>org.bansheeproject.Banshee.PlayerEngine.Pause</dbus_command>
+	</command>
+</MUSIC>
+

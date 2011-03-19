@@ -1,7 +1,7 @@
 <schemalist>
 	<schema id="apps.noside.rchip.settings" path="/apps/noside/rchip/settings/">
 		<key name="raidroot" type="s">
-			<default>"Tamatebako"</default>
+			<default>"/media/Tamatebako"</default>
 			<summary>Path</summary>
 			<description>The Path to the root directory of the raid server.</description>
 		</key>
@@ -30,5 +30,15 @@
 			<summary>Max HostName Size</summary>
 			<description>The largest number of charicters hostname can contain.</description>
 		</key>
+		<key name="xml-music" type="s">
+			<default>"/usr/local/share/noside/xml/banshee.music.xml"</default>
+			<summary>music xml file</summary>
+			<description>The XML file which contains the music commands for the player we are using</description>
+		</key>
+		<key name="xml-video" type="s">
+                        <default>"VIDEO.XML"</default>
+                        <summary>video xml file</summary>
+                        <description>The XML file which contains the video commands for the player we are using</description>
+                </key>
 	</schema>
 </schemalist>

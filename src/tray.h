@@ -36,8 +36,12 @@ void 				tray_menu 					( GtkStatusIcon*, guint, guint, gpointer );
 void 				add_files					( GtkWidget*, gpointer );
 void 				add_folders					( GtkWidget*, gpointer );	
 void 				about_box					( GtkWidget*, gpointer );
+void				change_music					( GtkWidget*, gpointer );
+void				change_video					( GtkWidget*, gpointer );
 void 				add_folder_to_playqueue				( char* );
 int 				file_type					( char* );
 GtkStatusIcon* 			create_tray_icon				( void );
 GtkWidget* 			create_tray_menu				( GtkStatusIcon* );
+void				set_xml_menu					( GtkWidget*,GtkWidget*);
+void 				set_xml_menu_with_path				( GtkWidget*,GtkWidget*,char*);
 #endif

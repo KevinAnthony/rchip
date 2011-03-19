@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MUISC>
+	<connection>
+		<type>DBUS</type>
+		<bus_name>org.gnome.Rhythmbox</bus_name>
+		<bus_path>/org/gnome/Rhythmbox/Shell>
+	</connection>
+	<command>
+		<name>NEXTRB</name>
+		<type>DBUS</type>
+		<dbus_command>org.gnome.Rhythmbox.Player.next</dbus_command>
+	</command>
+	<command>
+	        <name>BACKRB</name>
+	        <type>DBUS</type>
+	        <dbus_command>org.gnome.Rhythmbox.Player.previous</dbus_command>
+	</command>
+	<command>
+	        <name>PLAYRB</name>
+	        <type>DBUS</type>
+	        <dbus_command>org.gnome.Rhythmbox.Player.playPause</dbus_command>
+		<argument_type>(b)</argument_type>
+		<argument>TRUE</argument>
+	</command>
+	<command>
+	        <name>STOPRB</name>
+	        <type>DBUS</type>
+	        <dbus_command>org.gnome.Rhythmbox.Player.playPause</dbus_command>
+	        <argument_type>(b)</argument_type>
+	        <argument>TRUE</argument>
+		<comment>For Rhythmbox, stop and play are the same</comment>
+	</command>
+</MUSIC>

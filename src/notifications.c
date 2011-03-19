@@ -22,10 +22,6 @@
 
 #include	"sql.h"
 #include	"notifications.h" 
-#ifndef _WIN32
-#include 	<dbus/dbus.h>
-#include	<dbus/dbus-glib.h>
-#endif
 #include	<glib.h>
 #include	<glib/gprintf.h>
 #include	<string.h>
@@ -110,6 +106,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	#endif
 }
 /* I'm really not sure what this does, other then make this more then a one function */
+/*
 #ifndef _WIN32
 	void get_torrent_info(DBusGProxy* proxy,char* torrent) 
 	{
@@ -117,4 +114,4 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 		g_printf("Torrent:%s",torrent);
 		#endif
 	}
-#endif
+#endif*/

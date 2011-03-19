@@ -1,9 +1,9 @@
-m4_define([rchip_version_major], [1])
-m4_define([rchip_version_minor], [6])
-m4_define([rchip_version_micro], [1])
+m4_define([rchip_version_major], [2])
+m4_define([rchip_version_minor], [0])
+m4_define([rchip_version_micro], [0])
 
 dnl set to 0 when doing an official release
-m4_define([rchip_version_pre_release], [4])
+m4_define([rchip_version_pre_release], [11])
 
 m4_define([concat], $1$2$3$4)
 
@@ -81,12 +81,12 @@ if test "x$HAVE_GLIB" != "xyes" ; then
   AC_CHECK_LIB(glib-2.0, g_list_append, HAVE_GLIB="maybe", sweep_config_ok="no")
 fi
 
-PKG_CHECK_MODULES(DBUS, dbus-glib-1 >= 0.70 dbus-1 >= 0.70)
-AC_SUBST(DBUS_CFLAGS)
-AC_SUBST(DBUS_LIBS)
-if test "x$HAVE_DBUS" != "xyes" ; then
-  AC_CHECK_LIB(dbug-1, dbus_init, HAVE_DBUS="maybe", sweep_config_ok="no")
-fi
+#PKG_CHECK_MODULES(DBUS, dbus-glib-1 >= 0.70 dbus-1 >= 0.70)
+#AC_SUBST(DBUS_CFLAGS)
+#AC_SUBST(DBUS_LIBS)
+#if test "x$HAVE_DBUS" != "xyes" ; then
+#  AC_CHECK_LIB(dbug-1, dbus_init, HAVE_DBUS="maybe", sweep_config_ok="no")
+#fi
 
 LIBXML2_REQUIRED=2.5.10
 PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
@@ -94,12 +94,12 @@ LIBXML_VERSION=`xml2-config --version`
 AC_SUBST(LIBXML2_CFLAGS)
 AC_SUBST(LIBXML2_LIBS)
 
-PKG_CHECK_MODULES(GCONF, [gconf-2.0])
-AC_SUBST(GCONF_CFLAGS)
-AC_SUBST(GCONF_LIBS)
-if test "x$HAVE_GCONF" != "xyes" ; then
-	AC_CHECK_LIB(gconf-2.0, gconf_client_get_default, HAVE_GCONF="maybe", sweep_config_ok="no")
-fi
+#PKG_CHECK_MODULES(GCONF, [gconf-2.0])
+#AC_SUBST(GCONF_CFLAGS)
+#AC_SUBST(GCONF_LIBS)
+#if test "x$HAVE_GCONF" != "xyes" ; then
+#	AC_CHECK_LIB(gconf-2.0, gconf_client_get_default, HAVE_GCONF="maybe", sweep_config_ok="no")
+#fi
 
 AC_ARG_ENABLE(mysql,[  --disable-mysql         Turns off SQL(program does not do anything],[MYSQL="no"],[MYSQL="yes"])
 MYSQLCONFIG="/usr/bin/mysql_config"
@@ -124,7 +124,7 @@ AC_MSG_RESULT($MYSQL_LIBS)
 
 AC_ARG_ENABLE(debug,AS_HELP_STRING(--enable-debug={0-5},prints verbose output for debugging))
 case "x$enable_debug" in
-	x)	AC_DEFINE(VERBOSE,0,"Output Verbosity Level");;
+	x)	AC_DEFINE(VERBOSE,1,"Output Verbosity Level");;
 	x0)	AC_DEFINE(VERBOSE,0,"Output Verbosity Level");;
 	x1)	AC_DEFINE(VERBOSE,1,"Output Verbosity Level");;
 	x2)	AC_DEFINE(VERBOSE,2,"Output Verbosity Level");;
@@ -153,19 +153,21 @@ if test "x$DBUS" != "xno"; then
 				AC_MSG_ERROR([*** --enable-banshee flag used, but BANSHEE not present, please install BANSHEE or do not use flag])
 			else
 				AC_DEFINE(BANSHEE,,"Enable Banshee")
+				AC_SUBST(MUSIC,"${datadir}/noside/xml/banshee.music.xml")
 			fi
 		else
 			if test "x$HAVE_RHYTHMBOX" = "xfalse" ; then
 				AC_DEFINE(BANSHEE,,"Enable Banshee")
 			else
               			AC_DEFINE(RHYTHMBOX,,"Enable Rhythmbox")
+				AC_SUBST(MUSIC,"${datadir}/noside/xml/rhythmbox.music.xml")
 			fi
 		fi
         fi
 else
 	AC_DEFINE(DBUSOFF,,"Disable Dbus totally")
 fi
-
+AC_SUBST(VIDEO,"${datadir}/noside/xml/smplayer.video.xml")
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h])
@@ -176,7 +178,7 @@ AC_HEADER_STDBOOL
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-AC_CHECK_FUNCS([strstr uname])
+AC_CHECK_FUNCS([strstr uname assert])
 
 AC_OUTPUT([
 Makefile
@@ -184,6 +186,8 @@ src/Makefile
 data/Makefile
 data/icons-hicolor/Makefile
 data/ui/Makefile
+data/pluggable-xml/Makefile
+data/settings-xml/Makefile
 man/Makefile
 doc/Makefile
 ])

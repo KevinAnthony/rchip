@@ -33,6 +33,7 @@ install-data-local:
 uninstall-hook: 
 	@-$(install_icon_exec) -u $(theme_icons)
 
+DISTCLEANFILES = Makefile
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = $(wildcard *.png *.svg) $(wildcard src/*.svg)
 

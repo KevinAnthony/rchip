@@ -1,0 +1,39 @@
+The idea behind plugablexml is to allow expansion from the stock commands, and programs, simply by loading up a diffrent xml file
+
+It can take two types of commands
+DBUS and SYSTEM
+for dbus
+there needs to be a single <connection> string
+connection can be one of too types
+SYSTEM or DBUS
+system doesn't need any aditional commands
+dbus needs a <bus_name> and <dbus_path>
+
+then list all the commands
+dbus commands look like
+<command>
+	<name>incomming soap command</name>
+	<type>DBUS</type>            for now, type must mach type above
+	<dbus_command>abosulte command path, eg org.gnome.rhythmbox.player.play</dbus_command>
+	<argument_type>in G_VARIANT_FORMAT tuple (b,s,i,d)</argument_type>
+	<argument>arguemnt, comma sperated</argument>
+	<comment>some comments about command</comment>
+</command>
+argument, argument_type, comment are optional
+syatem commands look like
+<command>
+	<name>incomming soap command</name>
+	<type>SYSTEM</type>
+	<system_command>system command</system_command>
+	<argument>TRUE if this command takes an argument from command_text from the soap command</argument>
+	<comment>optional comment about this command, if there is an argument, this what it is should be stated here</comment>
+</command>
+Also for dbus files it should have the following node
+<connection>
+	<type>DBUS</type>
+	<bus_name>path.to.bus</bus_name>
+	<bus_path>/path/to/bus/object/</bus_path>
+</connection>
+the root node should be either <MUSIC> or <VIDEO>
+and file should be saved in the following format programName.music.xml or programname.video.xml
+

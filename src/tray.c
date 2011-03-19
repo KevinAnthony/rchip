@@ -22,9 +22,9 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <glib/gprintf.h>
-//#include <stdio.h>
-//#include <stdlib.h>
 #include <string.h>
+#include <glob.h>
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -33,6 +33,7 @@
 #include "utils.h"
 #include "settings.h"
 #include "status.h"
+#include "xml.h"
 
 void start_tray(){
 	#ifdef GTK3
@@ -195,6 +196,7 @@ void add_folder_to_playqueue(char *dirFile){
 				case FTDONOTPROC:
 					break;
 			}
+			g_free(newDirFile);
 		}
 		closedir(dp);
 	}
@@ -240,6 +242,19 @@ void about_box(GtkWidget *widget, gpointer gdata){
 	gtk_widget_show_all (dialog);
 }
 
+void change_music(GtkWidget *widget, gpointer gdata){
+	if(!set_setting_str(MUSIC_XML,(char*)gdata)){
+		g_warning("Couldn't set MusicXML\n");
+	}
+	g_free(gdata);
+}
+void change_video(GtkWidget *widget, gpointer gdata){
+	if(!set_setting_str(VIDEO_XML,(char*)gdata)){
+                g_warning("Couldn't set VideoXML\n");
+        }
+	g_free(gdata);
+}
+
 GtkStatusIcon* create_tray_icon() {
 	/* Creates and returns the tray icon */
 	GtkStatusIcon *tray_icon;
@@ -268,15 +283,41 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
 	GtkWidget *about_item;
 	GtkWidget *quit_item;
 
+	GtkWidget *setting_menu;
+	GtkWidget *music_menu;
+	GtkWidget *video_menu;
+
+	GtkWidget *setting_item;
+	GtkWidget *music_item;
+	GtkWidget *video_item;
+
 	tray_menu = gtk_menu_new ();
+
+	setting_menu = gtk_menu_new ();
+	music_menu = gtk_menu_new ();
+	video_menu = gtk_menu_new ();
+	
+	setting_item = gtk_menu_item_new_with_label ("Settings");
+	music_item = gtk_menu_item_new_with_label ("Music Program");
+	video_item = gtk_menu_item_new_with_label ("Video Program");	
+	
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(setting_item),setting_menu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(music_item),music_menu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(video_item),video_menu);
+
+	set_xml_menu(music_menu,video_menu);	
 
 	showsadd_item = gtk_menu_item_new_with_label ("Add Shows from files");
 	folderadd_item = gtk_menu_item_new_with_label ("Add Shows from folders");
 	about_item = gtk_menu_item_new_with_label ("About");
 	quit_item = gtk_menu_item_new_with_label ("Quit");
 
+	gtk_menu_shell_append(GTK_MENU_SHELL (setting_menu),music_item);
+        gtk_menu_shell_append(GTK_MENU_SHELL (setting_menu),video_item);
+
 	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), showsadd_item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), folderadd_item);
+	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), setting_item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), about_item);	
 	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), quit_item);
 
@@ -289,3 +330,79 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
 	return tray_menu;
 }
 
+void set_xml_menu(GtkWidget *music_menu, GtkWidget *video_menu){
+	set_xml_menu_with_path(music_menu,video_menu,PREFIX"/noside/xml/*.xml");
+	set_xml_menu_with_path(music_menu,video_menu,"~/.noside/xml/*.xml");
+}
+void set_xml_menu_with_path(GtkWidget *music_menu, GtkWidget *video_menu,char* path){
+	glob_t data;
+	switch( glob(path, 0, NULL, &data ) ){
+		case 0:
+			break;
+        	case GLOB_NOSPACE:
+			#if VERBOSE >= 1
+            		g_error( "Out of memory\n" );
+			#endif
+            		break;
+        	case GLOB_ABORTED:
+            		#if VERBOSE >= 1
+			g_error( "Reading error\n" );
+            		#endif
+			break;
+        	default:
+            		break;
+    		}
+	for (int i =0;i<data.gl_pathc; i++){
+		char* posOfLastSlash=data.gl_pathv[i];
+		char* ptr = data.gl_pathv[i];
+        	char* sptr = data.gl_pathv[i];
+		char* progName;
+		char* progType;
+		char* nameP;
+		char* typeP;
+		progName = g_malloc(strlen(ptr));
+		progType = g_malloc(strlen(ptr));
+		nameP = progName;
+		typeP = progType;
+        	for (; *ptr != '\0';ptr++) {
+                	if (*ptr == '/') {
+                	        posOfLastSlash = ptr;
+                	}
+        	}
+        	ptr = posOfLastSlash;
+        	ptr++;
+        	sptr=ptr;
+		for (int i = 0; i < 3; i++){
+	                for (; *ptr!='.' ; ptr++){
+	                        if (*ptr == '\0'){
+	                                if (i == 2){ break; }
+	                                #if VERBOSE >= 2
+	                                g_warning("Error: badly formed file name\n");
+	                                g_warning("File Name: %s\n",data.gl_pathv[i]);
+	                                #endif
+	                                return;
+	                        }
+	                        if (i == 0){*nameP++=*ptr;  }
+	                        else if (i == 1){ *typeP++=*ptr; }
+	                        else if (i == 2){ break; }
+                	}
+                	ptr++;
+        	}
+		*nameP='\0';
+		*typeP='\0';
+		if (!(g_strcmp0(progType,"music"))){
+			GtkWidget *item;
+			item = gtk_menu_item_new_with_label(progName);
+			gtk_menu_shell_append(GTK_MENU_SHELL (music_menu), item);
+			g_signal_connect(item,"activate",G_CALLBACK(change_music),(gpointer)g_strdup(sptr));
+		}else if (!(g_strcmp0(progType,"video"))){
+			GtkWidget *item2;
+                        item2 = gtk_menu_item_new_with_label(progName);
+                        gtk_menu_shell_append(GTK_MENU_SHELL (video_menu), item2);
+                        g_signal_connect(item2,"activate",G_CALLBACK(change_video),(gpointer)g_strdup(sptr));
+		}
+		g_free(progName);
+		g_free(progType);
+    	}
+    	globfree( &data );
+}

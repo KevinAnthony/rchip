@@ -4,7 +4,8 @@ CLEANFILES = \
 	*.tar.gz
 
 DISTCLEANFILES = \
-        *.bak \
+        Makefile \
+	*.bak \
         *~ \
         *.pidb
 

@@ -17,16 +17,34 @@
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-#ifndef 			CMDHANDLER_H
-#define 			CMDHANDLER_H
+#ifndef 			XML_H
+#define 			XML_H
 
-#include 			<glib.h>
+#include			<libxml/parser.h>
+#include			<libxml/tree.h>
+#include			<glib.h>
 
-gboolean			delete_from_hosts				( char* );
-char*				get_next_host					( void*,size_t,size_t );
-void				print_list					( void );
-void				get_next_cmd					( void );
-gboolean			process_cmd					( char*,char* );
-void				send_cmd					( char*,char* );
+#ifdef 				LIBXML_TREE_ENABLED
+#ifdef 				LIBXML_OUTPUT_ENABLED
+#define				VALID_XML
+
+gboolean			xml_init					( void );
+void				xml_free					( void );
+void				xml_settings_callback				( void );
+gboolean			xml_find_command				( char* );
+void				find_command					( xmlNode*,char* );
+gboolean			xml_file_exists					( void );
+char*				xml_get_type					( void );
+char*				xml_get_music_or_video				( void );
+gboolean			xml_has_system_argument				( void );
+char*				xml_get_dbus_argument				( void );
+char*				xml_get_dbus_argument_type			( void );
+char*				xml_get_dbus_command				( void );
+char*				xml_get_system_command				( void );
+char*				xml_get_bus_name				( char* );
+char*				xml_get_bus_path				( char* );
+
+#endif
+#endif
 
 #endif

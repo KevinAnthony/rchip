@@ -37,11 +37,11 @@
 #include 	"sql.h"
 #include	"settings.h"
 
-char*		sqlServer;
-char*	 	sqlUsername;
-char*		sqlPassword;
-char*		database;
-int		hostnameMaxSize;
+char*		sqlServer = NULL;
+char*	 	sqlUsername = NULL;
+char*		sqlPassword = NULL;
+char*		database = NULL;
+int		hostnameMaxSize = 0;
 /*  
  *  Here we would if tryOnDisconneced is true, and we are Disconneced
  *  We would try and connect
@@ -59,11 +59,13 @@ gboolean sql_is_connected (int tryOnDisconneced) {
 
 gboolean sql_init ()
 {
-	sqlServer = get_setting_str(SQL_SERVER);
-	sqlUsername = get_setting_str(SQL_USERNAME);
-	sqlPassword = get_setting_str(SQL_PASSWORD);
-	database = get_setting_str(SQL_DATABASE);
-	hostnameMaxSize = get_setting_int(SQL_MAX_NAME);
+	if (sqlServer == NULL){
+		sqlServer = get_setting_str(SQL_SERVER);
+		sqlUsername = get_setting_str(SQL_USERNAME);
+		sqlPassword = get_setting_str(SQL_PASSWORD);
+		database = get_setting_str(SQL_DATABASE);
+		hostnameMaxSize = get_setting_int(SQL_MAX_NAME);
+	}
 	if (mysql!=NULL){
 		mysql_close(mysql);
 		mysql=NULL;
@@ -162,9 +164,9 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 		g_sprintf(*cmdTxt,"%s",row[3] ? row[3] : NULL);
 		g_sprintf(*source,"%s",row[4] ? row[4] : NULL);
 	} else {
-		*cmd = " ";
-		*cmdTxt = " ";
-		*source = " ";
+		*cmd = NULL;
+		*cmdTxt = NULL;
+		*source = NULL;
 		*cmdID = 0;
 	}
 	mysql_free_result(res);

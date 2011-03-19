@@ -1,10 +1,10 @@
 docdir = $(datadir)/doc/@PACKAGE@
-doc_DATA = OVERVIEW
+doc_DATA = OVERVIEW PLUGABLEXML
 
 EXTRA_DIST =                    \
         $(doc_DATA)
 
-CLEANFILES = Makefile
+DISTCLEANFILES = Makefile
 
 MAINTAINERCLEANFILES = \
         Makefile.in

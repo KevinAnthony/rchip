@@ -1,0 +1,66 @@
+<VIDEO>
+	<connection>
+		<type>SYSTEM</type>
+	</connection>
+	<command>
+		<name>STOPSM</name>
+		<type>SYSTEM</type>
+		<system_command>smplayer -send-action stop</system_command>
+		<argument>FALSE</argument>
+	</command>
+	<command>
+		<name>OPENSM</name>
+		<type>SYSTEM</type>
+       		<system_command>smplayer</system_command>
+		<argument>TRUE</argument>
+		<command>The Argument here is the path to the file to open</command>
+	</command>
+	<command>
+		<name>PLAYSM</name>
+		<type>SYSTEM</type>
+		<system_command>smplayer -send-action play</system_command>
+		<argument>FALSE</argument>
+	</command>
+	<command>
+		<name>PAUSESM</name>
+		<type>SYSTEM</type>
+		<system_command>smplayer -send-action pause</system_command>
+		<argument>FALSE</argument>
+	</command>
+
+	<command>
+		<name>SKIPFSM</name>
+		<type>SYSTEM</type>
+		<system_command>smplayer -send-action forward1</system_command>
+		<argument>FALSE</argument>
+		<comment>smplayer has 3 stages of foward, this is stage 1 or ~5 sec</comment>
+	</command>
+	<command>
+		<name>SKIPBSM</name>
+		<type>SYSTEM</type>
+		<argument>FALSE</argument>
+		<system_command>smplayer -send-action rewind1</system_command>
+	</command>
+	<command>
+		<name>FULLONSM</name>
+		<type>SYSTEM</type>
+		<argument>FALSE</argument>
+		<system_command>smplayer -send-action fullscreen</system_command>
+	</command>
+	<command>
+		<name>FULLOFFSM</name>
+		<type>SYSTEM</type>
+		<argument>FALSE</argument>
+		<system_command>smplayer -send-action exit-fullscreen</system_command>
+	</command>
+	<command>
+		<name>MUTESM</name>
+		<type>SYSTEM</type>
+		<system_command>smplayer -send-action mute</system_command>
+	</command>
+	<command>
+		<name>QUITSM</name>
+		<type>SYSTEM</type>
+		<system_command>smplayer -send-action quit</system_command>
+	</command>
+</VIDEO>

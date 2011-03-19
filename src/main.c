@@ -33,6 +33,7 @@
 #include "sql.h"
 #include "cmdhandler.h"
 #endif
+#include "xml.h"
 
 void print_version();
 gboolean parse_command_line_options(int,char**);
@@ -44,7 +45,6 @@ gboolean update_active_devices(gpointer);
 size_t nelem;
 size_t size; 
 char* base;
-static gboolean version = FALSE;
 
 
 
@@ -55,6 +55,9 @@ int main(int argc, char** argv) {
 	GtkStatusIcon *tray_icon;
 	parse_command_line_options(argc,argv);
 	gtk_init(&argc, &argv);
+	if (!xml_init()){
+		g_error("xml_init FAILED\n");
+	}
 	#ifndef _WIN32
 		settings_init();
 	#endif
@@ -95,7 +98,8 @@ int main(int argc, char** argv) {
 }
 
 gboolean parse_command_line_options(int argc, char **argv) {
-        GError *error;
+        static gboolean version = FALSE;
+	GError *error;
         GOptionContext *context;
         static const GOptionEntry options []  = {
         {"version",'v',0, G_OPTION_ARG_NONE,&version,("Version Info"),NULL},
@@ -114,7 +118,7 @@ gboolean parse_command_line_options(int argc, char **argv) {
         if (version){
                 print_version();
                 exit(0);
-        }
+        } 
         return TRUE;
 }
 void print_version(){

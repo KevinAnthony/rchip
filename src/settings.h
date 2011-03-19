@@ -21,22 +21,8 @@
 #ifndef 			SETTINGS_H
 #define 			SETTINGS_H
 
-#ifdef 				_WIN32
-
-#include 			<libxml/parser.h>
-#include 			<libxml/tree.h>
-
-#define 			XMLFILE 					PREFIX"/share/settings.xml"
-
-char* 				get_setting					( char* );
-char* 				find_element_names				( xmlNode*,char* );
-int 				xml_file_exists					( void );
-int 				new_xml_file					( void );
-
-#else
-
 #include 			<glib.h>
-#include 			<gconf/gconf-client.h>
+#include			<gio/gio.h>
 
 #define 			VIDEO_ROOT 					"raidroot"
 #define 			SQL_SERVER 					"sql-server"
@@ -44,11 +30,15 @@ int 				new_xml_file					( void );
 #define				SQL_PASSWORD					"sql-passwd"
 #define				SQL_DATABASE					"sql-db"
 #define				SQL_MAX_NAME					"sql-hostnamesize"
+#define				MUSIC_XML					"xml-music"
+#define				VIDEO_XML					"xml-video"
 
 char* 				get_setting_str					( gchar* );
+gboolean			set_setting_str					( gchar*,gchar* );
 int				get_setting_int					( gchar* );
+gboolean			set_setting_int					( gchar*,int );
 void				settings_unref					( void );
+void				setting_changed					( GSettings*, gchar*, gpointer );
 gboolean 			settings_init					( void );
 
-#endif // # ifdef _WIN32
 #endif
