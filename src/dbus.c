@@ -240,8 +240,12 @@ struct playing_info_music dbus_get_playing_info_music() {
 		 */
 		#ifdef RHYTHMBOX	
 		gboolean playing;
+		char* stateObject = "/org/gnome/Rhythmbox/Player";
+                if (g_strcmp0(stateObject,currentMusicObject) != 0 ){
+                        new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
+                }
 		/* Check to see if the player is playing, if it's not, no point going any further*/
-		GVariant* results =g_dbus_proxy_call_sync(player,"getPlaying",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+		GVariant* results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox.Player.getPlaying",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 		if (error != NULL) {
 			#if VERBOSE >= 1
 			g_error("Error with getPlaying: %s\n",error->message);
@@ -250,12 +254,14 @@ struct playing_info_music dbus_get_playing_info_music() {
 		playing = g_variant_get_boolean(g_variant_get_child_value(results,0));
 		if (playing){
 			/* Get the current playing URI so we can get it's properties*/
-			results =g_dbus_proxy_call_sync(player,"getPlayingUri",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+			results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox.Player.getPlayingUri",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 			if (error == NULL) {
 				/* TODO: we need to check that results <> NULL */
 				const char* uri = g_variant_get_string(g_variant_get_child_value(results,0),NULL);
+				new_proxy("MUSIC",xml_get_bus_name("MUSIC"),"/org/gnome/Rhythmbox/Shell/");
 				/* using the URI above, we need to the the songPorperties */
-				results =g_dbus_proxy_call_sync(shell,"getSongProperties",g_variant_new ("(s)",uri),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+				results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox..Shell.getSongProperties",g_variant_new ("(s)",uri),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+				new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
 				/* TODO: we need to check the error and that result is not NULL */
 				double doubleValue;
 				GVariant* dict = g_variant_get_child_value(results,0);
@@ -287,7 +293,7 @@ struct playing_info_music dbus_get_playing_info_music() {
 				pInfo.Duration = doubleValue;
 				pInfo.isPlaying=playing;
 				/* we get the elaped time playing*/
-				results =g_dbus_proxy_call_sync(player,"getElapsed",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+				results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox.Player.getElapsed",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 				pInfo.Elapised_time = g_variant_get_uint32(g_variant_get_child_value(results,0));
 			} else {
 				#if VERBOSE >= 1
@@ -304,7 +310,6 @@ struct playing_info_music dbus_get_playing_info_music() {
 			pInfo.Duration = 0;
 		}
 		#endif
-		
 		#ifdef BANSHEE
 		/* GetCurrentState returns playing or not playing */
 		char* stateObject = "/org/bansheeproject/Banshee/PlayerEngine";
@@ -327,6 +332,7 @@ struct playing_info_music dbus_get_playing_info_music() {
 				result =g_dbus_proxy_call_sync(musicProxy,"org.bansheeproject.Banshee.PlayerEngine.GetCurrentTrack",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 				GVariant* dict = g_variant_get_child_value(result,0);
 				double doubleValue;
+me
 				/* this works like like loopup above*/
 				char* tempVar = g_malloc(8192);
 				g_variant_lookup(dict,"artist","s",&tempVar);

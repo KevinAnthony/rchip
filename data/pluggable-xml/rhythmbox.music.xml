@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MUISC>
+<MUSIC>
 	<connection>
 		<type>DBUS</type>
 		<bus_name>org.gnome.Rhythmbox</bus_name>
-		<bus_path>/org/gnome/Rhythmbox/Shell>
+		<bus_path>/org/gnome/Rhythmbox/Shell</bus_path>
 	</connection>
 	<command>
 		<name>NEXTRB</name>
