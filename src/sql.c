@@ -156,13 +156,10 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 	}
 	if ((row = mysql_fetch_row(res))) {
 	
-		*cmd = (char*)g_malloc(1024);
-		*cmdTxt = (char*)g_malloc(1024);
-		*source = (char*)g_malloc(1024);
 		*cmdID = atoi(row[0] ? row[0] : NULL);
-		g_sprintf(*cmd,"%s",row[2] ? row[2] : NULL);
-		g_sprintf(*cmdTxt,"%s",row[3] ? row[3] : NULL);
-		g_sprintf(*source,"%s",row[4] ? row[4] : NULL);
+		*cmd = g_strdup_printf("%s",row[2] ? row[2] : NULL);
+		*cmdTxt = g_strdup_printf("%s",row[3] ? row[3] : NULL);
+		*source = g_strdup_printf("%s",row[4] ? row[4] : NULL);
 	} else {
 		*cmd = NULL;
 		*cmdTxt = NULL;
@@ -176,9 +173,7 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 }
 
 void delete_from_cmdQueue(int cmdID) {
-	char *delquery;
-	delquery = (char*) g_malloc (sizeof("delete from cmdQueue where id =;")+sizeof(cmdID));
-	g_sprintf(delquery,"delete from cmdQueue where id =%i;",cmdID);
+	char *delquery = g_strdup_printf("delete from cmdQueue where id =%i;",cmdID);
 	#if VERBOSE >= 4
 	g_printf("Next Cmd Query:%s\n",delquery);
 	#endif
@@ -346,7 +341,7 @@ void get_active_devices(void* base, size_t size, size_t nelem)
        			g_sprintf(hostname,"%.*s", (int) lengths[i],row[i] ? row[i] : "NULL");
 			if (hostname != NULL) {
 				char* temp = base+ (len*size);
-				strcpy(temp,hostname);
+				g_strlcpy(temp,size,hostname);
 				len++;
 			}
    		}
@@ -380,8 +375,7 @@ void update_daemon_sql(){
 		*p='\0';
 
 	#endif
-		char* query =(char *)g_malloc(1024);
-		g_sprintf(query,"INSERT INTO daemonRegister (hostname,pathToRoot) VALUES (\"%s\",\"%s\") ON DUPLICATE KEY UPDATE hostname=\"%s\",pathToRoot=\"%s\";",name,path,name,path);
+		char* query =g_strdup_printf("INSERT INTO daemonRegister (hostname,pathToRoot) VALUES (\"%s\",\"%s\") ON DUPLICATE KEY UPDATE hostname=\"%s\",pathToRoot=\"%s\";",name,path,name,path);
 		sql_exec_quary(query);
 		g_free(query);
 	}

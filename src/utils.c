@@ -26,9 +26,9 @@
 #include "utils.h"
 
 char* replace_str(char* str, char* orig, char* rep){
-	static char buffer[4096];
+	static char buffer[sizeof(orig)+sizeof(rep)+sizeof(str)+1];
 	char* p;
-	if(!(p = strstr(str, orig)))  // Is 'orig' even in 'str'?
+	if(!(p = g_strstr_len(str,-1, orig)))  // Is 'orig' even in 'str'?
     		return str;
   	strncpy(buffer, str, p-str); // Copy characters from 'str' start to 'orig' st$
   	buffer[p-str] = '\0';

@@ -1,10 +1,5 @@
-	* switch from coded based to xml based soap command handling
-		Kevin
 	
 	* in mysql_init() we need to check for the tables existatnce, and if it's doesn't exist, create it
-		Kevin
-
-	* mysql server settings under gconf settings instead of hardcoded
 		Kevin
 
 	* Comments!

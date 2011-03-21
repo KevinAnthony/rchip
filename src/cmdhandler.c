@@ -175,10 +175,8 @@ void send_cmd(char* cmd, char* cmdTxt) {
 		for (int i = 0; i < nelem; i++) {
 			/* current element = (itterator*size)+initial memeory location */
 			char* elem = base+(i*size); 
-			 /* TODO:replace this and g_sprintf with self allocating memory commands :) */
-			strcpy(deviceName,elem);    
-			char* query = (char *)g_malloc(1024);
-			g_sprintf(query,"INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",deviceName);
+			g_strlcpy(deviceName,elem,size);
+			char* query = g_strdup_printf("INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",deviceName);
 			/*  Always free your pointers before they go out of scope */
 			sql_exec_quary(query);
 			g_free(query);

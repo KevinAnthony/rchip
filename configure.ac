@@ -3,7 +3,7 @@ m4_define([rchip_version_minor], [0])
 m4_define([rchip_version_micro], [0])
 
 dnl set to 0 when doing an official release
-m4_define([rchip_version_pre_release], [12])
+m4_define([rchip_version_pre_release], [13])
 
 m4_define([concat], $1$2$3$4)
 
@@ -170,7 +170,7 @@ fi
 AC_SUBST(VIDEO,"${datadir}/noside/xml/smplayer.video.xml")
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h string.h])
+AC_CHECK_HEADERS([stdlib.h string.h assert.h sys/utsname.h glob.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
@@ -178,8 +178,21 @@ AC_HEADER_STDBOOL
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-AC_CHECK_FUNCS([strstr uname assert])
+AC_CHECK_FUNCS(strlen)
+AC_CHECK_FUNCS(uname)
+AC_CHECK_FUNCS(atoi)
+AC_CHECK_FUNCS(strcat)
+AC_CHECK_FUNCS(strncpy)
+AC_CHECK_FUNCS(glob)
+AC_CHECK_FUNCS(globfree)
 
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(uint)
+AC_CHECK_SIZEOF(double)
+AC_CHECK_SIZEOF(size_t)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(ulong)
+AC_CHECK_SIZEOF(glob_t)
 AC_OUTPUT([
 Makefile
 src/Makefile

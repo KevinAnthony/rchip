@@ -212,7 +212,7 @@ gboolean send_command_to_video_player(char* command_name) {
 		g_error("Error with getPlaying: %s\n",error->message);
 		#endif
 		return FALSE;
-	 } else {
+	} else {
 		return TRUE;
 	}
 }
@@ -273,22 +273,19 @@ struct playing_info_music dbus_get_playing_info_music() {
 				 * we then allocate the pInfo field using the length +1(for the \0 char
 				 */
 				g_variant_lookup(dict,"artist","s",&tempVar);
-				pInfo.Artist = g_malloc(strlen(tempVar)+1);
-				strcpy(pInfo.Artist,tempVar);
+				pInfo.Artist = g_strdup(tempVar);
 				g_free(tempVar);
 
 				tempVar=g_malloc(8192);
 				g_variant_lookup(dict,"album","s",&tempVar);
-				pInfo.Album = g_malloc(strlen(tempVar)+1);
-				strcpy(pInfo.Album,tempVar);
-
+				pInfo.Album = g_strdup(tempVar);
 				g_free(tempVar);
+
 				tempVar=g_malloc(8192);
 				g_variant_lookup(dict,"title","s",&tempVar);
-				pInfo.Song = g_malloc(strlen(tempVar)+1);
-				strcpy(pInfo.Song,tempVar);
-
+				pInfo.Song = g_strdup(tempVar);
 				g_free(tempVar);
+
 				g_variant_lookup(dict,"duration","d",&doubleValue);
 				pInfo.Duration = doubleValue;
 				pInfo.isPlaying=playing;
@@ -332,24 +329,20 @@ struct playing_info_music dbus_get_playing_info_music() {
 				result =g_dbus_proxy_call_sync(musicProxy,"org.bansheeproject.Banshee.PlayerEngine.GetCurrentTrack",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
 				GVariant* dict = g_variant_get_child_value(result,0);
 				double doubleValue;
-me
 				/* this works like like loopup above*/
 				char* tempVar = g_malloc(8192);
 				g_variant_lookup(dict,"artist","s",&tempVar);
-				pInfo.Artist = g_malloc(strlen(tempVar)+1);
-				strcpy(pInfo.Artist,tempVar);
+				pInfo.Artist = g_strdup(tempVar);
 				g_free(tempVar);
 
 				tempVar=g_malloc(8192);
 				g_variant_lookup(dict,"album","s",&tempVar);
-				pInfo.Album = g_malloc(strlen(tempVar)+1);
-				strcpy(pInfo.Album,tempVar);
+				pInfo.Album = g_strdup(tempVar);
 				g_free(tempVar);
 
 				tempVar=g_malloc(8192);
 				g_variant_lookup(dict,"name","s",&tempVar);
-				pInfo.Song = g_malloc(strlen(tempVar)+1);
-				strcpy(pInfo.Song,tempVar);
+				pInfo.Song = g_strdup(tempVar);
 				g_free(tempVar);
 
 				g_variant_lookup(dict,"length","d",&doubleValue);

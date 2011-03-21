@@ -21,7 +21,6 @@
 #include <config.h>
 
 #include <gtk/gtk.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
@@ -34,9 +33,9 @@
 void add_file_to_playqueue(char* filepath){
 	//here i really should somehow figure out if it's an anime, a live action, or something else
 	// for now, it's all live action
-	if (strstr(filepath,"/English/Live_Action/") != NULL) {
+if (g_strstr_len(filepath,-1,"/English/Live_Action/") != NULL) {
 		send_cmd("ADDS",live_action(filepath));
-	} else if (strstr(filepath,"/Foreign/Animeted/") != NULL) {
+	} else if (g_strstr_len(filepath,-1,"/Foreign/Animeted/") != NULL) {
 		send_cmd("ADDS",anime(filepath));
 	} else {
 		send_cmd("ADDS",other(filepath));
@@ -108,9 +107,9 @@ char* live_action(char* filepath){
 }
 
 char* anime(char* filepath){
-	if (strstr(filepath,"One_Piece") != NULL) {
+	if (g_strstr_len(filepath,-1,"One_Piece") != NULL) {
 		return std_anime(filepath,"One_Piece");
-	} else if (strstr(filepath,"Fairy_Tail") != NULL) {
+	} else if (g_strstr_len(filepath,-1,"Fairy_Tail") != NULL) {
 		return std_anime(filepath,"Fairy_Tail");
 	} else {
 		return other(filepath);

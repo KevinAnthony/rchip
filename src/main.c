@@ -140,7 +140,7 @@ void print_version(){
 			char* hostname = g_malloc(size);
 			for (int i = 0; i < nelem; i++) {
 				char* elem = base+(i*size);
-				strcpy(hostname,elem);
+				g_strlcpy(hostname,elem,size);
 				char* query = build_playing_info_sql_query(pInfo,hostname);
 				sql_exec_quary(query);
 				g_free(query);
@@ -169,8 +169,7 @@ gboolean update_active_devices(gpointer data){
 }
 #ifndef _WIN32
 	char* build_playing_info_sql_query(const struct playing_info_music pInfo,char* hostname) {
-		char* query =(char *)g_malloc(1024);
-		g_sprintf(query,"INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
+		char* query =g_strdup_printf("INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
 		return query;
 	}
 #endif

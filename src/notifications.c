@@ -59,8 +59,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	base = g_malloc(nelem*size);
 	get_active_devices(base,size,nelem);
 	/* we allocate and build the message, when passed to a device they are pipe | delineated */
-	char* msg = (char *)g_malloc(sizeof(tickerString)+sizeof(notificationTitle)+sizeof(notificationText)+5);
-	g_sprintf(msg,"%s|%s|%s",tickerString,notificationTitle,notificationText);
+	char* msg = g_strdup_printf("%s|%s|%s",tickerString,notificationTitle,notificationText);
 	/* TMSG command tells the device to display the notification*/	
 	char* cmd = "TMSG";
 	char* recipt = g_malloc(size);
@@ -89,9 +88,8 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	/* For each element in the array, we build a query, and send it to the device */
 	for (int i = 0; i < nelem; i++) {
 		char* elem = base+(i*size);
-		strcpy(recipt,elem);
-		char* query = (char *)g_malloc(sizeof(msg)+sizeof(recipt)+sizeof(cmd)+sizeof(name)+sizeof("Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"\",\"\",\"\",\"\")")+5);
-		g_sprintf(query,"Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\")",cmd,msg,name,recipt);
+		g_strlcpy(recipt,elem,size);
+		char* query = g_strdup_printf("Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\")",cmd,msg,name,recipt);
 		sql_exec_quary(query);
 		g_free(query);
 	}
