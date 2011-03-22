@@ -1,27 +1,29 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 *
-*    rchip, Remote Controlled Home Integration Program
-*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*	rchip, Remote Controlled Home Integration Program
+*	Copyright (C) 2011 <Kevin@NoSideRacing.com>
 *
-*    This program is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
 *
-*    This program is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU General Public License for more details.
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*	GNU General Public License for more details.
 *
-*    You should have received a copy of the GNU General Public License
-*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*	You should have received a copy of the GNU General Public License
+*	along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 */
 
 #include <config.h>
 
+#include <string.h>
 #include <gtk/gtk.h>
 #include "status.h"
+#include "settings.h"
 
 GtkBuilder *builder;
 GtkWidget *window;
@@ -32,6 +34,7 @@ void init_status_window (gboolean showWindow){
 	window = GTK_WIDGET (gtk_builder_get_object (builder, "statusWindow"));
 	init_info_labels();
 	init_status_labels();
+	init_xml_labels();
 	init_buttons();
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(window_destroyed), NULL);
 	if (showWindow){
@@ -66,6 +69,18 @@ void init_info_labels(){
 	return;
 }
 
+void init_xml_labels(){
+	GtkLabel * label;
+	char* cLabelM = g_strconcat("Music File:\n",get_file_name_from_path(get_setting_str(MUSIC_XML)),NULL);
+	label = GTK_LABEL (gtk_builder_get_object (builder, "music_xml_file"));
+	gtk_label_set_label(label,cLabelM);
+	g_free(cLabelM);
+	char* cLabelV = g_strconcat("Video File:\n",get_file_name_from_path(get_setting_str(VIDEO_XML)),NULL);
+	label = GTK_LABEL (gtk_builder_get_object (builder, "video_xml_file"));
+	gtk_label_set_label(label,cLabelV);
+	g_free(cLabelV);
+}
+
 void init_buttons(){
 	GtkWidget *button;
 	button = GTK_WIDGET(gtk_builder_get_object (builder, "close"));
@@ -94,3 +109,14 @@ void show_hide_window(){
 	}
 }
 
+char* get_file_name_from_path(char* path){
+	char* posOfLastSlash=path;
+	char* ptr = path;
+	for (; *ptr != '\0';ptr++) {
+		if (*ptr == '/') {
+			posOfLastSlash = ptr;
+		}
+	}
+	posOfLastSlash++;
+	return posOfLastSlash;
+}

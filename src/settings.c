@@ -21,6 +21,8 @@
 #include <config.h>
 
 #include "settings.h"
+#include "status.h"
+#include "sql.h"
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <glib.h>
@@ -85,6 +87,7 @@ gboolean set_setting_int( gchar* keyname, int settingValue ){
 
 void setting_changed( GSettings *settings, gchar *key, gpointer user_data){
 	g_printf("Setting %s Changed",key);
+	
 }
 
 

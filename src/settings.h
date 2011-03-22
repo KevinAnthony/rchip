@@ -40,5 +40,4 @@ gboolean			set_setting_int					( gchar*,int );
 void				settings_unref					( void );
 void				setting_changed					( GSettings*, gchar*, gpointer );
 gboolean 			settings_init					( void );
-
 #endif
