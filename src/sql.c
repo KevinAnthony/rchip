@@ -341,7 +341,7 @@ void get_active_devices(void* base, size_t size, size_t nelem)
        			g_sprintf(hostname,"%.*s", (int) lengths[i],row[i] ? row[i] : "NULL");
 			if (hostname != NULL) {
 				char* temp = base+ (len*size);
-				g_strlcpy(temp,size,hostname);
+				strcpy(temp,hostname);
 				len++;
 			}
    		}

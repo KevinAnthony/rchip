@@ -82,7 +82,9 @@ void get_next_cmd() {
 			g_error("process_cmd:something went wrong\n");
 			#endif
 		} else {
+			#ifndef _NOSQL
 			delete_from_cmdQueue(cmdID);
+			#endif
 		}
 		g_free(cmd);
 		g_free(source);

@@ -90,6 +90,7 @@ int main(int argc, char** argv) {
 	g_timeout_add (5000,(GSourceFunc) update_active_devices,NULL);
 	#endif
 	init_status_window(FALSE);
+	printf("GOT HERE\n");
 	start_tray();
 	#ifndef _NOSQL
 		g_free(base);

@@ -1,20 +1,20 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 *
-*    rchip, Remote Controlled Home Integration Program
-*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+*	rchip, Remote Controlled Home Integration Program
+*	Copyright (C) 2011 <Kevin@NoSideRacing.com>
 *
-*    This program is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
 *
-*    This program is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU General Public License for more details.
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*	GNU General Public License for more details.
 *
-*    You should have received a copy of the GNU General Public License
-*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*	You should have received a copy of the GNU General Public License
+*	along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
 */
 #include <config.h>
@@ -250,8 +250,8 @@ void change_music(GtkWidget *widget, gpointer gdata){
 }
 void change_video(GtkWidget *widget, gpointer gdata){
 	if(!set_setting_str(VIDEO_XML,(char*)gdata)){
-                g_warning("Couldn't set VideoXML\n");
-        }
+		g_warning("Couldn't set VideoXML\n");
+	}
 	g_free(gdata);
 }
 
@@ -313,7 +313,7 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
 	quit_item = gtk_menu_item_new_with_label ("Quit");
 
 	gtk_menu_shell_append(GTK_MENU_SHELL (setting_menu),music_item);
-        gtk_menu_shell_append(GTK_MENU_SHELL (setting_menu),video_item);
+	gtk_menu_shell_append(GTK_MENU_SHELL (setting_menu),video_item);
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), showsadd_item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), folderadd_item);
@@ -331,31 +331,31 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
 }
 
 void set_xml_menu(GtkWidget *music_menu, GtkWidget *video_menu){
-	set_xml_menu_with_path(music_menu,video_menu,PREFIX"/noside/xml/*.xml");
-	set_xml_menu_with_path(music_menu,video_menu,"~/.noside/xml/*.xml");
+	set_xml_menu_with_path(music_menu,video_menu,PREFIX"/noside/xml/");
+	set_xml_menu_with_path(music_menu,video_menu,"~/.noside/xml/");
 }
 void set_xml_menu_with_path(GtkWidget *music_menu, GtkWidget *video_menu,char* path){
 	glob_t data;
-	switch( glob(path, 0, NULL, &data ) ){
+	switch( glob(g_strconcat(path,"*.xml",NULL), 0, NULL, &data ) ){
 		case 0:
 			break;
-        	case GLOB_NOSPACE:
+		case GLOB_NOSPACE:
 			#if VERBOSE >= 1
-            		g_error( "Out of memory\n" );
+			g_error( "Out of memory\n" );
 			#endif
-            		break;
-        	case GLOB_ABORTED:
-            		#if VERBOSE >= 1
-			g_error( "Reading error\n" );
-            		#endif
 			break;
-        	default:
-            		break;
-    		}
+		case GLOB_ABORTED:
+			#if VERBOSE >= 1
+			g_error( "Reading error\n" );
+			#endif
+			break;
+		default:
+			break;
+		}
 	for (int i =0;i<data.gl_pathc; i++){
 		char* posOfLastSlash=data.gl_pathv[i];
 		char* ptr = data.gl_pathv[i];
-        	char* sptr = data.gl_pathv[i];
+		char* sptr = data.gl_pathv[i];
 		char* progName;
 		char* progType;
 		char* nameP;
@@ -364,45 +364,48 @@ void set_xml_menu_with_path(GtkWidget *music_menu, GtkWidget *video_menu,char* p
 		progType = g_malloc(strlen(ptr));
 		nameP = progName;
 		typeP = progType;
-        	for (; *ptr != '\0';ptr++) {
-                	if (*ptr == '/') {
-                	        posOfLastSlash = ptr;
-                	}
-        	}
-        	ptr = posOfLastSlash;
-        	ptr++;
-        	sptr=ptr;
+		for (; *ptr != '\0';ptr++) {
+			if (*ptr == '/') {
+				posOfLastSlash = ptr;
+			}
+		}
+		ptr = posOfLastSlash;
+		ptr++;
+		sptr=ptr;
 		for (int i = 0; i < 3; i++){
-	                for (; *ptr!='.' ; ptr++){
-	                        if (*ptr == '\0'){
-	                                if (i == 2){ break; }
-	                                #if VERBOSE >= 2
-	                                g_warning("Error: badly formed file name\n");
-	                                g_warning("File Name: %s\n",data.gl_pathv[i]);
-	                                #endif
-	                                return;
-	                        }
-	                        if (i == 0){*nameP++=*ptr;  }
-	                        else if (i == 1){ *typeP++=*ptr; }
-	                        else if (i == 2){ break; }
-                	}
-                	ptr++;
-        	}
+			for (; *ptr!='.' ; ptr++){
+				if (*ptr == '\0'){
+					if (i == 2){ break; }
+					#if VERBOSE >= 2
+					g_warning("Error: badly formed file name\n");
+					g_warning("File Name: %s\n",data.gl_pathv[i]);
+					#endif
+					return;
+				}
+				if (i == 0){ *nameP++=*ptr; }
+				else if (i == 1){ *typeP++=*ptr; }
+				else if (i == 2){ break; }
+			}
+			ptr++;
+		}
 		*nameP='\0';
 		*typeP='\0';
+		*progName= g_ascii_toupper(*progName);
 		if (!(g_strcmp0(progType,"music"))){
 			GtkWidget *item;
 			item = gtk_menu_item_new_with_label(progName);
 			gtk_menu_shell_append(GTK_MENU_SHELL (music_menu), item);
-			g_signal_connect(item,"activate",G_CALLBACK(change_music),(gpointer)g_strdup(sptr));
+			char* filePath= g_strconcat(path,sptr,NULL);
+			g_signal_connect(item,"activate",G_CALLBACK(change_music),(gpointer)filePath);
 		}else if (!(g_strcmp0(progType,"video"))){
 			GtkWidget *item2;
-                        item2 = gtk_menu_item_new_with_label(progName);
-                        gtk_menu_shell_append(GTK_MENU_SHELL (video_menu), item2);
-                        g_signal_connect(item2,"activate",G_CALLBACK(change_video),(gpointer)g_strdup(sptr));
+			item2 = gtk_menu_item_new_with_label(progName);
+			gtk_menu_shell_append(GTK_MENU_SHELL (video_menu), item2);
+			char* filePath= g_strconcat(path,sptr,NULL);
+			g_signal_connect(item2,"activate",G_CALLBACK(change_video),(gpointer)filePath);
 		}
 		g_free(progName);
 		g_free(progType);
-    	}
-    	globfree( &data );
+	}
+	globfree( &data );
 }
