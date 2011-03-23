@@ -101,14 +101,14 @@ for line in fin:
 		commit = ""
 		while i < len(commitLine):
 			if len(commitLine) < i + 78:
-				commit = commit + "\n  " + commitLine[i:len(commitLine)]
+				commit = commit + "\n\t" + commitLine[i:len(commitLine)]
 				break
 			index = commitLine.rfind(' ', i, i+78)
 			if index > i:
-				commit = commit + "\n  " + commitLine[i:index]
+				commit = commit + "\n\t" + commitLine[i:index]
 				i = index+1
 			else:
-				commit = commit + "\n  " + commitLine[i:78]
+				commit = commit + "\n\t" + commitLine[i:78]
 				i = i+79
 
 		# Write out the commit line

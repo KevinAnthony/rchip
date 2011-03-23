@@ -1,1 +1,0 @@
-/usr/local/share/noside/xml/banshee.music.xml
