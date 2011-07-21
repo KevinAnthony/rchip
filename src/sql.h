@@ -41,5 +41,6 @@ void 				get_active_devices				( void*, size_t, size_t );
 size_t 				get_size					( void );
 size_t 				get_nelem					( void );
 void 				update_daemon_sql				( void );
+char*				sanitize					( char* );
 #endif //#ifdef _SQL
 #endif

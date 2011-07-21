@@ -1,4 +1,4 @@
-SUBDIRS = src data man doc
+SUBDIRS = src data man doc m4
 
 CLEANFILES = \
 	*.tar.gz

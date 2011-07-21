@@ -1,4 +1,5 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+			ihar* hostname = g_malloc(size);
 *
 *    rchip, Remote Controlled Home Integration Program
 *    Copyright (C) 2011 <Kevin@NoSideRacing.com>
@@ -130,6 +131,8 @@ void print_version(){
 #ifndef _NOSQL
 #ifndef _WIN32
 	gboolean daemon_loop(gpointer data) {
+		size=get_size();
+	        nelem=get_nelem();
 		/*if the dbus is active, do the following, else try and connect*/
 		get_next_cmd();
 		if (dbus_is_connected(TRUE)) {
@@ -137,20 +140,24 @@ void print_version(){
 			#if VERBOSE >= 4
 			print_playing_info_music(pInfo);
 			#endif
-			char* hostname = g_malloc(size);
-			for (int i = 0; i < nelem; i++) {
-				char* elem = base+(i*size);
-				g_strlcpy(hostname,elem,size);
-				char* query = build_playing_info_sql_query(pInfo,hostname);
-				sql_exec_quary(query);
-				g_free(query);
+			if (base != NULL){
+				for (int i = 0; i < nelem; i++) {
+					char* elem = base+(i*size);
+					printf("i = %i\n",i);
+					char* hostname = g_strndup(elem,size);
+					char* query = build_playing_info_sql_query(pInfo,hostname);
+					sql_exec_quary(query);
+					g_free(query);
+					g_free(hostname);
+				}
+			} else {
+				g_warning("base is null main.c");
 			}
 			if (pInfo.isPlaying){
 				if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
 				if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
 				if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
 			}
-			g_free(hostname);	
 		}
 		return TRUE;
 	}
@@ -169,8 +176,13 @@ gboolean update_active_devices(gpointer data){
 }
 #ifndef _WIN32
 	char* build_playing_info_sql_query(const struct playing_info_music pInfo,char* hostname) {
-		char* query =g_strdup_printf("INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
-		return query;
+		if ((pInfo.Artist != NULL) || (g_strcmp0(pInfo.Artist,"Artist") != 0)){
+
+			char* query =g_strdup_printf("INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
+			return query;
+		} else {
+			return "Select NULL;";
+		}
 	}
 #endif
 #endif

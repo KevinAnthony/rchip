@@ -72,7 +72,7 @@ fi
 #for international suppoert
 #run intltoolize --force --copy
 run $LIBTOOLIZE --force --copy --automake
-run aclocal 
+run aclocal -I m4
 run autoconf
 run autoheader
 

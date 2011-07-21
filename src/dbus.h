@@ -35,6 +35,7 @@ struct playing_info_music 	dbus_get_playing_info_music			( void );
 gchar* 				get_hash_str					( GHashTable*, const char* );	
 unsigned int 			get_hash_uint					( GHashTable*, const char* );
 void 				print_playing_info_music			( const struct playing_info_music );
-
+void	 			on_name_appeared 				( GDBusConnection *connection, const gchar *name, const gchar *name_owner, gpointer user_data );
+void 				on_name_vanished 				( GDBusConnection*, const gchar*, gpointer );
 #endif
 #endif

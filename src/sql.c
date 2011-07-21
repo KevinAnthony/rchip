@@ -132,7 +132,7 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 		g_error("Returning because real_connect failed in get_next_cmd_from_sql");
 		#endif
 		return;
-	} 
+	}
 	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
 		#if VERBOSE >= 1
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
@@ -144,7 +144,6 @@ void get_next_cmd_from_sql(char *hostname,int* cmdID,char** cmd,char** cmdTxt, c
 		#endif
 		return; 
 	}
-
 	res = mysql_use_result(mysql);
 	if (res == NULL) { 
 		mysql_close(mysql);
@@ -196,6 +195,7 @@ void delete_from_cmdQueue(int cmdID) {
 		#endif
 		mysql_close(mysql);
 		mysql=NULL;
+		g_free(delquery);
 		return;
 	}
 	mysql_close(mysql);
@@ -231,7 +231,6 @@ char* get_registered_devices_message(){
 		#endif
 		return NULL;
 	}
-
 	res = mysql_use_result(mysql);
 	if (res == NULL) {
 		mysql_close(mysql);
@@ -265,7 +264,6 @@ size_t get_nelem(){
 		mysql=NULL;
 		return -1;
 	}
-
 	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
 		#if VERBOSE >= 1	
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
@@ -307,8 +305,6 @@ void get_active_devices(void* base, size_t size, size_t nelem)
 		#endif
 		return;
 	}
-	
-	
 	if(mysql_real_query(mysql,query,(unsigned int)strlen(query))){
 		#if VERBOSE >= 1	
 		g_error("Error %u: %s\n",mysql_errno(mysql),mysql_error(mysql));
@@ -321,7 +317,6 @@ void get_active_devices(void* base, size_t size, size_t nelem)
 		return;
 	}
 	res = mysql_use_result(mysql);
-
 	if (res == NULL) {
 		mysql_close(mysql);
 		mysql=NULL;
@@ -380,4 +375,26 @@ void update_daemon_sql(){
 		g_free(query);
 	}
 }
+
+char* sanitize(char* incomming){
+	return incomming;
+	//This Does not work, i need to sanatize upstream
+	char* temp = g_malloc(strlen(incomming)*2);
+	char* p = incomming;
+	char* q = temp;
+	while (*p != '\0') {
+		if (((*p == ';') || (*p == '(') || (*p == ')') || (*p == '"') || (*p == '\'')) && (*p-1 != '\\')) {
+			*q++ = '\\';
+			*q++ = *p++;
+		} else {
+			*q++ = *p++;
+		}
+	} 
+	q='\0';
+		
+	char* retval = g_strdup(temp);
+	g_free(temp);
+	return retval;
+}
+
 #endif //#ifdef _SQL

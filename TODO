@@ -2,6 +2,9 @@
 	* in mysql_init() we need to check for the tables existatnce, and if it's doesn't exist, create it
 		Kevin
 
+	* Thier is a pointer error someware, i find it when you try and add a show, it crashes the program later on
+		Kevin
+
 	* Comments!
 		Kevin
 
