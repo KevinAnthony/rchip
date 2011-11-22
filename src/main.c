@@ -30,10 +30,11 @@
 #ifndef _WIN32
 	#include "dbus.h"
 #endif
-#ifndef _NOSQL
-#include "sql.h"
+#ifdef _JSON
+#include "rest.h"
 #include "cmdhandler.h"
 #endif
+#include "utils.h"
 #include "xml.h"
 
 void print_version();
@@ -43,11 +44,6 @@ gboolean update_active_devices(gpointer);
 #ifndef _WIN32
 	char* build_playing_info_sql_query(const struct playing_info_music,char*);
 #endif
-size_t nelem;
-size_t size; 
-char* base;
-
-
 
 /*The Main Program*/
 int main(int argc, char** argv) {
@@ -59,20 +55,12 @@ int main(int argc, char** argv) {
 	if (!xml_init()){
 		g_error("xml_init FAILED\n");
 	}
+	init_hostname();
 	#ifndef _WIN32
 		settings_init();
 	#endif
-	#ifndef _NOSQL
-		sql_init();
-		update_daemon_sql();
-		size=get_size();
-		nelem=get_nelem();
-		base = g_malloc0(nelem*size);
-		get_active_devices(base,size,nelem);
-	#endif
 	/*sets the tray icon from the create_tray_icon*/
 	tray_icon = create_tray_icon();
-	#ifndef _NOSQL
 	#ifndef _WIN32
 		struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};	
 		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
@@ -87,20 +75,18 @@ int main(int argc, char** argv) {
 		print_playing_info_music(pInfo);
 		#endif
 	#endif
+	get_active_devices();
 	g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
-	g_timeout_add (5000,(GSourceFunc) update_active_devices,NULL);
-	#endif
+	g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
 	init_status_window(FALSE);
+	gtk_widget_show(tray_icon);
 	start_tray();
-	#ifndef _NOSQL
-		g_free(base);
-	#endif
 	return 0;
 }
 
 gboolean parse_command_line_options(int argc, char **argv) {
         static gboolean version = FALSE;
-	GError *error;
+		GError *error;
         GOptionContext *context;
         static const GOptionEntry options []  = {
         {"version",'v',0, G_OPTION_ARG_NONE,&version,("Version Info"),NULL},
@@ -123,7 +109,7 @@ gboolean parse_command_line_options(int argc, char **argv) {
         return TRUE;
 }
 void print_version(){
-        g_printf("\n%s %s\n\nCopyright (C) %i NoSide Racing, llc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten By %s\n",PACKAGE_NAME,PACKAGE_VERSION,COMPILE_YEAR,PROGRAMMERS_NAME);
+        g_printf("\n%s %s\n\nCopyright (C) 2010-%i NoSide Racing, llc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten By %s\n",PACKAGE_NAME,PACKAGE_VERSION,COMPILE_YEAR,PROGRAMMERS_NAME);
 }
 
 
@@ -131,8 +117,6 @@ void print_version(){
 #ifndef _NOSQL
 #ifndef _WIN32
 	gboolean daemon_loop(gpointer data) {
-		size=get_size();
-	        nelem=get_nelem();
 		/*if the dbus is active, do the following, else try and connect*/
 		get_next_cmd();
 		if (dbus_is_connected(TRUE)) {
@@ -140,18 +124,9 @@ void print_version(){
 			#if VERBOSE >= 4
 			print_playing_info_music(pInfo);
 			#endif
-			if (base != NULL){
-				for (int i = 0; i < nelem; i++) {
-					char* elem = base+(i*size);
-					printf("i = %i\n",i);
-					char* hostname = g_strndup(elem,size);
-					char* query = build_playing_info_sql_query(pInfo,hostname);
-					sql_exec_quary(query);
-					g_free(query);
-					g_free(hostname);
-				}
-			} else {
-				g_warning("base is null main.c");
+			hostname_node *hosts;
+			for_each_hostname(hosts){
+				set_song_info_rest(pInfo,hosts->hostname);
 			}
 			if (pInfo.isPlaying){
 				if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
@@ -169,20 +144,7 @@ void print_version(){
 #endif
 
 gboolean update_active_devices(gpointer data){
-	size=get_size();
-	nelem=get_nelem();
-	get_active_devices(base,size,nelem);
-	return TRUE;
+		get_active_devices();	
+		return TRUE;
 }
-#ifndef _WIN32
-	char* build_playing_info_sql_query(const struct playing_info_music pInfo,char* hostname) {
-		if ((pInfo.Artist != NULL) || (g_strcmp0(pInfo.Artist,"Artist") != 0)){
-
-			char* query =g_strdup_printf("INSERT INTO rymBoxInfo (artist,album,title,etime,tottime,isplaying,dest_hostname) VALUES (\"%s\",\"%s\",\"%s\",\"%i\",\"%i\",\"%i\",\"%s\") ON DUPLICATE KEY UPDATE artist=\"%s\",album=\"%s\",title=\"%s\",etime=\"%i\",tottime=\"%i\",isplaying=\"%i\",dest_hostname=\"%s\";",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname,pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,hostname);
-			return query;
-		} else {
-			return "Select NULL;";
-		}
-	}
-#endif
 #endif

@@ -1,13 +1,6 @@
-	
-	* in mysql_init() we need to check for the tables existatnce, and if it's doesn't exist, create it
-		Kevin
+	* util.h/c  hostname need to be spilt into two structs, one to handle the fucntions, the other to handle the data 
 
 	* Thier is a pointer error someware, i find it when you try and add a show, it crashes the program later on
 		Kevin
-
-	* Comments!
-		Kevin
-
-
 
 It occered to me, that i'm putting 'Kevin' after every upgrade, because i'm the only supporter.  I would love a partner...

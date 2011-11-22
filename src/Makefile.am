@@ -8,42 +8,45 @@ AM_CFLAGS = 	$(CFLAGS) 		\
 		@GTK3_CFLAGS@		\
 		@GLIB_CFLAGS@		\
 		@LIBXML2_CFLAGS@	\
-		@MYSQL_CFLAGS@
+		@LIBJSON_CFLAGS@	\
+		@LIBCURL_CFLAGS@
 
 sourceincludedir = $(includedir)/@PACKAGE@/source
-sourceinclude_HEADERS = 		\
-	cmdhandler.h			\
+sourceinclude_HEADERS = \
+	cmdhandler.h		\
 	dbus.h  			\
 	tray.h				\
 	status.h			\
-	notifications.h			\
+	notifications.h		\
 	settings.h			\
 	showlist.h			\
-	sql.h				\
 	xml.h				\
+	rest.h				\
 	utils.h
 
-sourceinclude_SOURCE =			\
+sourceinclude_SOURCE =	\
 	$(sourceinclude_HEADERS)	\
-	cmdhandler.c			\
+	cmdhandler.c		\
 	dbus.c				\
 	tray.c				\
 	status.c			\
-	notifications.c			\
+	notifications.c		\
 	settings.c			\
 	showlist.c			\
-	sql.c				\
 	xml.c				\
+	rest.c				\
 	utils.c
 
 bin_PROGRAMS = rchip 
 
 rchip_SOURCES = $(sourceinclude_SOURCE) main.c
-rchip_LDADD = 	@GTK2_LIBS@		\
+rchip_LDADD = 	\
+		@GTK2_LIBS@		\
 		@GTK3_LIBS@		\
 		@GLIB_LIBS@		\
-		@LIBXML2_LIBS@		\
-		@MYSQL_LIBS@
+		@LIBXML2_LIBS@	\
+		@LIBJSON_LIBS@	\
+		@LIBCURL_LIBS@
 
 DISTCLEANFILES = Makefile
 

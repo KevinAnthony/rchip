@@ -21,6 +21,7 @@
 #include <config.h>
 
 #include <string.h>
+#include <stdlib.h>
 #include <glib.h>
 #include <glib/gprintf.h>
 #include "utils.h"
@@ -34,4 +35,67 @@ char* replace_str(char* str, char* orig, char* rep){
   	buffer[p-str] = '\0';
   	g_sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
   	return buffer;
+}
+
+void init_hostname ( void ){
+	Hosts = malloc(sizeof(hostname*));
+	Hosts->add = *add;
+	Hosts->delete = *delete;
+	Hosts->find = *find;
+	Hosts->data=NULL;
+}
+
+void add (char* data){
+	if (!Hosts->find(data)){
+		hostname_node* new_node = malloc(sizeof(hostname_node*));
+		new_node->hostname = g_strdup(data);
+		new_node->next = NULL;
+		if (Hosts->data == NULL){
+			Hosts->data = new_node;
+			return;
+		}
+		hostname_node* hostname_p = Hosts->data;
+		while (hostname_p->next != NULL){next_hostname(hostname_p);}
+		hostname_p->next = new_node;
+	}
+}
+
+void delete (char* data){
+	if (Hosts->data == NULL){
+		return;
+	}
+	hostname_node* cur = Hosts->data;
+	hostname_node* prev = NULL;
+	while (cur != NULL){
+		if (g_strcmp0(cur->hostname,data) == 0){
+			if (cur == Hosts->data){
+				Hosts->data=cur->next;
+				g_free(cur->hostname);
+				g_free(cur);
+				cur = Hosts->data;
+			} else {
+				prev->next = cur->next;
+				g_free(cur->hostname);
+				g_free(cur);
+				cur = prev->next;
+			}
+		}
+		if (prev == NULL){
+			prev = Hosts->data;
+		} else {
+			next_hostname(prev);
+		}
+		next_hostname(cur);
+	}
+}
+
+int find (char* token){
+	
+	hostname_node* hostname_p = Hosts->data;
+	for_each_hostname(hostname_p){
+		if (g_strcmp0(hostname_p->hostname, token) == 0){
+			return 1;
+		}
+	}
+	return 0;
 }

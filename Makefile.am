@@ -25,3 +25,9 @@ MAINTAINERCLEANFILES = \
 
 clean-local:
 	rm -rf bin
+
+run:
+	./src/rchip
+
+debug:
+	gdb ./src/rchip

@@ -265,12 +265,18 @@ GtkStatusIcon* create_tray_icon() {
 		tray_icon = gtk_status_icon_new();
 		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");
 	#else
-		tray_icon = gtk_status_icon_new_from_icon_name ("rchip-server");
+		//tray_icon = gtk_status_icon_new_from_icon_name ("rchip-server");
+		tray_icon = gtk_status_icon_new_from_file("/usr/local/share/icons/hicolor/48x48/apps/rchip-server.png");
 	#endif
 	g_signal_connect(G_OBJECT(tray_icon), "activate",G_CALLBACK(tray_click), NULL);
 	g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
 	gtk_status_icon_set_tooltip_text (tray_icon, "RCHIP");
 	gtk_status_icon_set_visible(tray_icon, TRUE);
+	if (gtk_status_icon_is_embedded(tray_icon)){
+		printf("Icon is Embedded\n");
+	} else {
+		printf("Icon is Not Embedded\n");
+	}
 	return tray_icon;
 }
 

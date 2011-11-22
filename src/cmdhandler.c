@@ -36,60 +36,29 @@
 	#include <process.h>
 	#define myerrno WSAGetLastError()
 #endif
-#include "sql.h"
 #include "cmdhandler.h"
 #include "settings.h"
 #include "utils.h"
 #include "xml.h"
 
-/* returns the next hostname, from a pointer based array */
-char* get_next_host(void* base,size_t size, size_t next){
-	return base+(next*size);
-}
 /*
  * (insert mad scientist type laughter here)
  */
 
 void get_next_cmd() {
-	char* cmd = NULL;
-        char* cmdTxt = NULL;
-        char* source = NULL;
-        int cmdID = 0;
-        #ifndef _WIN32
-                /*uts.nodename is the hostname of the computer*/
-                struct utsname uts;
-                uname( &uts );
-                #ifdef _SQL
-                get_next_cmd_from_sql(uts.nodename,&cmdID,&cmd,&cmdTxt,&source);
-                #endif
-        #else
-                /*hn is allowed to be 500char plus 1 for the \0 char*/
-                char hn[500 + 1];
-                DWORD dwLen = 500;
-                GetComputerName(hn, &dwLen);
-                #ifdef _SQL
-                get_next_cmd_from_sql(hn,&cmdID,&cmd,&cmdTxt,&source);
-                #endif
-        #endif
-	if (cmd != NULL){
+    #ifndef _WIN32
 		
-	
-        	#if VERBOSE >= 4
-                g_print("ID:%i\ncmd:%s:\ncmdTxt:%s:\n",cmdID,cmd,cmdTxt);
-        	#endif	
-		if(!process_cmd(cmd,cmdTxt)){
-			#if VERBOSE >= 1
-			g_error("process_cmd:something went wrong\n");
-			#endif
-		} else {
-			#ifndef _NOSQL
-			delete_from_cmdQueue(cmdID);
-			#endif
-		}
-		g_free(cmd);
-		g_free(source);
-		g_free(cmdTxt);
-	}
+    /*uts.nodename is the hostname of the computer*/
+    struct utsname uts;
+	uname( &uts );
+	get_cmd_from_server(uts.nodename);
+	#else
+	/*hn is allowed to be 500char plus 1 for the \0 char*/
+	char hn[500 + 1];
+	DWORD dwLen = 500;
+	GetComputerName(hn, &dwLen);
+	get_cmd_from_server(hn);
+	#endif
 }
 
 gboolean process_cmd(char* cmd,char* cmdTxt) {
@@ -114,7 +83,8 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
 				char* q = newCmdTxt;
 				int len = 0;
 				while (*p != '\0'){
-					if ((*p == '\'') || (*p == '\"') || (*p == ' ')){
+					//if ((*p == '\'') || (*p == '\"') || (*p == ' ')){
+					if (*p == ' '){
 						*q = '\\';
 						q++;
 						len++;
@@ -143,7 +113,7 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
 					send_command_to_video_player_with_argument(dbus_command,argument_str,argument);
 				}
 				g_free(argument);
-        	        	g_free(argument_str);
+				g_free(argument_str);
 			} else {
 				if(g_strcmp0(musicOrVideo,"MUSIC") == 0){
 					send_command_to_music_player(dbus_command);
@@ -184,5 +154,6 @@ void send_cmd(char* cmd, char* cmdTxt) {
 			g_free(query);
 		}
 	g_free(deviceName);
+	g_free(base);
 	#endif
 }

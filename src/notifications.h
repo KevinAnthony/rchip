@@ -21,7 +21,6 @@
 #ifndef 			NOTIFICATIONS_H
 #define 			NOTIFICATIONS_H
 
-#include			"sql.h"
 #include			<glib.h>
 
 

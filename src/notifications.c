@@ -20,7 +20,6 @@
 
 #include <config.h>
 
-#include	"sql.h"
 #include	"notifications.h" 
 #include	<glib.h>
 #include	<glib/gprintf.h>

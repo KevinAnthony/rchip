@@ -20,15 +20,39 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-struct 				playing_info_music				{
-        									char 	*Artist;
-        									char 	*Album;
-        									char 	*Song;
-        									int 	Elapised_time;
-        									int 	Duration;
-        									int 	isPlaying;
-										};
+#define next_hostname(hn) \
+	hn=hn->next
+#define for_each_hostname(hn) \
+	for (hn=Hosts->data; hn != NULL; next_hostname(hn))
 
 char* 				replace_str					( char*, char*, char* );
+void 				add							( char* );
+void 				delete						( char* );
+int					find						( char* );
+void 				init_hostname				( void );
+
+struct playing_info_music {
+	char 	*Artist;
+    char 	*Album;
+    char 	*Song;
+    int 	Elapised_time;
+    int 	Duration;
+    int 	isPlaying;
+};
+
+typedef struct HostNamesNodeStruct {
+	char* hostname;
+	struct HostNamesNodeStruct* next;
+} hostname_node;
+
+typedef struct HostNameStruct{
+	hostname_node *data;
+	void (*add)(char *);
+	void (*delete)(char *);
+	int (*find)(char *);
+} hostname;
+
+hostname*			get_host_head				( void );
+hostname* Hosts;
 
 #endif

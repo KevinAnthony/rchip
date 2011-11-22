@@ -1,6 +1,6 @@
-m4_define([rchip_version_major], [2])
+m4_define([rchip_version_major], [3])
 m4_define([rchip_version_minor], [0])
-m4_define([rchip_version_micro], [1])
+m4_define([rchip_version_micro], [0])
 
 dnl set to 0 when doing an official release
 m4_define([rchip_version_pre_release], [0])
@@ -29,7 +29,6 @@ m4_define([rchip_asm_version],
 
 AC_PREREQ([2.67])
 AC_INIT([rchip], rchip_version, [kevin@nosideracing.com])
-AC_CONFIG_SRCDIR([src/sql.h])
 AC_CONFIG_MACRO_DIR(m4)
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([rchip], rchip_version)
@@ -52,9 +51,9 @@ AC_PATH_PROG(GDK_PIXBUF_CSOURCE, gdk-pixbuf-csource)
 
 # Checks for libraries.
 
-dnl Check for MYSQ
-RCHIP_CHECK_MYSQL
 
+dnl Chack for JSON
+RCHIP_CHECK_JSON
 dnl Check for GLIB, GTK, GIO, and GSETTINGS
 RCHIP_CHECK_GLIB
 
@@ -70,7 +69,7 @@ dnl check for music programs
 RCHIP_CHECK_MUSIC
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h string.h assert.h sys/utsname.h glob.h])
+AC_CHECK_HEADERS([stdlib.h string.h assert.h sys/utsname.h glob.h curl/curl.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T

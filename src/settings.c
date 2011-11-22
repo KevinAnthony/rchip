@@ -22,12 +22,11 @@
 
 #include "settings.h"
 #include "status.h"
-#include "sql.h"
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <glib.h>
 #include <gio/gio.h>
-GSettings *settings;
+GSettings *settings = NULL;
 
 char* get_setting_str( gchar* keyname) {
 	/*
@@ -37,7 +36,11 @@ char* get_setting_str( gchar* keyname) {
 	printf("Trying to get Setting for Value:%s\n",keyname);
 	#endif
 	char* valueStr = NULL;
-	valueStr = g_settings_get_string (settings,keyname);
+	if (settings != NULL) {
+		valueStr = g_settings_get_string (settings,keyname);
+	} else {
+		return NULL;	
+	}
 	#if VERBOSE >= 4
 	printf("Value for key is:%s\n",valueStr);
 	#endif
