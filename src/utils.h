@@ -25,7 +25,7 @@
 #define for_each_hostname(hn) \
 	for (hn=Hosts->data; hn != NULL; next_hostname(hn))
 
-char* 				replace_str					( char*, char*, char* );
+gchar* 				replace_str 				( const gchar* , const gchar*, const gchar* );
 void 				add							( char* );
 void 				delete						( char* );
 int					find						( char* );

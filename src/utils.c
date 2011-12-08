@@ -26,15 +26,19 @@
 #include <glib/gprintf.h>
 #include "utils.h"
 
-char* replace_str(char* str, char* orig, char* rep){
-	static char buffer[sizeof(orig)+sizeof(rep)+sizeof(str)+1];
-	char* p;
-	if(!(p = g_strstr_len(str,-1, orig)))  // Is 'orig' even in 'str'?
-    		return str;
-  	strncpy(buffer, str, p-str); // Copy characters from 'str' start to 'orig' st$
-  	buffer[p-str] = '\0';
-  	g_sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
-  	return buffer;
+gchar* replace_str (const gchar *src,const gchar *find,const gchar *replace){
+	gchar* retval = g_strdup(src);
+	gchar* ptr = NULL;
+	while ((ptr = g_strstr_len(retval,-1,find)) && (ptr != NULL)){
+		gchar* after_find = ptr+strlen(find);
+		gchar* before_find = g_strndup(retval,ptr-retval);
+		gchar* temp = g_strconcat(before_find,replace,after_find,NULL);
+		g_free(retval);
+	    retval = g_strdup(temp);
+		g_free(before_find);
+		g_free(temp);
+	}
+	return retval;
 }
 
 void init_hostname ( void ){
