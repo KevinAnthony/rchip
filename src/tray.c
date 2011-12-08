@@ -111,10 +111,6 @@ void add_files(GtkWidget *widget, gpointer gdata){
 			 * or in windows c:\path\to\file, sql can't handle that, as \ is an escape char
 			 * so we set it default to c:/path/to/file and set it back to c:\path\to\file when it plays
 			 */
-			#ifdef _WIN32
-			char* p = filename;
-			while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
-			#endif
 			#if VERBOSE >= 3
 			g_printf("Adding Filename:%s\n",filename);
 			#endif
