@@ -67,7 +67,7 @@ char* get_registered_devices_message(){
 void get_active_devices( void ){	
 	CURL *session = curl_easy_init();
 	if (session) {
-		curl_easy_setopt(session, CURLOPT_URL, "http://www.nosideholdings.com/json/getdaemons/");
+		curl_easy_setopt(session, CURLOPT_URL, "http://www.nosideholdings.com/json/getremotedevice/");
 		curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, get_active_decives_callback);
 		curl_easy_perform(session);
 	}
