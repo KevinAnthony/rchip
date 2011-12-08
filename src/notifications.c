@@ -24,14 +24,9 @@
 #include	<glib.h>
 #include	<glib/gprintf.h>
 #include	<string.h>
-#ifdef _WIN32
 #include	<winsock.h>
 #include	<mysql.h>
 #include	<windows.h>
-#else
-#include	<mysql/mysql.h>
-#include	<sys/utsname.h>
-#endif
 
 
 
@@ -64,26 +59,13 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	char* recipt = g_malloc(size);
 	char* name = NULL;
 	/* we get the current hostname of the PC this program is running on */
-	#ifndef _WIN32
-		struct utsname uts;
-		uname( &uts );
-		name = g_malloc(strlen(uts.nodename)+2);
-		int len = strlen(uts.nodename);
-		char* p;
-		p=name;
-		for (int i = 0; i<len; i++){*p++ = uts.nodename[i];}
-	#else
-		char hn[500 + 1];
-		DWORD dwLen = 500;
-		GetComputerName(hn, &dwLen);
-		name = g_malloc(strlen(hn)+2);
-		int len = strlen(hn);
-		char* p;
-		p=name;
-		for (int i = 0; i<len; i++){*p++=hn[i];}
-		*p='\0';
-
-	#endif
+	struct utsname uts;
+	uname( &uts );
+	name = g_malloc(strlen(uts.nodename)+2);
+	int len = strlen(uts.nodename);
+	char* p;
+	p=name;
+	for (int i = 0; i<len; i++){*p++ = uts.nodename[i];}
 	/* For each element in the array, we build a query, and send it to the device */
 	for (int i = 0; i < nelem; i++) {
 		char* elem = base+(i*size);
@@ -102,13 +84,3 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
 	return FALSE;
 	#endif
 }
-/* I'm really not sure what this does, other then make this more then a one function */
-/*
-#ifndef _WIN32
-	void get_torrent_info(DBusGProxy* proxy,char* torrent) 
-	{
-		#if VERBOSE >= 4
-		g_printf("Torrent:%s",torrent);
-		#endif
-	}
-#endif*/

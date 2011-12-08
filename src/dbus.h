@@ -18,7 +18,6 @@
 *
 */
 
-#ifndef				_WIN32
 #ifndef				DBUS_H
 #define				DBUS_H
 
@@ -37,5 +36,4 @@ unsigned int 			get_hash_uint					( GHashTable*, const char* );
 void 				print_playing_info_music			( const struct playing_info_music );
 void	 			on_name_appeared 				( GDBusConnection *connection, const gchar *name, const gchar *name_owner, gpointer user_data );
 void 				on_name_vanished 				( GDBusConnection*, const gchar*, gpointer );
-#endif
 #endif

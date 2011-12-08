@@ -25,9 +25,6 @@
 #include <string.h>
 #include <glob.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
 #include "tray.h"
 #include "showlist.h"
 #include "utils.h"
@@ -145,10 +142,6 @@ void add_folders(GtkWidget *widget, gpointer gdata){
 		GSList* node = filelist;
 		while (node != NULL){
 			filename = (char*)node->data;
-			#ifdef _WIN32
-			char* p = filename;
-			while (*p++ != '\0'){ if (*p == '\\') { *p = '/';} }
-			#endif
 			#if VERBOSE >= 3
 			g_printf("Adding Filename%s\n",filename);
 			#endif
@@ -175,12 +168,7 @@ void add_folder_to_playqueue(char *dirFile){
 	} else {
 		while((ep=readdir(dp))) {
 			if (!strcmp(ep->d_name,".") || !strcmp(ep->d_name, "..")) { continue; } 
-
-			#ifdef WIN32
-				newDirFile = g_strdup_printf("%s\\%s", dirFile, ep->d_name);
-			#else
-				newDirFile = g_strdup_printf("%s/%s", dirFile, ep->d_name);
-			#endif
+			newDirFile = g_strdup_printf("%s/%s", dirFile, ep->d_name);
 			switch(file_type(newDirFile)){
 				case FTDIR:
 					add_folder_to_playqueue(newDirFile);
@@ -254,16 +242,8 @@ void change_video(GtkWidget *widget, gpointer gdata){
 GtkStatusIcon* create_tray_icon() {
 	/* Creates and returns the tray icon */
 	GtkStatusIcon *tray_icon;
-	#ifdef _WIN32
-		#if VERBOSE >= 5
-		g_printf ("Icon at: %s%s\n",PREFIX,"/share/rchip.png");
-		#endif
-		tray_icon = gtk_status_icon_new();
-		gtk_status_icon_set_from_file (tray_icon,PREFIX "/share/rchip.png");
-	#else
-		//tray_icon = gtk_status_icon_new_from_icon_name ("rchip-server");
-		tray_icon = gtk_status_icon_new_from_file("/usr/local/share/icons/hicolor/48x48/apps/rchip-server.png");
-	#endif
+	//tray_icon = gtk_status_icon_new_from_icon_name ("rchip-server");
+	tray_icon = gtk_status_icon_new_from_file("/usr/local/share/icons/hicolor/48x48/apps/rchip-server.png");
 	g_signal_connect(G_OBJECT(tray_icon), "activate",G_CALLBACK(tray_click), NULL);
 	g_signal_connect(G_OBJECT(tray_icon), "popup-menu", G_CALLBACK(tray_menu), NULL);
 	gtk_status_icon_set_tooltip_text (tray_icon, "RCHIP");

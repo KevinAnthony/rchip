@@ -23,18 +23,12 @@
 #include <glib/gprintf.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef _WIN32
-	/*for hostname on unix and unix-like systems*/
-	#include <sys/utsname.h>
-	#ifndef DBUSOFF
-	/*windows doesn't have a dbus so we can't use it*/
-	#include "dbus.h"
-	#endif
-#else
-	/*for hostname on windows machines*/
-	#include <windows.h>
-	#include <process.h>
-	#define myerrno WSAGetLastError()
+/*for hostname on unix and unix-like systems*/
+#include <sys/utsname.h>
+#ifndef DBUSOFF
+/*windows doesn't have a dbus so we can't use it*/
+#include "dbus.h"
+#endif
 #endif
 #include "cmdhandler.h"
 #include "settings.h"
@@ -46,19 +40,10 @@
  */
 
 void get_next_cmd() {
-    #ifndef _WIN32
-		
     /*uts.nodename is the hostname of the computer*/
     struct utsname uts;
 	uname( &uts );
 	get_cmd_from_server(uts.nodename);
-	#else
-	/*hn is allowed to be 500char plus 1 for the \0 char*/
-	char hn[500 + 1];
-	DWORD dwLen = 500;
-	GetComputerName(hn, &dwLen);
-	get_cmd_from_server(hn);
-	#endif
 }
 
 gboolean process_cmd(char* cmd,char* cmdTxt) {
@@ -132,28 +117,4 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
 
 /* insert command and command text into cmdQueue, once per hsotname*/
 void send_cmd(char* cmd, char* cmdTxt) {
-	#ifdef _SQL
-	/* Number of elements in array */
-	size_t nelem = get_nelem();
-	/* Size (in bytes) of each element */
-	size_t size = get_size();   
-	/* Size (in bytes) of each element */
-	char* base;
-	/* allocate array to size number of elements * size of elements */
-	base = g_malloc(nelem*size);
-	/* get list of active devices */
-	get_active_devices(base,size,nelem);
-	char* deviceName = g_malloc(size);
-		for (int i = 0; i < nelem; i++) {
-			/* current element = (itterator*size)+initial memeory location */
-			char* elem = base+(i*size); 
-			g_strlcpy(deviceName,elem,size);
-			char* query = g_strdup_printf("INSERT INTO cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\");",cmd,cmdTxt,"Tomoya",deviceName);
-			/*  Always free your pointers before they go out of scope */
-			sql_exec_quary(query);
-			g_free(query);
-		}
-	g_free(deviceName);
-	g_free(base);
-	#endif
 }

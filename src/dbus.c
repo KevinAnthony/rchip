@@ -20,7 +20,6 @@
 
 #include <config.h>
 
-#ifndef _WIN32
 #include 	"dbus.h"
 #include	"utils.h"
 #include	"notifications.h"
@@ -447,4 +446,3 @@ void on_name_vanished (GDBusConnection *connection, const gchar *name, gpointer 
         }
 	dbus_init();
 }
-#endif

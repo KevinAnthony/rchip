@@ -27,9 +27,7 @@
 #include "tray.h"
 #include "status.h"
 #include "settings.h"
-#ifndef _WIN32
-	#include "dbus.h"
-#endif
+#include "dbus.h"
 #ifdef _JSON
 #include "rest.h"
 #include "cmdhandler.h"
@@ -41,9 +39,7 @@ void print_version();
 gboolean parse_command_line_options(int,char**);
 gboolean daemon_loop(gpointer);
 gboolean update_active_devices(gpointer);
-#ifndef _WIN32
-	char* build_playing_info_sql_query(const struct playing_info_music,char*);
-#endif
+char* build_playing_info_sql_query(const struct playing_info_music,char*);
 
 /*The Main Program*/
 int main(int argc, char** argv) {
@@ -56,24 +52,19 @@ int main(int argc, char** argv) {
 		g_error("xml_init FAILED\n");
 	}
 	init_hostname();
-	#ifndef _WIN32
-		settings_init();
-	#endif
+	settings_init();
 	/*sets the tray icon from the create_tray_icon*/
 	tray_icon = create_tray_icon();
-	#ifndef _WIN32
-		struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};	
-		/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
-		#if VERBOSE >= 4
-		print_playing_info_music(pInfo);
-		#endif
-		/*inits the dbus and get the first set of info*/
-		dbus_init();
-
-		pInfo = dbus_get_playing_info_music();
-		#if VERBOSE >= 4
-		print_playing_info_music(pInfo);
-		#endif
+	struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};	
+	/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
+	#if VERBOSE >= 4
+	print_playing_info_music(pInfo);
+	#endif
+	/*inits the dbus and get the first set of info*/
+	dbus_init();
+	pInfo = dbus_get_playing_info_music();
+	#if VERBOSE >= 4
+	print_playing_info_music(pInfo);
 	#endif
 	get_active_devices();
 	g_timeout_add (2000,(GSourceFunc) daemon_loop,NULL);
@@ -114,37 +105,28 @@ void print_version(){
 
 
 
-#ifndef _NOSQL
-#ifndef _WIN32
-	gboolean daemon_loop(gpointer data) {
-		/*if the dbus is active, do the following, else try and connect*/
-		get_next_cmd();
-		if (dbus_is_connected(TRUE)) {
-			struct playing_info_music pInfo = dbus_get_playing_info_music();
-			#if VERBOSE >= 4
-			print_playing_info_music(pInfo);
-			#endif
-			hostname_node *hosts;
-			for_each_hostname(hosts){
-				set_song_info_rest(pInfo,hosts->hostname);
-			}
-			if (pInfo.isPlaying){
-				if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
-				if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
-				if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
-			}
+gboolean daemon_loop(gpointer data) {
+	/*if the dbus is active, do the following, else try and connect*/
+	get_next_cmd();
+	if (dbus_is_connected(TRUE)) {
+		struct playing_info_music pInfo = dbus_get_playing_info_music();
+		#if VERBOSE >= 4
+		print_playing_info_music(pInfo);
+		#endif
+		hostname_node *hosts;
+		for_each_hostname(hosts){
+			set_song_info_rest(pInfo,hosts->hostname);
 		}
-		return TRUE;
+		if (pInfo.isPlaying){
+			if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
+			if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
+			if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
+		}
 	}
-#else
-	gboolean daemon_loop(gpointer data){
-		get_next_cmd();
-		return TRUE;
-	}
-#endif
+	return TRUE;
+}
 
 gboolean update_active_devices(gpointer data){
 		get_active_devices();	
 		return TRUE;
 }
-#endif

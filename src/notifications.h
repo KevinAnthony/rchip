@@ -26,9 +26,4 @@
 
 gboolean 			set_notification				( char*,char*,char* );
 
-/*
-#ifndef 			_WIN32
-void 				get_torrent_info				( DBusGProxy*,char* );
-#endif
-*/
 #endif
