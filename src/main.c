@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 		#endif
 	#endif
 	get_active_devices();
-	g_timeout_add (500,(GSourceFunc) daemon_loop,NULL);
+	g_timeout_add (2000,(GSourceFunc) daemon_loop,NULL);
 	g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
 	init_status_window(FALSE);
 	gtk_widget_show(tray_icon);
