@@ -24,9 +24,6 @@
 #include	<glib.h>
 #include	<glib/gprintf.h>
 #include	<string.h>
-#include	<winsock.h>
-#include	<mysql.h>
-#include	<windows.h>
 
 
 

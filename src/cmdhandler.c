@@ -29,9 +29,9 @@
 /*windows doesn't have a dbus so we can't use it*/
 #include "dbus.h"
 #endif
-#endif
 #include "cmdhandler.h"
 #include "settings.h"
+#include "rest.h"
 #include "utils.h"
 #include "xml.h"
 
@@ -117,4 +117,11 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
 
 /* insert command and command text into cmdQueue, once per hsotname*/
 void send_cmd(char* cmd, char* cmdTxt) {
+	#if VERBOSE >= 4
+		printf("Sending\ncmd  : %s\ntext:%s\n",cmd,cmdTxt);
+	#endif
+	hostname_node *hosts;
+	for_each_hostname(hosts){
+		send_cmd_to_server(hosts->hostname,cmd,cmdTxt);
+	}
 }

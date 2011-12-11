@@ -28,6 +28,7 @@
 #include			"utils.h"
 
 void 				get_cmd_from_server					( char* );
+void				send_cmd_to_server					( char*, char*, char* );
 size_t 				get_commands_callback				( void*,size_t,size_t,void*);
 char* 				get_registered_devices_message		( void );
 void 				get_active_devices					( void );

@@ -31,7 +31,7 @@
 #include 	"rest.h"
 #include	"settings.h"
 #include	"utils.h"
-
+#include 	<sys/utsname.h>
 void get_cmd_from_server(char *hostname) {
 	CURL *session = curl_easy_init();
 	if (session) {
@@ -42,6 +42,17 @@ void get_cmd_from_server(char *hostname) {
 	curl_easy_cleanup(session);
 }
 
+void send_cmd_to_server(char* hostname,char* cmd,char* cmdTxt){
+	struct utsname uts;
+	uname( &uts );
+	CURL *session = curl_easy_init();
+	if (session) {
+		char* url = g_strconcat("http://www.nosideholdings.com/json/sendcommand/?command=",curl_easy_escape(session,cmd,strlen(cmd)),"&command_text=",curl_easy_escape(session,cmdTxt,strlen(cmdTxt)),"&source_hostname=",curl_easy_escape(session,uts.nodename,strlen(uts.nodename)),"&destination_hostname=",curl_easy_escape(session,hostname,strlen(hostname)),NULL);
+		curl_easy_setopt(session, CURLOPT_URL, url);
+		curl_easy_perform(session);
+	}
+	curl_easy_cleanup(session);
+}
 size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
 	json_object *jarray = json_tokener_parse((char*)ptr);
 	for (int i = 0; i< json_object_array_length(jarray); i++){
