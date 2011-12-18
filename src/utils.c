@@ -29,8 +29,9 @@
 gchar* replace_str (const gchar *src,const gchar *find,const gchar *replace){
 	gchar* retval = g_strdup(src);
 	gchar* ptr = NULL;
-	while ((ptr = g_strstr_len(retval,-1,find)) && (ptr != NULL)){
-		gchar* after_find = ptr+strlen(find);
+	ptr = g_strstr_len(retval,-1,find); 
+	if (ptr != NULL){
+		gchar* after_find = replace_str(ptr+strlen(find),find,replace);
 		gchar* before_find = g_strndup(retval,ptr-retval);
 		gchar* temp = g_strconcat(before_find,replace,after_find,NULL);
 		g_free(retval);
