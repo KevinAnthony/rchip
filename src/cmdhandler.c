@@ -68,7 +68,6 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
 				char* q = newCmdTxt;
 				int len = 0;
 				while (*p != '\0'){
-					//if ((*p == '\'') || (*p == '\"') || (*p == ' ')){
 					if (*p == ' '){
 						*q = '\\';
 						q++;
@@ -83,8 +82,15 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
 				cmdTxt = g_strndup(newCmdTxt,len);
 				g_free(newCmdTxt);
 			}
+			gchar* t1 = replace_str(cmdTxt,"(","\\(");
+			g_free(cmdTxt);
+			gchar* t2 = replace_str(t1,")","\\)");
+			g_free(t1);
+			gchar* t3 = replace_str(t2,"\'","\\\'");
+			g_free(t2);
+			cmdTxt = replace_str(t3,";","\\;");
+			g_free(t3);
 			gchar* command = g_strdup_printf ("%s %s&",xml_get_system_command(),cmdTxt);
-			g_printf("%s\n",command);
 			system(command);
 			g_free(command);
 		} else if (g_strcmp0(type,"DBUS") == 0) {
