@@ -30,6 +30,7 @@ void 				add							( char* );
 void 				delete						( char* );
 int					find						( char* );
 void 				init_hostname				( void );
+gboolean            is_valid_extension			( const gchar* );
 
 struct playing_info_music {
 	char 	*Artist;

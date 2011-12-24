@@ -104,3 +104,8 @@ int find (char* token){
 	}
 	return 0;
 }
+
+
+gboolean is_valid_extension(const gchar* filename){
+	return g_str_has_suffix (filename,"mkv") || g_str_has_suffix (filename,"avi") || g_str_has_suffix (filename,"mp4");
+}

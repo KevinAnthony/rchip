@@ -33,16 +33,16 @@
 void add_file_to_playqueue(char* filepath){
 	//here i really should somehow figure out if it's an anime, a live action, or something else
 	// for now, it's all live action
-if (g_strstr_len(filepath,-1,"/English/Live_Action/") != NULL) {
-		send_cmd("ADDS",live_action(filepath));
-	} else if (g_strstr_len(filepath,-1,"/Foreign/Animeted/") != NULL) {
-		send_cmd("ADDS",anime(filepath));
-	} else {
-		send_cmd("ADDS",other(filepath));
+if ((is_valid_extension(filepath))){
+	if ((g_strstr_len(filepath,-1,"/English/Live_Action/") != NULL)) {
+			send_cmd("ADDS",live_action(filepath));
+		} else if (g_strstr_len(filepath,-1,"/Foreign/Animeted/") != NULL) {
+			send_cmd("ADDS",anime(filepath));
+		} else {
+			send_cmd("ADDS",other(filepath));
+		}
 	}
-
 }
-
 char* live_action(char* filepath){
 	char* posOfLastSlash=filepath;
 	int fnamelen=0;
