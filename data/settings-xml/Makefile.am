@@ -5,8 +5,8 @@ all:
 		cat $$xml_desc | ${SED} 's,MUSIC.XML,@MUSIC@,' | ${SED} 's,VIDEO.XML,@VIDEO@,'>../$$xml_desc; \
 	done;) &>/dev/null || true
 
-DISTCLEANFILES = Makefile ../$(settings_xml)
+DISTCLEANFILES = Makefile
 
 MAINTAINERCLEANFILES = Makefile.in 
 
-EXTRA_DIST = $(wildcard *.xml)
+EXTRA_DIST = *.xml

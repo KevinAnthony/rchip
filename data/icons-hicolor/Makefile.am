@@ -35,5 +35,5 @@ uninstall-hook:
 
 DISTCLEANFILES = Makefile
 MAINTAINERCLEANFILES = Makefile.in
-EXTRA_DIST = $(wildcard *.png *.svg) $(wildcard src/*.svg)
+EXTRA_DIST = *.png *.svg src/*.svg
 

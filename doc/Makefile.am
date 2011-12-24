@@ -1,4 +1,4 @@
-docdir = $(datadir)/doc/@PACKAGE@
+docdir = $(datadir)/doc/
 doc_DATA = OVERVIEW PLUGABLEXML
 
 EXTRA_DIST =                    \
