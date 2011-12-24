@@ -145,7 +145,6 @@ void add_folders(GtkWidget *widget, gpointer gdata){
 			#if VERBOSE >= 3
 			g_printf("Adding Filename%s\n",filename);
 			#endif
-			filename = replace_str(filename,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
 			add_folder_to_playqueue(filename);
 			node=node->next;
 		} 
