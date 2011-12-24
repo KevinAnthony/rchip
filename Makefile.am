@@ -1,11 +1,11 @@
-SUBDIRS = src data man doc m4
+SUBDIRS = src data man doc 
 
 CLEANFILES = \
 	*.tar.gz
 
 DISTCLEANFILES = \
         Makefile \
-	*.bak \
+	    *.bak \
         *~ \
         *.pidb
 
@@ -21,8 +21,13 @@ MAINTAINERCLEANFILES = \
         install-sh \
         config.sub \
         config.guess \
-        mkinstalldirs
-
+        mkinstalldirs \
+		m4/libtool.m4	\
+		m4/lt~obsolete.m4	\
+		m4/ltoptions.m4  	\
+		m4/ltsugar.m4 	\
+		m4/ltversion.m4	\
+		m4/pkg.m4
 clean-local:
 	rm -rf bin
 
