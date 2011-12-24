@@ -39,6 +39,6 @@
                         <default>"VIDEO.XML"</default>
                         <summary>video xml file</summary>
                         <description>The XML file which contains the video commands for the player we are using</description>
-                </key>
+        </key>
 	</schema>
 </schemalist>
