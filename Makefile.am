@@ -28,6 +28,7 @@ MAINTAINERCLEANFILES = \
 		m4/ltsugar.m4 	\
 		m4/ltversion.m4	\
 		m4/pkg.m4
+
 clean-local:
 	rm -rf bin
 
