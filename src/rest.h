@@ -35,5 +35,7 @@ void 				get_active_devices					( void );
 size_t 				get_active_decives_callback			( void*,size_t,size_t,void*);
 void 				set_song_info_rest					( struct playing_info_music, char* );
 void 				update_daemon_server				( void );
+void				authenticate						( void );
+void 				deauthenticate						( void );
 #endif //#ifdef _JSON
 #endif

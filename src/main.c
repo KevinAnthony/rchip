@@ -48,6 +48,7 @@ int main(int argc, char** argv) {
 	GtkStatusIcon *tray_icon;
 	parse_command_line_options(argc,argv);
 	gtk_init(&argc, &argv);
+	authenticate();
 	if (!xml_init()){
 		g_error("xml_init FAILED\n");
 	}
@@ -72,6 +73,7 @@ int main(int argc, char** argv) {
 	init_status_window(FALSE);
 	gtk_widget_show(tray_icon);
 	start_tray();
+	deauthenticate();
 	return 0;
 }
 
