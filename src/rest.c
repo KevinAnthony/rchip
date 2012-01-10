@@ -35,7 +35,7 @@
 #include 	<sys/utsname.h>
 
 //TODO: This should be a setting, not hard coded
-char* URL = "http://www.nosideracing.com/json";
+char* URL = "http://www.nosideholdings.com/json";
 
 CURL *session;
 void get_cmd_from_server(char *hostname) {
@@ -61,7 +61,6 @@ void send_cmd_to_server(char* hostname,char* cmd,char* cmdTxt){
 }
 size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
 	if (g_strcmp0(ptr,"\"Not Authorized\"") == 0){
-		printf("Error with Authentication\n");
 		return 0;
 	}
 	json_object *jarray = json_tokener_parse((char*)ptr);
@@ -76,7 +75,6 @@ size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
 				cmd_txt = json_object_get_string(val);
 			}
 		}
-		printf("Command=%s\n",cmd);
 		process_cmd(cmd,cmd_txt);	
 	}
 	return 0;
@@ -87,10 +85,8 @@ char* get_registered_devices_message(){
 }
 
 void get_active_devices( void ){
-	return;
 	if (session) {
 		char* url = g_strconcat(URL,"/getremotedevice/",NULL);
-		printf("url:%s\n",url);
 	    curl_easy_setopt(session, CURLOPT_URL, url);
 		curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
 		curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, get_active_decives_callback);
@@ -100,8 +96,7 @@ void get_active_devices( void ){
 }
 
 size_t get_active_decives_callback(void *ptr,size_t size, size_t count, void* stream){
-	//json_object *jarray = json_tokener_parse((char*)ptr);
-	json_object *jarray = json_tokener_parse("[{\"devices_name\": \"7327943473\"}]");
+	json_object *jarray = json_tokener_parse((char*)ptr);
 	for (int i = 0; i< json_object_array_length(jarray); i++){
 		json_object_object_foreach(json_object_array_get_idx(jarray, i), key, val){
 			Hosts->add(json_object_get_string(val));
@@ -116,7 +111,6 @@ void set_song_info_rest(struct playing_info_music pInfo, char* hostname) {
 	if (pInfo.isPlaying != 0){
 		if (session) {
 			char* url = g_strdup_printf("%s/setsonginfo/?artist=%s&album=%s&song=%s&elapsed_time=%d&total_time=%d&is_playing=%d&dest_hostname=%s",URL,curl_easy_escape(session,pInfo.Artist,strlen(pInfo.Artist)),curl_easy_escape(session,pInfo.Album,strlen(pInfo.Album)),curl_easy_escape(session,pInfo.Song,strlen(pInfo.Song)),pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,curl_easy_escape(session,hostname,strlen(hostname)));
-			printf("url:%s\n",url);
 			curl_easy_setopt(session, CURLOPT_URL, url);
 			curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
 			curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, get_active_decives_callback);
