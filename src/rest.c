@@ -34,7 +34,9 @@
 #include	"cmdhandler.h"
 #include 	<sys/utsname.h>
 
-char* URL = "http://192.168.1.3/json";
+//TODO: This should be a setting, not hard coded
+char* URL = "http://www.nosideracing.com/json";
+
 CURL *session;
 void get_cmd_from_server(char *hostname) {
 	if (session) {
@@ -58,7 +60,6 @@ void send_cmd_to_server(char* hostname,char* cmd,char* cmdTxt){
 	}
 }
 size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
-	printf("ptr:%s:\n",ptr);
 	if (g_strcmp0(ptr,"\"Not Authorized\"") == 0){
 		printf("Error with Authentication\n");
 		return 0;
