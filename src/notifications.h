@@ -18,12 +18,12 @@
 *
 */
 
-#ifndef 			NOTIFICATIONS_H
-#define 			NOTIFICATIONS_H
+#ifndef             NOTIFICATIONS_H
+#define             NOTIFICATIONS_H
 
-#include			<glib.h>
+#include            <glib.h>
 
 
-gboolean 			set_notification				( char*,char*,char* );
+gboolean             set_notification                ( char*,char*,char* );
 
 #endif

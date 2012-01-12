@@ -20,10 +20,10 @@
 
 #include <config.h>
 
-#include	"notifications.h" 
-#include	<glib.h>
-#include	<glib/gprintf.h>
-#include	<string.h>
+#include    "notifications.h" 
+#include    <glib.h>
+#include    <glib/gprintf.h>
+#include    <string.h>
 
 
 
@@ -36,48 +36,48 @@
  *
  */
 gboolean set_notification(char* tickerString,char* notificationTitle,char* notificationText) {
-	#ifdef _SQL
-	/* 
-	 * nelem is the number of elements in the array
-	 * size is the size in bytes of each element
-	 * base is a pointer to the first byte of the first element of the array
-	 */
-	size_t nelem;
-	size_t size;
-	char* base;
-	size=get_size();
-	nelem=get_nelem();
-	base = g_malloc(nelem*size);
-	get_active_devices(base,size,nelem);
-	/* we allocate and build the message, when passed to a device they are pipe | delineated */
-	char* msg = g_strdup_printf("%s|%s|%s",tickerString,notificationTitle,notificationText);
-	/* TMSG command tells the device to display the notification*/	
-	char* cmd = "TMSG";
-	char* recipt = g_malloc(size);
-	char* name = NULL;
-	/* we get the current hostname of the PC this program is running on */
-	struct utsname uts;
-	uname( &uts );
-	name = g_malloc(strlen(uts.nodename)+2);
-	int len = strlen(uts.nodename);
-	char* p;
-	p=name;
-	for (int i = 0; i<len; i++){*p++ = uts.nodename[i];}
-	/* For each element in the array, we build a query, and send it to the device */
-	for (int i = 0; i < nelem; i++) {
-		char* elem = base+(i*size);
-		g_strlcpy(recipt,elem,size);
-		char* query = g_strdup_printf("Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\")",cmd,msg,name,recipt);
-		sql_exec_quary(query);
-		g_free(query);
-	}
-	/* And we free everything */
-	g_free(recipt);
-	g_free(msg);
-	g_free(name);
-	g_free(base);
-	return TRUE;
-	#else
-	return FALSE;
-	#endif
+    #ifdef _SQL
+    /* 
+     * nelem is the number of elements in the array
+     * size is the size in bytes of each element
+     * base is a pointer to the first byte of the first element of the array
+     */
+    size_t nelem;
+    size_t size;
+    char* base;
+    size=get_size();
+    nelem=get_nelem();
+    base = g_malloc(nelem*size);
+    get_active_devices(base,size,nelem);
+    /* we allocate and build the message, when passed to a device they are pipe | delineated */
+    char* msg = g_strdup_printf("%s|%s|%s",tickerString,notificationTitle,notificationText);
+    /* TMSG command tells the device to display the notification*/    
+    char* cmd = "TMSG";
+    char* recipt = g_malloc(size);
+    char* name = NULL;
+    /* we get the current hostname of the PC this program is running on */
+    struct utsname uts;
+    uname( &uts );
+    name = g_malloc(strlen(uts.nodename)+2);
+    int len = strlen(uts.nodename);
+    char* p;
+    p=name;
+    for (int i = 0; i<len; i++){*p++ = uts.nodename[i];}
+    /* For each element in the array, we build a query, and send it to the device */
+    for (int i = 0; i < nelem; i++) {
+        char* elem = base+(i*size);
+        g_strlcpy(recipt,elem,size);
+        char* query = g_strdup_printf("Insert into cmdQueue (command,cmdText,source_hostname,dest_hostname) values (\"%s\",\"%s\",\"%s\",\"%s\")",cmd,msg,name,recipt);
+        sql_exec_quary(query);
+        g_free(query);
+    }
+    /* And we free everything */
+    g_free(recipt);
+    g_free(msg);
+    g_free(name);
+    g_free(base);
+    return TRUE;
+    #else
+    return FALSE;
+    #endif
 }

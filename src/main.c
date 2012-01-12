@@ -1,5 +1,5 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
-			ihar* hostname = g_malloc(size);
+            ihar* hostname = g_malloc(size);
 *
 *    rchip, Remote Controlled Home Integration Program
 *    Copyright (C) 2011 <Kevin@NoSideRacing.com>
@@ -43,43 +43,43 @@ char* build_playing_info_sql_query(const struct playing_info_music,char*);
 
 /*The Main Program*/
 int main(int argc, char** argv) {
-	/* defines the tray_icon, as well as init gtk*/
-	g_set_application_name(PACKAGE_NAME);
-	GtkStatusIcon *tray_icon;
-	parse_command_line_options(argc,argv);
-	gtk_init(&argc, &argv);
-	authenticate();
-	if (!xml_init()){
-		g_error("xml_init FAILED\n");
-	}
-	init_hostname();
-	settings_init();
-	/*sets the tray icon from the create_tray_icon*/
-	tray_icon = create_tray_icon();
-	struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};	
-	/* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
-	#if VERBOSE >= 4
-	print_playing_info_music(pInfo);
-	#endif
-	/*inits the dbus and get the first set of info*/
-	dbus_init();
-	pInfo = dbus_get_playing_info_music();
-	#if VERBOSE >= 4
-	print_playing_info_music(pInfo);
-	#endif
-	get_active_devices();
-	g_timeout_add (2000,(GSourceFunc) daemon_loop,NULL);
-	g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
-	init_status_window(FALSE);
-	gtk_widget_show(tray_icon);
-	start_tray();
-	deauthenticate();
-	return 0;
+    /* defines the tray_icon, as well as init gtk*/
+    g_set_application_name(PACKAGE_NAME);
+    GtkStatusIcon *tray_icon;
+    parse_command_line_options(argc,argv);
+    gtk_init(&argc, &argv);
+    authenticate();
+    if (!xml_init()){
+        g_error("xml_init FAILED\n");
+    }
+    init_hostname();
+    settings_init();
+    /*sets the tray icon from the create_tray_icon*/
+    tray_icon = create_tray_icon();
+    struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};    
+    /* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
+    #if VERBOSE >= 4
+    print_playing_info_music(pInfo);
+    #endif
+    /*inits the dbus and get the first set of info*/
+    dbus_init();
+    pInfo = dbus_get_playing_info_music();
+    #if VERBOSE >= 4
+    print_playing_info_music(pInfo);
+    #endif
+    get_active_devices();
+    g_timeout_add (2000,(GSourceFunc) daemon_loop,NULL);
+    g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
+    init_status_window(FALSE);
+    gtk_widget_show(tray_icon);
+    start_tray();
+    deauthenticate();
+    return 0;
 }
 
 gboolean parse_command_line_options(int argc, char **argv) {
         static gboolean version = FALSE;
-		GError *error;
+        GError *error;
         GOptionContext *context;
         static const GOptionEntry options []  = {
         {"version",'v',0, G_OPTION_ARG_NONE,&version,("Version Info"),NULL},
@@ -108,27 +108,27 @@ void print_version(){
 
 
 gboolean daemon_loop(gpointer data) {
-	/*if the dbus is active, do the following, else try and connect*/
-	get_next_cmd();
-	if (dbus_is_connected(TRUE)) {
-		struct playing_info_music pInfo = dbus_get_playing_info_music();
-		#if VERBOSE >= 4
-		print_playing_info_music(pInfo);
-		#endif
-		hostname_node *hosts;
-		for_each_hostname(hosts){
-			set_song_info_rest(pInfo,hosts->hostname);
-		}
-		if (pInfo.isPlaying){
-			if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
-			if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
-			if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
-		}
-	}
-	return TRUE;
+    /*if the dbus is active, do the following, else try and connect*/
+    get_next_cmd();
+    if (dbus_is_connected(TRUE)) {
+        struct playing_info_music pInfo = dbus_get_playing_info_music();
+        #if VERBOSE >= 4
+        print_playing_info_music(pInfo);
+        #endif
+        hostname_node *hosts;
+        for_each_hostname(hosts){
+            set_song_info_rest(pInfo,hosts->hostname);
+        }
+        if (pInfo.isPlaying){
+            if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
+            if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
+            if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
+        }
+    }
+    return TRUE;
 }
 
 gboolean update_active_devices(gpointer data){
-		get_active_devices();	
-		return TRUE;
+        get_active_devices();    
+        return TRUE;
 }

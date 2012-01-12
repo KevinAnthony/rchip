@@ -22,20 +22,20 @@
 #define JSON_H
 
 #ifdef _JSON
-#include			<curl/curl.h>
-#include			<json/json.h>
-#include			<glib.h>
-#include			"utils.h"
+#include            <curl/curl.h>
+#include            <json/json.h>
+#include            <glib.h>
+#include            "utils.h"
 
-void 				get_cmd_from_server					( char* );
-void				send_cmd_to_server					( char*, char*, char* );
-size_t 				get_commands_callback				( void*,size_t,size_t,void*);
-char* 				get_registered_devices_message		( void );
-void 				get_active_devices					( void );
-size_t 				get_active_decives_callback			( void*,size_t,size_t,void*);
-void 				set_song_info_rest					( struct playing_info_music, char* );
-void 				update_daemon_server				( void );
-void				authenticate						( void );
-void 				deauthenticate						( void );
+void                get_cmd_from_server                 ( char* );
+void                send_cmd_to_server                  ( char*, char*, char* );
+size_t              get_commands_callback               ( void*,size_t,size_t,void*);
+char*               get_registered_devices_message      ( void );
+void                get_active_devices                  ( void );
+size_t              get_active_decives_callback         ( void*,size_t,size_t,void*);
+void                set_song_info_rest                  ( struct playing_info_music, char* );
+void                update_daemon_server                ( void );
+void                authenticate                        ( void );
+void                deauthenticate                      ( void );
 #endif //#ifdef _JSON
 #endif

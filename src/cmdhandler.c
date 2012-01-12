@@ -42,95 +42,95 @@
 void get_next_cmd() {
     /*uts.nodename is the hostname of the computer*/
     struct utsname uts;
-	uname( &uts );
-	get_cmd_from_server(uts.nodename);
+    uname( &uts );
+    get_cmd_from_server(uts.nodename);
 }
 
 gboolean process_cmd(char* cmd,char* cmdTxt) {
-	if ((cmd != NULL) && (cmd != "")){
-		gboolean xmli = xml_init();
-		gboolean xmlf = xml_find_command(cmd);
-		if (!xmli){
-			g_printf("XML_INIT PROBLEM\n");
-			return FALSE;
-		}
-		if (!xmlf){
-			g_printf("XML_FIND_COMMAND(%s) PROBLEM\n",cmd);
-			return FALSE;
-		}
-		if (xmli && xmlf){
-			char* type = xml_get_type();
-			char* musicOrVideo = xml_get_music_or_video();
-			if(g_strcmp0(type,"SYSTEM") == 0){
-				if (g_strcmp0(cmdTxt,"") != 0){
-					cmdTxt = g_strescape(cmdTxt,"");
-					gchar* newCmdTxt = malloc(strlen(cmdTxt)*2);
-					char* p = cmdTxt;
-					char* q = newCmdTxt;
-					int len = 0;
-					while (*p != '\0'){
-						if (*p == ' '){
-							*q = '\\';
-							q++;
-							len++;
-						}
-						*q=*p;
-						p++;
-						q++;
-						len++;
-					}
-					g_free(cmdTxt);
-					cmdTxt = g_strndup(newCmdTxt,len);
-					g_free(newCmdTxt);
-				}
-				gchar* t1 = replace_str(cmdTxt,"(","\\(");
-				g_free(cmdTxt);
-				gchar* t2 = replace_str(t1,")","\\)");
-				g_free(t1);
-				gchar* t3 = replace_str(t2,"\'","\\\'");
-				g_free(t2);
-				cmdTxt = replace_str(t3,";","\\;");
-				g_free(t3);
-				gchar* command = g_strdup_printf ("%s %s&",xml_get_system_command(),cmdTxt);
-				system(command);
-				g_free(command);
-			} else if (g_strcmp0(type,"DBUS") == 0) {
-				char* argument = xml_get_dbus_argument();
-				char* argument_str = xml_get_dbus_argument_type();
-				char* dbus_command = xml_get_dbus_command();
-				if (argument != NULL){
-					if(g_strcmp0(musicOrVideo,"MUSIC") == 0){
-						send_command_to_music_player_with_argument(dbus_command,argument_str,argument);
-					} else {
-						send_command_to_video_player_with_argument(dbus_command,argument_str,argument);
-					}
-					g_free(argument);
-					g_free(argument_str);
-				} else {
-					if(g_strcmp0(musicOrVideo,"MUSIC") == 0){
-						send_command_to_music_player(dbus_command);
-					} else {
-						send_command_to_video_player(dbus_command);
-					}
-				}
-				g_free(dbus_command);
-			}
-			g_free(type);
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	}
-	return TRUE;
+    if ((cmd != NULL) && (cmd != "")){
+        gboolean xmli = xml_init();
+        gboolean xmlf = xml_find_command(cmd);
+        if (!xmli){
+            g_printf("XML_INIT PROBLEM\n");
+            return FALSE;
+        }
+        if (!xmlf){
+            g_printf("XML_FIND_COMMAND(%s) PROBLEM\n",cmd);
+            return FALSE;
+        }
+        if (xmli && xmlf){
+            char* type = xml_get_type();
+            char* musicOrVideo = xml_get_music_or_video();
+            if(g_strcmp0(type,"SYSTEM") == 0){
+                if (g_strcmp0(cmdTxt,"") != 0){
+                    cmdTxt = g_strescape(cmdTxt,"");
+                    gchar* newCmdTxt = malloc(strlen(cmdTxt)*2);
+                    char* p = cmdTxt;
+                    char* q = newCmdTxt;
+                    int len = 0;
+                    while (*p != '\0'){
+                        if (*p == ' '){
+                            *q = '\\';
+                            q++;
+                            len++;
+                        }
+                        *q=*p;
+                        p++;
+                        q++;
+                        len++;
+                    }
+                    g_free(cmdTxt);
+                    cmdTxt = g_strndup(newCmdTxt,len);
+                    g_free(newCmdTxt);
+                }
+                gchar* t1 = replace_str(cmdTxt,"(","\\(");
+                g_free(cmdTxt);
+                gchar* t2 = replace_str(t1,")","\\)");
+                g_free(t1);
+                gchar* t3 = replace_str(t2,"\'","\\\'");
+                g_free(t2);
+                cmdTxt = replace_str(t3,";","\\;");
+                g_free(t3);
+                gchar* command = g_strdup_printf ("%s %s&",xml_get_system_command(),cmdTxt);
+                system(command);
+                g_free(command);
+            } else if (g_strcmp0(type,"DBUS") == 0) {
+                char* argument = xml_get_dbus_argument();
+                char* argument_str = xml_get_dbus_argument_type();
+                char* dbus_command = xml_get_dbus_command();
+                if (argument != NULL){
+                    if(g_strcmp0(musicOrVideo,"MUSIC") == 0){
+                        send_command_to_music_player_with_argument(dbus_command,argument_str,argument);
+                    } else {
+                        send_command_to_video_player_with_argument(dbus_command,argument_str,argument);
+                    }
+                    g_free(argument);
+                    g_free(argument_str);
+                } else {
+                    if(g_strcmp0(musicOrVideo,"MUSIC") == 0){
+                        send_command_to_music_player(dbus_command);
+                    } else {
+                        send_command_to_video_player(dbus_command);
+                    }
+                }
+                g_free(dbus_command);
+            }
+            g_free(type);
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+    return TRUE;
 }
 
 /* insert command and command text into cmdQueue, once per hsotname*/
 void send_cmd(char* cmd, char* cmdTxt) {
-	#if VERBOSE >= 4
-		printf("Sending\ncmd  : %s\ntext:%s\n",cmd,cmdTxt);
-	#endif
-	hostname_node *hosts;
-	for_each_hostname(hosts){
-		send_cmd_to_server(hosts->hostname,cmd,cmdTxt);
-	}
+    #if VERBOSE >= 4
+        printf("Sending\ncmd  : %s\ntext:%s\n",cmd,cmdTxt);
+    #endif
+    hostname_node *hosts;
+    for_each_hostname(hosts){
+        send_cmd_to_server(hosts->hostname,cmd,cmdTxt);
+    }
 }
