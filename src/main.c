@@ -48,12 +48,12 @@ int main(int argc, char** argv) {
     GtkStatusIcon *tray_icon;
     parse_command_line_options(argc,argv);
     gtk_init(&argc, &argv);
+    settings_init();
     authenticate();
     if (!xml_init()){
         g_error("xml_init FAILED\n");
     }
     init_hostname();
-    settings_init();
     /*sets the tray icon from the create_tray_icon*/
     tray_icon = create_tray_icon();
     struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};    

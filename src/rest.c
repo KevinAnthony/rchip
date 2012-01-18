@@ -121,7 +121,9 @@ void set_song_info_rest(struct playing_info_music pInfo, char* hostname) {
 }
 
 void authenticate( void ){
-    char* url = g_strconcat(URL,"/authenticate/?username=kevin&password=Inverse81",NULL);
+    char* username = get_setting_str(REST_USERNAME);
+    char* password = get_setting_str(REST_PASSWORD);
+    char* url = g_strconcat(URL,"/authenticate/?username=",username,"&password=",password,NULL);
     char* response;
     session = curl_easy_init();
     if (session) {

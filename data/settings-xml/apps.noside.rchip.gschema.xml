@@ -1,5 +1,15 @@
 <schemalist>
 	<schema id="apps.noside.rchip.settings" path="/apps/noside/rchip/settings/">
+		<key name="rest-username" type="s">
+			<default>""</default>
+			<summary>Username</summary>
+			<description>The Username for the REST server.</description>
+		</key>
+		<key name="rest-password" type="s">
+			<default>""</default>
+			<summary>Password</summary>
+			<description>The Password for the REST server.</description>
+		</key>
 		<key name="raidroot" type="s">
 			<default>"/media/Tamatebako"</default>
 			<summary>Path</summary>

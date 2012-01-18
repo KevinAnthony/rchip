@@ -24,20 +24,22 @@
 #include            <glib.h>
 #include            <gio/gio.h>
 
-#define             VIDEO_ROOT                   "raidroot"
-#define             SQL_SERVER                   "sql-server"
-#define             SQL_USERNAME                 "sql-username"
-#define             SQL_PASSWORD                 "sql-passwd"
-#define             SQL_DATABASE                 "sql-db"
-#define             SQL_MAX_NAME                 "sql-hostnamesize"
-#define             MUSIC_XML                    "xml-music"
-#define             VIDEO_XML                    "xml-video"
+#define             REST_USERNAME               "rest-username"
+#define             REST_PASSWORD               "rest-password"
+#define             VIDEO_ROOT                  "raidroot"
+#define             SQL_SERVER                  "sql-server"
+#define             SQL_USERNAME                "sql-username"
+#define             SQL_PASSWORD                "sql-passwd"
+#define             SQL_DATABASE                "sql-db"
+#define             SQL_MAX_NAME                "sql-hostnamesize"
+#define             MUSIC_XML                   "xml-music"
+#define             VIDEO_XML                   "xml-video"
 
-char*               get_setting_str              ( gchar* );
-gboolean            set_setting_str              ( gchar*,gchar* );
-int                 get_setting_int              ( gchar* );
-gboolean            set_setting_int              ( gchar*,int );
-void                settings_unref               ( void );
-void                setting_changed              ( GSettings*, gchar*, gpointer );
-gboolean            settings_init                ( void );
+char*               get_setting_str             ( gchar* );
+gboolean            set_setting_str             ( gchar*,gchar* );
+int                 get_setting_int             ( gchar* );
+gboolean            set_setting_int             ( gchar*,int );
+void                settings_unref              ( void );
+void                setting_changed             ( GSettings*, gchar*, gpointer );
+gboolean            settings_init               ( void );
 #endif

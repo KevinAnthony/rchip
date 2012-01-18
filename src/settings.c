@@ -89,8 +89,9 @@ gboolean set_setting_int( gchar* keyname, int settingValue ){
 }
 
 void setting_changed( GSettings *settings, gchar *key, gpointer user_data){
-    g_printf("Setting %s Changed",key);
-    
+    #if VERBOSE >=3
+    g_printf("Setting %s Changed\n",key);
+    #endif
 }
 
 

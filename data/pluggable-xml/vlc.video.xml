@@ -1,0 +1,60 @@
+<VIDEO>
+	<connection>
+		<type>DBUS</type>
+        <bus_name>org.bansheeproject.Banshee</bus_name>
+        <bus_path>/Player</bus_path>
+	</connection>
+	<command>
+		<name>STOPSM</name>
+		<type>DBUS</type>
+        <dbus_command>org.freedesktop.MediaPlayer.Stop</dbus_command>
+	</command>
+	<command>
+		<name>OPENSM</name>
+		<type>SYSTEM</type>
+        <system_command>vlc --control dbus</system_command>
+		<argument>TRUE</argument>
+		<command>The Argument here is the path to the file to open</command>
+	</command>
+	<command>
+		<name>PLAYSM</name>
+        <type>DBUS</type>
+        <dbus_command>org.freedesktop.MediaPlayer.Play</dbus_command>
+	</command>
+	<command>
+		<name>PAUSESM</name>
+        <type>DBUS</type>
+        <dbus_command>org.freedesktop.MediaPlayer.Pause</dbus_command>
+    </command>
+	<command>
+		<name>SKIPFSM</name>
+        <type>DBUS</type>
+        <dbus_command>org.freedesktop.MediaPlayer.Stop</dbus_command>
+	</command>
+	<command>
+		<name>SKIPBSM</name>
+        <type>DBUS</type>
+        <dbus_command>org.freedesktop.MediaPlayer.Stop</dbus_command>
+	</command>
+	<command>
+		<name>FULLONSM</name>
+    	<type>DBUS</type>
+        <dbus_command></dbus_command>
+    </command>
+	<command>
+		<name>FULLOFFSM</name>
+    	<type>DBUS</type>
+        <dbus_command></dbus_command>
+	</command>
+	<command>
+		<name>MUTESM</name>
+		<type>SYSTEM</type>
+		<system_command>smplayer -send-action mute</system_command>
+	</command>
+	<command>
+		<name>QUITSM</name>
+		<type>SYSTEM</type>
+		<system_command>killall vlc</system_command>
+        <argument>FALSE</argument>
+	</command>
+</VIDEO>

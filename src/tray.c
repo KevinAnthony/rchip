@@ -36,7 +36,6 @@ void start_tray(){
     #ifdef GTK3
         /* set up a new GtkApplication and register callback*/
         GtkApplication *app;
-        gint status;
         app = gtk_application_new("org.noside.rchip", 0);
         g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
         g_application_register(G_APPLICATION(app),NULL,NULL);
@@ -47,7 +46,7 @@ void start_tray(){
          * not function properly
          */
         if (!(g_application_get_is_remote(G_APPLICATION(app)))){
-            status = g_application_run(G_APPLICATION (app),0,NULL);
+            g_application_run(G_APPLICATION (app),0,NULL);
         }
         g_object_unref(app);
     #else
@@ -82,6 +81,37 @@ void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gp
     gtk_menu_popup (GTK_MENU (tray_menu), NULL, NULL,gtk_status_icon_position_menu,status_icon,button,activate_time);
 }
 
+void credentials(GtkWidget *widget, gpointer gdata){
+    static GtkWidget *dialog = NULL;
+    dialog = gtk_dialog_new();
+    gtk_window_set_modal( GTK_WINDOW( dialog ), TRUE );
+    //gtk_window_set_transient_for( GTK_WINDOW( dialog ),GTK_WINDOW( window ) );
+                                                                    
+    gtk_window_set_title( GTK_WINDOW( dialog ), "Conformation" );
+                                                                                     
+    gtk_dialog_add_button( GTK_DIALOG( dialog ), GTK_STOCK_YES, 1 );
+    gtk_dialog_add_button( GTK_DIALOG( dialog ), GTK_STOCK_NO,  2 );
+    GtkWidget *box = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
+    
+    GtkWidget *username = gtk_entry_new();
+    GtkWidget *password = gtk_entry_new();
+    gtk_entry_set_text (GTK_ENTRY (username), get_setting_str(REST_USERNAME));
+    gtk_entry_set_text (GTK_ENTRY (password), get_setting_str(REST_PASSWORD));
+    gtk_entry_set_visibility(GTK_ENTRY(password),FALSE);
+
+
+    gtk_box_pack_start( GTK_BOX( box ), gtk_label_new( "Username" ), TRUE, TRUE, 0 );
+    gtk_box_pack_start( GTK_BOX( box ), username, TRUE, TRUE, 0 );
+    gtk_box_pack_start( GTK_BOX( box ), gtk_label_new( "Password" ), TRUE, TRUE, 0 );
+    gtk_box_pack_start( GTK_BOX( box ), password, TRUE, TRUE, 0 );
+
+    gtk_widget_show_all( dialog );
+    if (gtk_dialog_run( GTK_DIALOG (dialog) ) == 1){
+        set_setting_str(REST_USERNAME,gtk_entry_get_text(username));
+        set_setting_str(REST_PASSWORD,gtk_entry_get_text(password));
+    }
+    gtk_widget_hide( dialog );
+}
 void add_files(GtkWidget *widget, gpointer gdata){
     /*Add Show files to remote watch list*/
      #if VERBOSE >= 3
@@ -259,6 +289,8 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
     /* Set's up the basic tray_menu, with four options */
 
     GtkWidget *tray_menu;
+    
+    GtkWidget *credentials_item;
     GtkWidget *showsadd_item;
     GtkWidget *folderadd_item;
     GtkWidget *about_item;
@@ -272,6 +304,7 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
     GtkWidget *music_item;
     GtkWidget *video_item;
 
+    
     tray_menu = gtk_menu_new ();
 
     setting_menu = gtk_menu_new ();
@@ -281,7 +314,8 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
     setting_item = gtk_menu_item_new_with_label ("Settings");
     music_item = gtk_menu_item_new_with_label ("Music Program");
     video_item = gtk_menu_item_new_with_label ("Video Program");    
-    
+    credentials_item = gtk_menu_item_new_with_label ("Login Credentials");
+
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(setting_item),setting_menu);
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(music_item),music_menu);
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(video_item),video_menu);
@@ -296,12 +330,17 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
     gtk_menu_shell_append(GTK_MENU_SHELL (setting_menu),music_item);
     gtk_menu_shell_append(GTK_MENU_SHELL (setting_menu),video_item);
 
+    gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), credentials_item);
+    gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), gtk_separator_menu_item_new());
     gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), showsadd_item);
     gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), folderadd_item);
+    gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), gtk_separator_menu_item_new());
     gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), setting_item);
+    gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), gtk_separator_menu_item_new());
     gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), about_item);    
     gtk_menu_shell_append (GTK_MENU_SHELL (tray_menu), quit_item);
 
+    g_signal_connect_swapped(credentials_item, "activate",G_CALLBACK(credentials),NULL);
     g_signal_connect_swapped(showsadd_item, "activate",G_CALLBACK(add_files),NULL);
     g_signal_connect_swapped(folderadd_item, "activate",G_CALLBACK(add_folders),NULL);
     g_signal_connect_swapped(about_item, "activate",G_CALLBACK(about_box),NULL);
