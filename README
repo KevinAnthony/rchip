@@ -1,8 +1,6 @@
 General Information
 ===================
 
-rchip stands for Remote Controlled Home automation Integration Program.  Using a MySQL database to hold the command queue, almost any front end can send commands to this program.
-
-for example, the MySQL database can be populated by a SOAP frontend, receving commands from a phone, it can be populated by a timer program on another machine, or even an ardiuino with a tempature sensor.  anything that can connect to MySQL either directly or threw a secondary program, can be used to control your music and video's.
-
+rchip stands for Remote Controlled Home automation Integration Program.  Using a list of JSON commands, it allows for a media options to be remotly controlled over from any device that can access the internet.  This is mostly a client, but it also can interact with other devices, such as adding shows to remote playqueues.
+Using a XML file, and a predefined instruction set, rchip can command any media player.
 
