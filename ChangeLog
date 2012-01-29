@@ -1,3 +1,10 @@
+2012-01-29  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* ChangeLog, INSTALL, Makefile.am, change.py, data/Makefile.am,
+	data/icons-hicolor/Makefile.am, data/settings-xml/Makefile.am,
+	scripts/build.sh, scripts/change_log_create, scripts/gnu_file.sh,
+	scripts/icon_search, scripts/winInstaller.nsi: Some Cleanup
+
 2012-01-26  Kevin Anthony <kevin.s.anthony@gmail.com>
 
 	* README, TODO: Updated Readme and Todo Files
