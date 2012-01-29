@@ -1,8 +1,5 @@
 SUBDIRS = src data man doc 
 
-CLEANFILES = \
-	*.tar.gz
-
 DISTCLEANFILES = \
         Makefile \
 	    *.bak \

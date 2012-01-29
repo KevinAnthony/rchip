@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
     parse_command_line_options(argc,argv);
     gtk_init(&argc, &argv);
     settings_init();
-    authenticate();
+    rest_init();
     if (!xml_init()){
         g_error("xml_init FAILED\n");
     }

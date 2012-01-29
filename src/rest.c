@@ -24,20 +24,24 @@
 
 #include    <curl/curl.h>
 #include    <json/json.h>
-#include     <glib.h>
+#include    <glib.h>
 #include    <glib/gprintf.h>
 #include    <string.h>
 #include    <stdlib.h>
-#include     "rest.h"
+#include    "rest.h"
 #include    "settings.h"
 #include    "utils.h"
 #include    "cmdhandler.h"
-#include     <sys/utsname.h>
+#include    <sys/utsname.h>
 
 //TODO: This should be a setting, not hard coded
 char* URL = "http://www.nosideholdings.com/json";
-
 CURL *session;
+
+void rest_init() {
+    authenticate();
+    update_daemon_server();
+}
 void get_cmd_from_server(char *hostname) {
     if (session) {
         char* url = g_strconcat(URL,"/getcommand/?host=",curl_easy_escape(session,hostname,strlen(hostname)),NULL);
@@ -105,6 +109,18 @@ size_t get_active_decives_callback(void *ptr,size_t size, size_t count, void* st
     return 0;
 }
 void update_daemon_server(){
+    if (session){
+        struct utsname uts;
+        uname( &uts );
+        char* video_path = get_setting_str(VIDEO_ROOT);
+        char* url = g_strconcat(URL,"/registerdaemon/?hostname=",curl_easy_escape(session,uts.nodename,strlen(uts.nodename)),"&video_path=",curl_easy_escape(session,video_path,strlen(video_path)),NULL);
+
+        curl_easy_setopt(session, CURLOPT_URL, url);
+        curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
+        curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, get_active_decives_callback);
+        curl_easy_perform(session);
+        g_free(url);
+    }
 }
 
 void set_song_info_rest(struct playing_info_music pInfo, char* hostname) {
@@ -113,7 +129,6 @@ void set_song_info_rest(struct playing_info_music pInfo, char* hostname) {
             char* url = g_strdup_printf("%s/setsonginfo/?artist=%s&album=%s&song=%s&elapsed_time=%d&total_time=%d&is_playing=%d&dest_hostname=%s",URL,curl_easy_escape(session,pInfo.Artist,strlen(pInfo.Artist)),curl_easy_escape(session,pInfo.Album,strlen(pInfo.Album)),curl_easy_escape(session,pInfo.Song,strlen(pInfo.Song)),pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,curl_easy_escape(session,hostname,strlen(hostname)));
             curl_easy_setopt(session, CURLOPT_URL, url);
             curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
-            curl_easy_setopt(session, CURLOPT_WRITEFUNCTION, get_active_decives_callback);
             curl_easy_perform(session);
             g_free(url);
         }
