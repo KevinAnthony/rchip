@@ -35,5 +35,10 @@ uninstall-hook:
 
 DISTCLEANFILES = Makefile
 MAINTAINERCLEANFILES = Makefile.in
-EXTRA_DIST = *.png *.svg src/*.svg
-
+EXTRA_DIST = rchip-server-16.png  \
+             rchip-server-192.png \
+             rchip-server-22.png  \
+             rchip-server-24.png  \
+             rchip-server-256.png \
+             rchip-server-32.png  \
+             rchip-server-48.png

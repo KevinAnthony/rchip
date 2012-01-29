@@ -9,8 +9,7 @@ desktopdir = $(datadir)/applications
 desktop_DATA = rchip.desktop
 
 EXTRA_DIST = 			\
-	$(desktop_DATA)		\
-	$(gsettings_SCHEMAS)
+	$(desktop_DATA)
 
 CLEANFILES = apps.noside.rchip.gschema.xml
 

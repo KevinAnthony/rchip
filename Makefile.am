@@ -10,8 +10,8 @@ DISTCLEANFILES = \
         *.pidb
 
 MAINTAINERCLEANFILES = \
+        configure \
         compile \
-        INSTALL \
         config.h.in \
         aclocal.m4 \
         ltmain.sh \

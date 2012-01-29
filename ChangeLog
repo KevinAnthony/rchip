@@ -1,3 +1,123 @@
+2012-01-26  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* README, TODO: Updated Readme and Todo Files
+
+2012-01-17  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* data/pluggable-xml/Makefile.am, data/pluggable-xml/vlc.video.xml,
+	data/settings-xml/apps.noside.rchip.gschema.xml, src/main.c, src/rest.c,
+	src/settings.c, src/settings.h, src/tray.c: Added VLC to pluggable xml Added
+	password change window Changed to prefrances for username/password
+
+2012-01-12  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/cmdhandler.c, src/cmdhandler.h, src/dbus.c, src/dbus.h, src/main.c,
+	src/notifications.c, src/notifications.h, src/rest.c, src/rest.h,
+	src/settings.c, src/settings.h, src/showlist.c, src/showlist.h, src/status.c,
+	src/status.h, src/tray.c, src/tray.h, src/utils.c, src/utils.h, src/xml.c,
+	src/xml.h: Changed tabs to spaces
+
+2012-01-10  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/rest.c: Removed Debuging return statment
+
+2012-01-09  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/rest.c: Removed Debuging print statment, Added TODO comment
+
+	* src/cmdhandler.c, src/main.c, src/rest.c, src/rest.h: Added JSON
+	Authentication
+
+2011-12-24  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* data/msremote.desktop, data/rchip.exe.lnk, m4/Makefile, m4/Makefile.am,
+	m4/Makefile.in: Removed obsolete files
+
+	* Makefile.am, configure: removed Makefile from the m4 directory, generated
+	scripts are now removed from root makefile  This prevents the ./configure
+	from autorunning
+
+	* data/Makefile.am, data/icons-hicolor/Makefile.am,
+	data/settings-xml/Makefile.am, doc/Makefile.am: Replaced Wildcard statment
+	with plain *. for faster making
+
+	* src/showlist.c, src/utils.c, src/utils.h: Added checking for correct
+	extension before adding to showlist
+
+	* data/settings-xml/apps.noside.rchip.gschema.xml: Removed an errent tab
+
+2011-12-23  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* libs/GNU.Gettext.dll, libs/freetype6.dll, libs/iconv.dll, libs/intl.dll,
+	libs/libasprintf-0.dll, libs/libatk-1.0-0.dll, libs/libcairo-2.dll,
+	libs/libexpat-1.dll, libs/libfontconfig-1.dll, libs/libgail.dll,
+	libs/libgailutil-18.dll, libs/libgcc_s_dw2-1.dll,
+	libs/libgdk-win32-2.0-0.dll, libs/libgdk_pixbuf-2.0-0.dll,
+	libs/libgio-2.0-0.dll, libs/libglib-2.0-0.dll, libs/libgmodule-2.0-0.dll,
+	libs/libgobject-2.0-0.dll, libs/libgthread-2.0-0.dll,
+	libs/libgtk-win32-2.0-0.dll, libs/libmysql.dll, libs/libpango-1.0-0.dll,
+	libs/libpangocairo-1.0-0.dll, libs/libpangoft2-1.0-0.dll,
+	libs/libpangowin32-1.0-0.dll, libs/libpixmap.dll, libs/libpng14-14.dll,
+	libs/libwimp.dll, libs/libxml2.dll, libs/zlib1.dll: Removed old windows
+	Library
+
+	* src/tray.c: Fixed a bug preventing Add Folder from working correctly
+
+2011-12-18  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/cmdhandler.c: Added some escaping before calling system commands 
+	escaping ' ( ) ;
+
+	* src/utils.c: Fixed bug in str_replace where if replace string contained
+	find string, an infinite loop occored
+
+2011-12-10  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/resource.rc: deleted unused file
+
+	* src/cmdhandler.c, src/notifications.c, src/rest.c, src/rest.h: Added
+	send_command_to_server function  Allows for two way communication between
+	rchip and server via JSON
+
+	* configure, configure.ac, m4/Makefile: Bumped version number
+
+2011-12-08  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/cmdhandler.c, src/dbus.c, src/dbus.h, src/main.c, src/notifications.c,
+	src/notifications.h, src/tray.c: Removed all windows ifdefs
+
+	* src/rest.c: libcur was calling the wrong method when asking for hostnames
+
+	* src/utils.c, src/utils.h: Fixed bug in str_replace function  leading to a
+	complete rewrite
+
+	* src/tray.c: libcur was calling the wrong method when asking for hostnames
+
+	* src/main.c: Changed timeout for daemon loop from 1/2 sec to 2 seconds
+
+	* configure, configure.ac, m4/Makefile: Changed version numbering system
+
+2011-11-22  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* Makefile.am, TODO, configure, configure.ac, m4/Makefile, m4/Makefile.in,
+	m4/json.m4, m4/mysql.m4, src/Makefile.am, src/cmdhandler.c, src/main.c,
+	src/notifications.c, src/notifications.h, src/rest.c, src/rest.h,
+	src/settings.c, src/sql.c, src/sql.h, src/tray.c, src/utils.c, src/utils.h:
+	Pulled SQL out rchip, added JSON support.  ALPHA-VERSION
+
+2011-07-21  Kevin Anthony <kevin@Tomoya.(none)>
+
+	* Makefile.am, TODO, autogen.sh, configure, configure.ac, data/Makefile.am,
+	m4/Makefile, m4/Makefile.am, m4/Makefile.in, m4/glib.m4, m4/music.m4,
+	m4/mysql.m4, m4/verbosity.m4, m4/xml.m4, src/dbus.c, src/dbus.h, src/main.c,
+	src/sql.c, src/sql.h: Added checking for dbus Bus Names existance, and
+	waiting to execute commands agains Bus Names until they exist
+
+2011-03-23  KevinAnthony <Kevin@nosideracing.com>
+
+	* ChangeLog, data/settings-xml/music.txt, data/settings-xml/test.xml,
+	scripts/change_log_create: fix a bug in change_log_create
+
 2011-03-22  KevinAnthony <Kevin@nosideracing.com>
 
 	* NEWS, configure, configure.ac, data/settings-xml/Makefile.am,
