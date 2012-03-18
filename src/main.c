@@ -35,11 +35,12 @@
 #include "utils.h"
 #include "xml.h"
 
-void print_version();
-gboolean parse_command_line_options(int,char**);
-gboolean daemon_loop(gpointer);
-gboolean update_active_devices(gpointer);
-char* build_playing_info_sql_query(const struct playing_info_music,char*);
+void        print_version();
+gboolean    parse_command_line_options(int,char**);
+gboolean    update_song_info(gpointer);
+gboolean    get_next_command(gpointer);
+gboolean    update_active_devices(gpointer);
+char*       build_playing_info_sql_query(const struct playing_info_music,char*);
 
 /*The Main Program*/
 int main(int argc, char** argv) {
@@ -68,7 +69,8 @@ int main(int argc, char** argv) {
     print_playing_info_music(pInfo);
     #endif
     get_active_devices();
-    g_timeout_add (2000,(GSourceFunc) daemon_loop,NULL);
+    g_timeout_add (1000,(GSourceFunc) get_next_command,NULL);
+    g_timeout_add (10000,(GSourceFunc) update_song_info,NULL);
     g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
     init_status_window(FALSE);
     gtk_widget_show(tray_icon);
@@ -107,9 +109,8 @@ void print_version(){
 
 
 
-gboolean daemon_loop(gpointer data) {
+gboolean update_song_info(gpointer data) {
     /*if the dbus is active, do the following, else try and connect*/
-    get_next_cmd();
     if (dbus_is_connected(TRUE)) {
         struct playing_info_music pInfo = dbus_get_playing_info_music();
         #if VERBOSE >= 4
@@ -127,7 +128,10 @@ gboolean daemon_loop(gpointer data) {
     }
     return TRUE;
 }
-
+gboolean get_next_command(gpointer data) {
+    get_next_cmd();
+    return TRUE;
+}
 gboolean update_active_devices(gpointer data){
         get_active_devices();    
         return TRUE;
