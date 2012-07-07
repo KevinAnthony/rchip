@@ -31,6 +31,7 @@ void                delete                      ( char* );
 int                 find                        ( char* );
 void                init_hostname               ( void );
 gboolean            is_valid_extension          ( const gchar* );
+gboolean            queue_init                  ( void );
 
 struct playing_info_music {
     char    *Artist;
@@ -52,6 +53,11 @@ typedef struct HostNameStruct{
     void (*delete)(char *);
     int (*find)(char *);
 } hostname;
+
+typedef struct QueueFunctionData{
+    gpointer* (*func)(gpointer*);
+    gpointer* data;
+} queue_function_data;
 
 hostname*            get_host_head                ( void );
 hostname* Hosts;

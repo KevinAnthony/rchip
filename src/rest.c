@@ -34,6 +34,9 @@
 #include    "cmdhandler.h"
 #include    <sys/utsname.h>
 
+extern gboolean program_active;
+extern GAsyncQueue *network_async_queue;
+
 //TODO: This should be a setting, not hard coded
 char* URL = "http://www.nosideholdings.com/json";
 CURL *session;
@@ -42,7 +45,20 @@ void rest_init() {
     authenticate();
     update_daemon_server();
 }
-void get_cmd_from_server(char *hostname) {
+
+void rest_thread_handler(gpointer* data){
+    while (program_active){
+        gpointer *data = g_async_queue_try_pop (network_async_queue);
+        if (data){
+            queue_function_data *function_data = (queue_function_data*) data;
+            function_data->func(function_data->data);
+            g_free(function_data);
+        }
+    }
+}
+
+gpointer* get_cmd_from_server(gpointer *data) {
+    char* hostname = (char*) data;
     if (session) {
         char* url = g_strconcat(URL,"/getcommand/?host=",curl_easy_escape(session,hostname,strlen(hostname)),NULL);
         curl_easy_setopt(session, CURLOPT_URL, url);
@@ -51,18 +67,10 @@ void get_cmd_from_server(char *hostname) {
         curl_easy_perform(session);
         g_free(url);
     }
+    g_free(data);
+    return NULL;
 }
 
-void send_cmd_to_server(char* hostname,char* cmd,char* cmdTxt){
-    struct utsname uts;
-    uname( &uts );
-    if (session) {
-        char* url = g_strconcat(URL,"/sendcommand/?command=",curl_easy_escape(session,cmd,strlen(cmd)),"&command_text=",curl_easy_escape(session,cmdTxt,strlen(cmdTxt)),"&source_hostname=",curl_easy_escape(session,uts.nodename,strlen(uts.nodename)),"&destination_hostname=",curl_easy_escape(session,hostname,strlen(hostname)),NULL);
-        curl_easy_setopt(session, CURLOPT_URL, url);
-        curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
-        curl_easy_perform(session);
-    }
-}
 size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
     json_object *jarray = json_tokener_parse((char*)ptr);
     json_object *json_success = json_object_object_get(jarray, "success");
@@ -85,11 +93,28 @@ size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
     return 0;
 }
 
+gpointer* send_cmd_to_server(gpointer* data){
+    command_data* command = (command_data*) data;
+    struct utsname uts;
+    uname( &uts );
+    if (session) {
+        char* url = g_strconcat(URL,"/sendcommand/?command=",curl_easy_escape(session,command->command,strlen(command->command)),"&command_text=",curl_easy_escape(session,command->command_text,strlen(command->command_text)),"&source_hostname=",curl_easy_escape(session,uts.nodename,strlen(uts.nodename)),"&destination_hostname=",curl_easy_escape(session,command->hostname,strlen(command->hostname)),NULL);
+        curl_easy_setopt(session, CURLOPT_URL, url);
+        curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
+        curl_easy_perform(session);
+    }
+    g_free(command->command);
+    g_free(command->command_text);
+    g_free(command->hostname);
+    g_free(data);
+    return NULL;
+}
+
 char* get_registered_devices_message(){
     return NULL;
 }
 
-void get_active_devices( void ){
+gpointer* get_active_devices( gpointer* data ){
     if (session) {
         char* url = g_strconcat(URL,"/getremotedevice/",NULL);
         curl_easy_setopt(session, CURLOPT_URL, url);
@@ -98,6 +123,7 @@ void get_active_devices( void ){
         curl_easy_perform(session);
         g_free(url);
     }
+    return NULL;
 }
 
 size_t get_active_decives_callback(void *ptr,size_t size, size_t count, void* stream){
@@ -128,16 +154,25 @@ void update_daemon_server(){
     }
 }
 
-void set_song_info_rest(struct playing_info_music pInfo, char* hostname) {
-    if (pInfo.isPlaying != 0){
+gpointer* set_song_info_rest(gpointer *data) {
+    song_info_data* info = (song_info_data*) data;
+    if (info->pInfo.isPlaying != 0){
         if (session) {
-            char* url = g_strdup_printf("%s/setsonginfo/?artist=%s&album=%s&song=%s&elapsed_time=%d&total_time=%d&is_playing=%d&dest_hostname=%s",URL,curl_easy_escape(session,pInfo.Artist,strlen(pInfo.Artist)),curl_easy_escape(session,pInfo.Album,strlen(pInfo.Album)),curl_easy_escape(session,pInfo.Song,strlen(pInfo.Song)),pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying,curl_easy_escape(session,hostname,strlen(hostname)));
+            char* url = g_strdup_printf("%s/setsonginfo/?artist=%s&album=%s&song=%s&elapsed_time=%d&total_time=%d&is_playing=%d&dest_hostname=%s",
+            URL,curl_easy_escape(session,info->pInfo.Artist,strlen(info->pInfo.Artist)),
+            curl_easy_escape(session,info->pInfo.Album,strlen(info->pInfo.Album)),
+            curl_easy_escape(session,info->pInfo.Song,strlen(info->pInfo.Song)),
+            info->pInfo.Elapised_time,info->pInfo.Duration,info->pInfo.isPlaying,
+            curl_easy_escape(session,info->hostname,strlen(info->hostname)));
             curl_easy_setopt(session, CURLOPT_URL, url);
             curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
             curl_easy_perform(session);
             g_free(url);
         }
     }
+    g_free(info->hostname);
+    g_free(data);
+    return NULL;
 }
 
 void authenticate( void ){

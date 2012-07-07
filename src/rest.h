@@ -28,15 +28,28 @@
 #include            "utils.h"
 
 void                rest_init                           ( void );
-void                get_cmd_from_server                 ( char* );
-void                send_cmd_to_server                  ( char*, char*, char* );
+void                rest_thread_handler                 ( gpointer* );
+gpointer*           get_cmd_from_server                 ( gpointer* );
+gpointer*           send_cmd_to_server                  ( gpointer* );
 size_t              get_commands_callback               ( void*,size_t,size_t,void*);
 char*               get_registered_devices_message      ( void );
-void                get_active_devices                  ( void );
+gpointer*           get_active_devices                  ( gpointer* );
 size_t              get_active_decives_callback         ( void*,size_t,size_t,void*);
-void                set_song_info_rest                  ( struct playing_info_music, char* );
+gpointer*           set_song_info_rest                  ( gpointer* );
 void                update_daemon_server                ( void );
 void                authenticate                        ( void );
 void                deauthenticate                      ( void );
+
+typedef struct CommandData{
+    char* hostname;
+    char* command;
+    char* command_text;
+} command_data;
+
+typedef struct SongInfoData{
+    struct playing_info_music pInfo;
+    char* hostname;
+} song_info_data;
+
 #endif //#ifdef _JSON
 #endif

@@ -27,7 +27,7 @@ enum {
     FTFILE,
     FTDONOTPROC
 };
-void                 start_tray                      ( void );
+void                 start_tray                      ( );
 #ifdef GTK3
 void                 activate                        ( GtkApplication* );
 #endif

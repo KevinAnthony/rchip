@@ -34,5 +34,11 @@ AC_DEFUN([RCHIP_CHECK_GLIB],
 		AC_CHECK_LIB(glib-2.0, g_list_append, HAVE_GLIB="maybe", sweep_config_ok="no")
 	fi
 
+	PKG_CHECK_MODULES(GTHREAD, gthread-2.0 >=  2.32.3, HAVE_GTHREAD="yes", sweep_config_ok="no")
+	AC_SUBST(GTHREAD_CFLAGS)
+	AC_SUBST(GTHREAD_LIBS)
+	if test "x$HAVE_GTHREAD" != "xyes" ; then
+		AC_CHECK_LIB(gthread-2.0, g_thread_init, HAVE_GTHREAD="maybe", sweep_config_ok="no")
+	fi
 ])
 

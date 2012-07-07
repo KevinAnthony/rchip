@@ -42,18 +42,22 @@ gboolean    get_next_command(gpointer);
 gboolean    update_active_devices(gpointer);
 char*       build_playing_info_sql_query(const struct playing_info_music,char*);
 
+extern GAsyncQueue *network_async_queue;
+
 /*The Main Program*/
 int main(int argc, char** argv) {
     /* defines the tray_icon, as well as init gtk*/
     g_set_application_name(PACKAGE_NAME);
     GtkStatusIcon *tray_icon;
     parse_command_line_options(argc,argv);
+    g_thread_init(NULL);
     gtk_init(&argc, &argv);
     settings_init();
     rest_init();
-    if (!xml_init()){
+    if (!queue_init())
+        g_error("queue_init FAILED\n");
+    if (!xml_init())
         g_error("xml_init FAILED\n");
-    }
     init_hostname();
     /*sets the tray icon from the create_tray_icon*/
     tray_icon = create_tray_icon();
@@ -68,7 +72,15 @@ int main(int argc, char** argv) {
     #if VERBOSE >= 4
     print_playing_info_music(pInfo);
     #endif
-    get_active_devices();
+    get_active_devices(NULL);
+
+    GError *error;
+    GThread *network_thread;
+    if ( (network_thread = g_thread_create((GThreadFunc)rest_thread_handler, NULL,FALSE, &error)) == NULL){
+        g_error("Error Creating Thread %s",error->message);
+        g_error_free(error);
+    }
+
     g_timeout_add (1000,(GSourceFunc) get_next_command,NULL);
     g_timeout_add (10000,(GSourceFunc) update_song_info,NULL);
     g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
@@ -117,14 +129,23 @@ gboolean update_song_info(gpointer data) {
         print_playing_info_music(pInfo);
         #endif
         hostname_node *hosts;
+        
         for_each_hostname(hosts){
-            set_song_info_rest(pInfo,hosts->hostname);
+            song_info_data* info = g_malloc(sizeof(song_info_data));
+            info->pInfo = pInfo;
+            info->hostname = g_strdup(hosts->hostname);
+            queue_function_data* func = g_malloc(sizeof(queue_function_data));
+            func->func = *set_song_info_rest;
+            func->data = (gpointer)info;
+            g_async_queue_push(network_async_queue,(gpointer)func);
         }
+
         if (pInfo.isPlaying){
             if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
             if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
             if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
         }
+
     }
     return TRUE;
 }
@@ -133,6 +154,9 @@ gboolean get_next_command(gpointer data) {
     return TRUE;
 }
 gboolean update_active_devices(gpointer data){
-        get_active_devices();    
-        return TRUE;
+    queue_function_data* func = g_malloc(sizeof(queue_function_data));
+    func->func = *get_active_devices;
+    func->data = NULL;
+    g_async_queue_push(network_async_queue,(gpointer)func);
+    return TRUE;
 }

@@ -39,15 +39,21 @@
  * (insert mad scientist type laughter here)
  */
 
+extern GAsyncQueue *network_async_queue;
+
 void get_next_cmd() {
     /*uts.nodename is the hostname of the computer*/
     struct utsname uts;
     uname( &uts );
-    get_cmd_from_server(uts.nodename);
+    queue_function_data* func = g_malloc(sizeof(queue_function_data));
+    func->func = *get_cmd_from_server;
+    func->data = (gpointer)g_strdup(uts.nodename);
+    g_async_queue_push(network_async_queue,(gpointer)func);
 }
 
 gboolean process_cmd(char* cmd,char* cmdTxt) {
-    if ((cmd != NULL) && (cmd != "")){
+    
+    if ((cmd != NULL) && (g_strcmp0(cmd,"") != 0)){
         gboolean xmli = xml_init();
         gboolean xmlf = xml_find_command(cmd);
         if (!xmli){
@@ -131,6 +137,13 @@ void send_cmd(char* cmd, char* cmdTxt) {
     #endif
     hostname_node *hosts;
     for_each_hostname(hosts){
-        send_cmd_to_server(hosts->hostname,cmd,cmdTxt);
+        queue_function_data* func = g_malloc(sizeof(queue_function_data));
+        command_data* data = g_malloc(sizeof(command_data));
+        data->command = g_strdup(cmd);
+        data->command_text = g_strdup(cmdTxt);
+        data->hostname = g_strdup(hosts->hostname);
+        func->func = *send_cmd_to_server;
+        func->data = (gpointer)data;
+        g_async_queue_push(network_async_queue,(gpointer)func);
     }
 }

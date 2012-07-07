@@ -26,6 +26,12 @@
 #include <glib/gprintf.h>
 #include "utils.h"
 
+gboolean            program_active = FALSE;
+
+GAsyncQueue         *network_async_queue = NULL;
+GAsyncQueue         *file_async_queue = NULL;
+GAsyncQueue         *gui_async_queue = NULL;
+
 gchar* replace_str (const gchar *src,const gchar *find,const gchar *replace){
     gchar* retval = g_strdup(src);
     gchar* ptr = NULL;
@@ -105,7 +111,20 @@ int find (char* token){
     return 0;
 }
 
-
 gboolean is_valid_extension(const gchar* filename){
     return g_str_has_suffix (filename,"mkv") || g_str_has_suffix (filename,"avi") || g_str_has_suffix (filename,"mp4");
+}
+
+gboolean queue_init( void ){
+    network_async_queue = g_async_queue_new();
+    if (!network_async_queue)
+        return FALSE;
+    file_async_queue = g_async_queue_new();
+    if (!file_async_queue)
+        return FALSE;
+    gui_async_queue = g_async_queue_new();
+    if (!gui_async_queue)
+        return FALSE;
+    program_active = TRUE;
+    return TRUE;
 }

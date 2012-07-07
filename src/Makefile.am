@@ -3,9 +3,10 @@ AUTOMAKE_OPTIONS = foreign
 CFLAGS=-std=c99 -Wall -g 
 CPPFLAGS = -DPREFIX='"$(datadir)"' @CPPFLAGS@
 
-AM_CFLAGS = 	$(CFLAGS) 		\
+AM_CFLAGS = 	$(CFLAGS)   \
 		@GTK2_CFLAGS@ 		\
 		@GTK3_CFLAGS@		\
+		@GTHREAD_CFLAGS@	\
 		@GLIB_CFLAGS@		\
 		@LIBXML2_CFLAGS@	\
 		@LIBJSON_CFLAGS@	\
@@ -43,6 +44,7 @@ rchip_SOURCES = $(sourceinclude_SOURCE) main.c
 rchip_LDADD = 	\
 		@GTK2_LIBS@		\
 		@GTK3_LIBS@		\
+		@GTHREAD_LIBS@	\
 		@GLIB_LIBS@		\
 		@LIBXML2_LIBS@	\
 		@LIBJSON_LIBS@	\
