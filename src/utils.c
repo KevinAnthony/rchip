@@ -35,7 +35,7 @@ GAsyncQueue         *gui_async_queue = NULL;
 gchar* replace_str (const gchar *src,const gchar *find,const gchar *replace){
     gchar* retval = g_strdup(src);
     gchar* ptr = NULL;
-    ptr = g_strstr_len(retval,-1,find); 
+    ptr = g_strstr_len(retval,-1,find);
     if (ptr != NULL){
         gchar* after_find = replace_str(ptr+strlen(find),find,replace);
         gchar* before_find = g_strndup(retval,ptr-retval);
@@ -101,7 +101,7 @@ void delete (char* data){
 }
 
 int find (char* token){
-    
+
     hostname_node* hostname_p = Hosts->data;
     for_each_hostname(hostname_p){
         if (g_strcmp0(hostname_p->hostname, token) == 0){

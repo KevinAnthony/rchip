@@ -25,7 +25,7 @@
 #include    "notifications.h"
 #include    "xml.h"
 #include    <string.h>
-#include    <gio/gio.h>    
+#include    <gio/gio.h>
 #include    <glib.h>
 #include    <glib/gprintf.h>
 #include    <assert.h>
@@ -45,7 +45,7 @@ static gboolean musicConnected = FALSE;
 static gboolean videoConnected = FALSE;
 
 /*
- * if connection(conn) is null, and we tryOnDisconnced is true it try and reconnect. 
+ * if connection(conn) is null, and we tryOnDisconnced is true it try and reconnect.
  * if conn is not null it return true
  * else it returns false
  */
@@ -278,11 +278,11 @@ struct playing_info_music dbus_get_playing_info_music() {
         GError *error = NULL;
         /* Make sure we are connected to dbus */
         if (dbus_is_connected(TRUE)) {
-            /* 
+            /*
              * dbus and rhythmbox are raticlly diffrent here
              * I don't know if we can combind this into one command, but i should look into it
              */
-            #ifdef RHYTHMBOX    
+            #ifdef RHYTHMBOX
             gboolean playing;
             char* stateObject = "/org/gnome/Rhythmbox/Player";
                     if (g_strcmp0(stateObject,currentMusicObject) != 0 ){
@@ -311,7 +311,7 @@ struct playing_info_music dbus_get_playing_info_music() {
                     GVariant* dict = g_variant_get_child_value(results,0);
                     /* We don't know how long the information is, so we allocate 8K of chariters */
                     char* tempVar=g_malloc(8192);
-                    /* 
+                    /*
                      * Each segment below is similar
                      * we pull the infomation out of the dict and into tempVar
                      * we then allocate the pInfo field using the length +1(for the \0 char
@@ -319,17 +319,17 @@ struct playing_info_music dbus_get_playing_info_music() {
                     g_variant_lookup(dict,"artist","s",&tempVar);
                     pInfo.Artist = g_strdup(tempVar);
                     g_free(tempVar);
-    
+
                     tempVar=g_malloc(8192);
                     g_variant_lookup(dict,"album","s",&tempVar);
                     pInfo.Album = g_strdup(tempVar);
                     g_free(tempVar);
-    
+
                     tempVar=g_malloc(8192);
                     g_variant_lookup(dict,"title","s",&tempVar);
                     pInfo.Song = g_strdup(tempVar);
                     g_free(tempVar);
-    
+
                     g_variant_lookup(dict,"duration","d",&doubleValue);
                     pInfo.Duration = doubleValue;
                     pInfo.isPlaying=playing;
@@ -378,22 +378,22 @@ struct playing_info_music dbus_get_playing_info_music() {
                     g_variant_lookup(dict,"artist","s",&tempVar);
                     pInfo.Artist = g_strdup(tempVar);
                     g_free(tempVar);
-    
+
                     tempVar=g_malloc(8192);
                     g_variant_lookup(dict,"album","s",&tempVar);
                     pInfo.Album = g_strdup(tempVar);
                     g_free(tempVar);
-        
+
                     tempVar=g_malloc(8192);
                     g_variant_lookup(dict,"name","s",&tempVar);
                     pInfo.Song = g_strdup(tempVar);
                     g_free(tempVar);
-    
+
                     g_variant_lookup(dict,"length","d",&doubleValue);
                     pInfo.Duration = doubleValue;
-                    /* 
-                     * this is tricky, c and t are current posistion and total length in bytes 
-                     * we use basic algebra to get the position in secounds using cross-multiply and divide 
+                    /*
+                     * this is tricky, c and t are current posistion and total length in bytes
+                     * we use basic algebra to get the position in secounds using cross-multiply and divide
                      */
                     result = g_dbus_proxy_call_sync(musicProxy,"org.bansheeproject.Banshee.PlayerEngine.GetPosition",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
                     unsigned int c = g_variant_get_uint32(g_variant_get_child_value(result,0));
@@ -409,7 +409,7 @@ struct playing_info_music dbus_get_playing_info_music() {
             #endif
         }
     }
-    return pInfo;    
+    return pInfo;
 }
 
 /* This outputs the information in human readable */
@@ -427,7 +427,7 @@ void on_name_appeared (GDBusConnection *connection, const gchar *name, const gch
           g_print ("Name %s on %s is owned by %s\n", name,"the session bus", name_owner);
     #endif
     if (g_strcmp0(name,xml_get_bus_path("MUSIC"))){
-        musicConnected = TRUE;    
+        musicConnected = TRUE;
     } else if (g_strcmp0(name,xml_get_bus_path("VIDEO"))) {
         videoConnected = TRUE;
     }

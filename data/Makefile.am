@@ -15,4 +15,4 @@ CLEANFILES = apps.noside.rchip.gschema.xml
 
 DISTCLEANFILES = Makefile
 
-MAINTAINERCLEANFILES = Makefile.in 
+MAINTAINERCLEANFILES = Makefile.in

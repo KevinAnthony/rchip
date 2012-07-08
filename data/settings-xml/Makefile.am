@@ -9,6 +9,6 @@ distcheck:
 
 DISTCLEANFILES = Makefile
 
-MAINTAINERCLEANFILES = Makefile.in 
+MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = apps.noside.rchip.gschema.xml

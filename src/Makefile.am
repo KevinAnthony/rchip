@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
 
-CFLAGS=-std=c99 -Wall -g 
+CFLAGS=-std=c99 -Wall -g
 CPPFLAGS = -DPREFIX='"$(datadir)"' @CPPFLAGS@
 
 AM_CFLAGS = 	$(CFLAGS)   \
@@ -38,7 +38,7 @@ sourceinclude_SOURCE =	\
 	rest.c				\
 	utils.c
 
-bin_PROGRAMS = rchip 
+bin_PROGRAMS = rchip
 
 rchip_SOURCES = $(sourceinclude_SOURCE) main.c
 rchip_LDADD = 	\

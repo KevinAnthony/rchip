@@ -5,7 +5,7 @@ AC_DEFUN([RCHIP_CHECK_MUSIC],
 
 	AC_CHECK_PROG(HAVE_RHYTHMBOX, rhythmbox, true, false)
 	AC_CHECK_PROG(HAVE_BANSHEE, banshee, true, false)
-	
+
 	if test "x$DBUS" != "xno"; then
 	        if test "x$HAVE_RHYTHMBOX" = "xfalse" -a "x$HAVE_BANSHEE" = "xfalse" -a "x$DBUS" = "xyes"; then
 	                AC_MSG_ERROR([*** dbus enabled but no music player found, please install either RHYTHMBOX or BANSHEE or use --disable-dbus])

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MUSIC>
 	<connection>
-		<type>DBUS</type> 
+		<type>DBUS</type>
 		<bus_name>org.bansheeproject.Banshee</bus_name>
 	        <bus_path>/org/bansheeproject/Banshee/PlayerEngine</bus_path>
 	</connection>

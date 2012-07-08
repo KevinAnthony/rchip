@@ -52,7 +52,7 @@ void get_next_cmd() {
 }
 
 gboolean process_cmd(char* cmd,char* cmdTxt) {
-    
+
     if ((cmd != NULL) && (g_strcmp0(cmd,"") != 0)){
         gboolean xmli = xml_init();
         gboolean xmlf = xml_find_command(cmd);

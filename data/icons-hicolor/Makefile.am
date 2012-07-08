@@ -30,7 +30,7 @@ install_icon_exec = $(top_srcdir)/build/icon-theme-installer \
 install-data-local:
 	@-$(install_icon_exec) -i $(theme_icons)
 
-uninstall-hook: 
+uninstall-hook:
 	@-$(install_icon_exec) -u $(theme_icons)
 
 DISTCLEANFILES = Makefile

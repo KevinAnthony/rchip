@@ -20,14 +20,14 @@
 
 #include <config.h>
 
-#include    "notifications.h" 
+#include    "notifications.h"
 #include    <glib.h>
 #include    <glib/gprintf.h>
 #include    <string.h>
 
 
 
-/* 
+/*
  * pass notifcations to host devices
  *
  * Ticker String is the text that is displayed on the menu bar when the message is first receaved
@@ -37,7 +37,7 @@
  */
 gboolean set_notification(char* tickerString,char* notificationTitle,char* notificationText) {
     #ifdef _SQL
-    /* 
+    /*
      * nelem is the number of elements in the array
      * size is the size in bytes of each element
      * base is a pointer to the first byte of the first element of the array
@@ -51,7 +51,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
     get_active_devices(base,size,nelem);
     /* we allocate and build the message, when passed to a device they are pipe | delineated */
     char* msg = g_strdup_printf("%s|%s|%s",tickerString,notificationTitle,notificationText);
-    /* TMSG command tells the device to display the notification*/    
+    /* TMSG command tells the device to display the notification*/
     char* cmd = "TMSG";
     char* recipt = g_malloc(size);
     char* name = NULL;

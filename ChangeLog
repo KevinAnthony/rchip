@@ -72,7 +72,7 @@
 
 2011-12-18  Kevin Anthony <kevin.s.anthony@gmail.com>
 
-	* src/cmdhandler.c: Added some escaping before calling system commands 
+	* src/cmdhandler.c: Added some escaping before calling system commands
 	escaping ' ( ) ;
 
 	* src/utils.c: Fixed bug in str_replace where if replace string contained

@@ -24,7 +24,7 @@ gboolean xml_init(){
         g_error("xml_file_exists RETURNED FALSE\n");
         #endif
         return FALSE;
-           } 
+           }
 
     LIBXML_TEST_VERSION
 
@@ -45,7 +45,7 @@ gboolean xml_init(){
         g_error("error: could not parse file %s\n",videoxml);
         #endif
         retVal = FALSE;
-    }    
+    }
 
     /*Get the root element node */
     root_element_music = xmlDocGetRootElement(doc_music);
@@ -127,7 +127,7 @@ char* xml_get_type(){
                 }
                 child_node = child_node->next;
         }
-    return NULL;    
+    return NULL;
 }
 
 char* xml_get_music_or_video(){
@@ -163,7 +163,7 @@ char* xml_get_dbus_argument(){
                 child_node = child_node->next;
         }
         return retVal;
-}       
+}
 
 char* xml_get_dbus_argument_type(){
     assert(cmd_node != NULL);
@@ -176,7 +176,7 @@ char* xml_get_dbus_argument_type(){
                 child_node = child_node->next;
         }
         return retVal;
-}       
+}
 
 char* xml_get_dbus_command(){
     assert(cmd_node != NULL);
@@ -189,7 +189,7 @@ char* xml_get_dbus_command(){
                 child_node = child_node->next;
         }
         return retVal;
-}       
+}
 
 char* xml_get_system_command(){
     assert(cmd_node != NULL);
@@ -238,7 +238,7 @@ char* xml_get_bus_name( char* type ){
                 child_node = child_node->next;
         }
         return retVal;
-}       
+}
 
 char* xml_get_bus_path ( char* type ){
 xmlNode *top_node = NULL;
@@ -275,6 +275,6 @@ xmlNode *top_node = NULL;
         }
         return retVal;
 
-}       
+}
 
 #endif

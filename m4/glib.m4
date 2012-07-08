@@ -25,7 +25,7 @@ AC_DEFUN([RCHIP_CHECK_GLIB],
 			fi
 		else
 			AC_MSG_ERROR([NO GTK found, please install GTK])
-		fi	
+		fi
 	fi
 	PKG_CHECK_MODULES(GLIB, glib-2.0 >=  2.28.1, HAVE_GLIB="yes", sweep_config_ok="no")
 	AC_SUBST(GLIB_CFLAGS)

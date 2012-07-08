@@ -39,13 +39,13 @@ char* get_setting_str( gchar* keyname) {
     if (settings != NULL) {
         valueStr = g_settings_get_string (settings,keyname);
     } else {
-        return NULL;    
+        return NULL;
     }
     #if VERBOSE >= 4
     printf("Value for key is:%s\n",valueStr);
     #endif
     if (valueStr == NULL) {
-             #if VERBOSE >= 2     
+             #if VERBOSE >= 2
         g_error("Error: No Value for %s",keyname);
         #endif
         return NULL;
@@ -56,7 +56,7 @@ char* get_setting_str( gchar* keyname) {
 gboolean set_setting_str( gchar* keyname, gchar* settingValue ){
     #if VERBOSE >= 3
     printf("Trying to set Setting with value:%s--%s\n",keyname,settingValue);
-    #endif 
+    #endif
     return g_settings_set_string(settings,keyname,settingValue);
 }
 
