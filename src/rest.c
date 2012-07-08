@@ -46,7 +46,7 @@ void rest_init() {
     update_daemon_server();
 }
 
-void rest_thread_handler(gpointer* data){
+void rest_thread_handler(gpointer* NotUsed){
     while (program_active){
         gpointer *data = g_async_queue_try_pop (network_async_queue);
         if (data){
@@ -72,22 +72,26 @@ gpointer* get_cmd_from_server(gpointer *data) {
 }
 
 size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
-    json_object *jarray = json_tokener_parse((char*)ptr);
-    json_object *json_success = json_object_object_get(jarray, "success");
-    if (g_strcmp0(json_object_to_json_string(json_success),"true") == 0){
-        json_object *json_data = json_object_object_get(jarray, "data");
-        for (int i = 0; i< json_object_array_length(json_data); i++){
-            char *cmd;
-            char *cmd_txt;
-            json_object_object_foreach(json_object_array_get_idx(json_data, i), key, val){
-                if (g_strcmp0(key,"command") == 0){
-                    cmd = json_object_get_string(val);
+    long http_code = 0;
+    curl_easy_getinfo (session, CURLINFO_RESPONSE_CODE, &http_code);
+    if (http_code == 200) {
+        json_object *jarray = json_tokener_parse((char*)ptr);
+        json_object *json_success = json_object_object_get(jarray, "success");
+        if (g_strcmp0(json_object_to_json_string(json_success),"true") == 0){
+            json_object *json_data = json_object_object_get(jarray, "data");
+            for (int i = 0; i< json_object_array_length(json_data); i++){
+                char *cmd;
+                char *cmd_txt;
+                json_object_object_foreach(json_object_array_get_idx(json_data, i), key, val){
+                    if (g_strcmp0(key,"command") == 0){
+                        cmd = json_object_get_string(val);
+                    }
+                    if (g_strcmp0(key,"command_text") == 0){
+                        cmd_txt = json_object_get_string(val);
+                    }
                 }
-                if (g_strcmp0(key,"command_text") == 0){
-                    cmd_txt = json_object_get_string(val);
-                }
+                process_cmd(cmd,cmd_txt);
             }
-            process_cmd(cmd,cmd_txt);    
         }
     }
     return 0;
@@ -159,11 +163,11 @@ gpointer* set_song_info_rest(gpointer *data) {
     if (info->pInfo.isPlaying != 0){
         if (session) {
             char* url = g_strdup_printf("%s/setsonginfo/?artist=%s&album=%s&song=%s&elapsed_time=%d&total_time=%d&is_playing=%d&dest_hostname=%s",
-            URL,curl_easy_escape(session,info->pInfo.Artist,strlen(info->pInfo.Artist)),
-            curl_easy_escape(session,info->pInfo.Album,strlen(info->pInfo.Album)),
-            curl_easy_escape(session,info->pInfo.Song,strlen(info->pInfo.Song)),
-            info->pInfo.Elapised_time,info->pInfo.Duration,info->pInfo.isPlaying,
-            curl_easy_escape(session,info->hostname,strlen(info->hostname)));
+                    URL,curl_easy_escape(session,info->pInfo.Artist,strlen(info->pInfo.Artist)),
+                    curl_easy_escape(session,info->pInfo.Album,strlen(info->pInfo.Album)),
+                    curl_easy_escape(session,info->pInfo.Song,strlen(info->pInfo.Song)),
+                    info->pInfo.Elapised_time,info->pInfo.Duration,info->pInfo.isPlaying,
+                    curl_easy_escape(session,info->hostname,strlen(info->hostname)));
             curl_easy_setopt(session, CURLOPT_URL, url);
             curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
             curl_easy_perform(session);

@@ -25,6 +25,7 @@
 #include <glib/gprintf.h>
 #include <string.h>
 #include "tray.h"
+#include "showlist.h"
 #include "status.h"
 #include "settings.h"
 #include "dbus.h"
@@ -61,7 +62,7 @@ int main(int argc, char** argv) {
     init_hostname();
     /*sets the tray icon from the create_tray_icon*/
     tray_icon = create_tray_icon();
-    struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};    
+    struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
     /* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
     #if VERBOSE >= 4
     print_playing_info_music(pInfo);
@@ -76,8 +77,15 @@ int main(int argc, char** argv) {
 
     GError *error;
     GThread *network_thread;
-    if ( (network_thread = g_thread_create((GThreadFunc)rest_thread_handler, NULL,FALSE, &error)) == NULL){
-        g_error("Error Creating Thread %s",error->message);
+    GThread *file_thread;
+
+    if ( (network_thread = g_thread_create((GThreadFunc)rest_thread_handler, NULL, FALSE, &error)) == NULL){
+        g_error("Error Creating Network Thread %s",error->message);
+        g_error_free(error);
+    }
+
+    if ( (file_thread = g_thread_create((GThreadFunc)file_thread_handler, NULL, FALSE, &error)) == NULL){
+        g_error("Error Creating Network Thread %s",error->message);
         g_error_free(error);
     }
 
@@ -87,6 +95,7 @@ int main(int argc, char** argv) {
     init_status_window(FALSE);
     gtk_widget_show(tray_icon);
     start_tray();
+    printf("Got Here\n");
     deauthenticate();
     return 0;
 }
@@ -112,7 +121,7 @@ gboolean parse_command_line_options(int argc, char **argv) {
         if (version){
                 print_version();
                 exit(0);
-        } 
+        }
         return TRUE;
 }
 void print_version(){
@@ -129,7 +138,7 @@ gboolean update_song_info(gpointer data) {
         print_playing_info_music(pInfo);
         #endif
         hostname_node *hosts;
-        
+
         for_each_hostname(hosts){
             song_info_data* info = g_malloc(sizeof(song_info_data));
             info->pInfo = pInfo;

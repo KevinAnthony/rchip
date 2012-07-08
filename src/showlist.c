@@ -25,16 +25,35 @@
 #include <string.h>
 #include <glib.h>
 #include <glib/gprintf.h>
+#include <glob.h>
+#include <dirent.h>
 #include "showlist.h"
 #include "cmdhandler.h"
 #include "settings.h"
 #include "utils.h"
 
-void add_file_to_playqueue(char* filepath){
+extern gboolean program_active;
+extern GAsyncQueue *file_async_queue;
+
+
+void file_thread_handler(gpointer *NotUsed){
+    while(program_active){
+        gpointer *data = g_async_queue_try_pop (file_async_queue);
+        if (data){
+            queue_function_data* function_data = (queue_function_data*) data;
+            function_data->func(function_data->data);
+            g_free(function_data->data);
+            g_free(function_data);
+        }
+    }
+}
+
+gpointer* add_file_to_playqueue(gpointer* data){
     //here i really should somehow figure out if it's an anime, a live action, or something else
     // for now, it's all live action
-if ((is_valid_extension(filepath))){
-    if ((g_strstr_len(filepath,-1,"/English/Live_Action/") != NULL)) {
+    char* filepath = (char*)data;
+    if ((is_valid_extension(filepath))){
+        if ((g_strstr_len(filepath,-1,"/English/Live_Action/") != NULL)) {
             send_cmd("ADDS",live_action(filepath));
         } else if (g_strstr_len(filepath,-1,"/Foreign/Animeted/") != NULL) {
             send_cmd("ADDS",anime(filepath));
@@ -42,7 +61,58 @@ if ((is_valid_extension(filepath))){
             send_cmd("ADDS",other(filepath));
         }
     }
+    return NULL;
 }
+
+gpointer* add_folder_to_playqueue(gpointer* data){
+    /* this sets threw each folder recursivly and adds all file to playqueue (although it's really a list)*/
+    DIR *dp;
+    struct dirent *ep;
+    char *newDirFile;
+    char* dirFile = (char*) data;
+
+    if ((dp=opendir(dirFile))==NULL) {
+        dirFile = replace_str(dirFile,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
+        add_file_to_playqueue((gpointer*)dirFile);
+    } else {
+        while((ep=readdir(dp))) {
+            if (!strcmp(ep->d_name,".") || !strcmp(ep->d_name, "..")) { continue; }
+            newDirFile = g_strdup_printf("%s/%s", dirFile, ep->d_name);
+            switch(file_type(newDirFile)){
+                case FTDIR:
+                    queue_function_data* func = g_malloc(sizeof(queue_function_data));
+                    func->func  = *add_file_to_playqueue;
+                    func->data = g_strdup(newDirFile);
+                    g_async_queue_push(file_async_queue,(gpointer)func);
+                    break;
+                case FTFILE:
+                    newDirFile = replace_str(newDirFile,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
+                    queue_function_data* func = g_malloc(sizeof(queue_function_data));
+                    func->func  = *add_file_to_playqueue;
+                    func->data = g_strdup(newDirFile);
+                    g_async_queue_push(file_async_queue,(gpointer)func);
+                    break;
+                case FTDONOTPROC:
+                    break;
+            }
+            g_free(newDirFile);
+        }
+        closedir(dp);
+    }
+    return NULL;
+}
+
+int file_type(char *name){
+    /* gets the file type from the path */
+    DIR *dp;
+    int ret = FTFILE;
+    if (!((dp=opendir(name))==NULL)){
+        ret = FTDIR;
+        closedir(dp);
+    }
+    return ret;
+}
+
 char* live_action(char* filepath){
     char* posOfLastSlash=filepath;
     int fnamelen=0;
@@ -214,7 +284,7 @@ char* std_anime(char* filepath,char* name){
     }
     *ptr++='|';
     while (*sptr++ != '['){ lenOfSubgroup--; }
-    lenOfSubgroup++;    
+    lenOfSubgroup++;
     for (int i = 0; i < lenOfSubgroup; i++){
         *ptr++=*sptr++;
     }

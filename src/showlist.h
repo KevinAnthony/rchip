@@ -21,8 +21,15 @@
 #ifndef             SHOWLIST_H
 #define             SHOWLIST_H
 #include            <gtk/gtk.h>
-
-void                 add_file_to_playqueue        ( char* );
+enum {
+    FTDIR,
+    FTFILE,
+    FTDONOTPROC
+    };
+void                 file_thread_handler          ( gpointer* );
+gpointer*            add_file_to_playqueue        ( gpointer* );
+gpointer*            add_folder_to_playqueue      ( gpointer* );
+int                  file_type                    ( char* );
 char*                live_action                  ( char* );
 char*                anime                        ( char* );
 char*                other                        ( char* );
