@@ -54,11 +54,11 @@ gpointer* add_file_to_playqueue(gpointer* data){
     char* filepath = (char*)data;
     if ((is_valid_extension(filepath))){
         if ((g_strstr_len(filepath,-1,"/English/Live_Action/") != NULL)) {
-            send_cmd("ADDS",live_action(filepath));
+            send_cmd("ADDS",live_action(filepath),TP_LOW);
         } else if (g_strstr_len(filepath,-1,"/Foreign/Animeted/") != NULL) {
-            send_cmd("ADDS",anime(filepath));
+            send_cmd("ADDS",anime(filepath),TP_LOW);
         } else {
-            send_cmd("ADDS",other(filepath));
+            send_cmd("ADDS",other(filepath),TP_LOW);
         }
     }
     return NULL;
@@ -76,21 +76,22 @@ gpointer* add_folder_to_playqueue(gpointer* data){
         add_file_to_playqueue((gpointer*)dirFile);
     } else {
         while((ep=readdir(dp))) {
+            queue_function_data* func = g_malloc(sizeof(queue_function_data));
             if (!strcmp(ep->d_name,".") || !strcmp(ep->d_name, "..")) { continue; }
             newDirFile = g_strdup_printf("%s/%s", dirFile, ep->d_name);
             switch(file_type(newDirFile)){
                 case FTDIR:
-                    queue_function_data* func = g_malloc(sizeof(queue_function_data));
                     func->func  = *add_file_to_playqueue;
                     func->data = g_strdup(newDirFile);
-                    g_async_queue_push(file_async_queue,(gpointer)func);
+                    func->priority = TP_NORMAL;
+                    g_async_queue_push_sorted(file_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
                     break;
                 case FTFILE:
                     newDirFile = replace_str(newDirFile,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
-                    queue_function_data* func = g_malloc(sizeof(queue_function_data));
                     func->func  = *add_file_to_playqueue;
                     func->data = g_strdup(newDirFile);
-                    g_async_queue_push(file_async_queue,(gpointer)func);
+                    func->priority = TP_NORMAL;
+                    g_async_queue_push_sorted(file_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
                     break;
                 case FTDONOTPROC:
                     break;

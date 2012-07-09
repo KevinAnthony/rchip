@@ -32,6 +32,14 @@ int                 find                        ( char* );
 void                init_hostname               ( void );
 gboolean            is_valid_extension          ( const gchar* );
 gboolean            queue_init                  ( void );
+gint                sort_async_queue            ( gconstpointer a, gconstpointer b, gpointer user_data );
+
+typedef enum {
+    TP_LOW,
+    TP_NORMAL,
+    TP_HIGH,
+    TP_CRITICAL
+} thread_priority;
 
 struct playing_info_music {
     char    *Artist;
@@ -57,6 +65,7 @@ typedef struct HostNameStruct{
 typedef struct QueueFunctionData{
     gpointer* (*func)(gpointer*);
     gpointer* data;
+    thread_priority priority;
 } queue_function_data;
 
 hostname*            get_host_head                ( void );

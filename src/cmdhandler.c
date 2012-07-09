@@ -47,8 +47,9 @@ void get_next_cmd() {
     uname( &uts );
     queue_function_data* func = g_malloc(sizeof(queue_function_data));
     func->func = *get_cmd_from_server;
+    func->priority = TP_NORMAL;
     func->data = (gpointer)g_strdup(uts.nodename);
-    g_async_queue_push(network_async_queue,(gpointer)func);
+    g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
 }
 
 gboolean process_cmd(char* cmd,char* cmdTxt) {
@@ -131,7 +132,7 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
 }
 
 /* insert command and command text into cmdQueue, once per hsotname*/
-void send_cmd(char* cmd, char* cmdTxt) {
+void send_cmd(char* cmd, char* cmdTxt, thread_priority priority) {
     #if VERBOSE >= 4
         printf("Sending\ncmd  : %s\ntext:%s\n",cmd,cmdTxt);
     #endif
@@ -143,7 +144,8 @@ void send_cmd(char* cmd, char* cmdTxt) {
         data->command_text = g_strdup(cmdTxt);
         data->hostname = g_strdup(hosts->hostname);
         func->func = *send_cmd_to_server;
+        func->priority = priority;
         func->data = (gpointer)data;
-        g_async_queue_push(network_async_queue,(gpointer)func);
+        g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
     }
 }

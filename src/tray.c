@@ -149,7 +149,8 @@ void add_files(GtkWidget *widget, gpointer gdata){
             queue_function_data* func = g_malloc(sizeof(queue_function_data));
             func->func  = *add_file_to_playqueue;
             func->data = g_strdup(filename);
-            g_async_queue_push(file_async_queue,(gpointer)func);
+            func->priority = TP_NORMAL;
+            g_async_queue_push_sorted(file_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
             node=node->next;
         }
         g_slist_free(filelist);
@@ -184,7 +185,8 @@ void add_folders(GtkWidget *widget, gpointer gdata){
             queue_function_data* func = g_malloc(sizeof(queue_function_data));
             func->func  = *add_folder_to_playqueue;
             func->data = g_strdup(filename);
-            g_async_queue_push(file_async_queue,(gpointer)func);
+            func->priority = TP_NORMAL;
+            g_async_queue_push_sorted(file_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
             node=node->next;
         }
         g_slist_free(filelist);

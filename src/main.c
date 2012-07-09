@@ -93,7 +93,6 @@ int main(int argc, char** argv) {
     g_timeout_add (10000,(GSourceFunc) update_song_info,NULL);
     g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
     init_status_window(FALSE);
-    gtk_widget_show(tray_icon);
     start_tray();
     printf("Got Here\n");
     deauthenticate();
@@ -146,7 +145,8 @@ gboolean update_song_info(gpointer data) {
             queue_function_data* func = g_malloc(sizeof(queue_function_data));
             func->func = *set_song_info_rest;
             func->data = (gpointer)info;
-            g_async_queue_push(network_async_queue,(gpointer)func);
+            func->priority = TP_NORMAL;
+            g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
         }
 
         if (pInfo.isPlaying){
@@ -165,7 +165,8 @@ gboolean get_next_command(gpointer data) {
 gboolean update_active_devices(gpointer data){
     queue_function_data* func = g_malloc(sizeof(queue_function_data));
     func->func = *get_active_devices;
+    func->priority = TP_NORMAL;
     func->data = NULL;
-    g_async_queue_push(network_async_queue,(gpointer)func);
+    g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
     return TRUE;
 }

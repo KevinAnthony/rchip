@@ -128,3 +128,13 @@ gboolean queue_init( void ){
     program_active = TRUE;
     return TRUE;
 }
+
+gint sort_async_queue(gconstpointer a, gconstpointer b, gpointer user_data){
+    gint32 id1;
+    gint32 id2;
+
+    id1 = ((queue_function_data*) a)->priority;
+    id2 = ((queue_function_data*) b)->priority;
+
+    return (id1 > id2 ? +1 : id1 == id2 ? 0 : -1);
+}

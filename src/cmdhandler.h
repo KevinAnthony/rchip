@@ -20,13 +20,14 @@
 #ifndef             CMDHANDLER_H
 #define             CMDHANDLER_H
 
-#include             <glib.h>
+#include            <glib.h>
+#include            "utils.h"
 
 gboolean            delete_from_hosts                ( char* );
 char*               get_next_host                    ( void*,size_t,size_t );
 void                print_list                       ( void );
 void                get_next_cmd                     ( void );
 gboolean            process_cmd                      ( char*,char* );
-void                send_cmd                         ( char*,char* );
+void                send_cmd                         ( char*,char*,thread_priority );
 
 #endif
