@@ -1,22 +1,22 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
-*
-*    rchip, Remote Controlled Home Integration Program
-*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
-*
-*    This program is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
-*
-*    This program is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU General Public License for more details.
-*
-*    You should have received a copy of the GNU General Public License
-*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+/*
+ *
+ *    rchip, Remote Controlled Home Integration Program
+ *    Copyright (C) 2011-2012 <kevin.s.anthony@gmail.com>
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include <config.h>
 
@@ -69,11 +69,11 @@ gboolean dbus_init(){
     GError *error = NULL;
     /* Get the session bus */
     conn = g_bus_get_sync(G_BUS_TYPE_SESSION,NULL,&error);
-        if (error != NULL) {
-        #if VERBOSE >= 1
+    if (error != NULL) {
+#if VERBOSE >= 1
         g_error("Somethings wrong:dbus_g_bus_get\n");
         g_error("%s\n",error->message);
-        #endif
+#endif
         conn = NULL;
         return FALSE;
     }
@@ -89,10 +89,10 @@ gboolean dbus_init(){
         if ((busName != NULL) && (objectPath != NULL)){
             musicProxy= g_dbus_proxy_new_sync(conn, G_DBUS_CALL_FLAGS_NONE,NULL,busName,objectPath,busName,NULL,&error);
             if (error != NULL) {
-                #if VERBOSE >= 1
+#if VERBOSE >= 1
                 g_error("Somethings wrong:dbus_g_proxy_new_for_name_owner(SHELL)\n");
                 g_error("%s\n",error->message);
-                #endif
+#endif
                 conn =NULL;
                 return FALSE;
             }
@@ -111,27 +111,27 @@ gboolean dbus_init(){
     if ((watcher_id_video == 0) && (busName != NULL)){
         watcher_id_video = g_bus_watch_name(G_BUS_TYPE_SESSION,busName,G_BUS_NAME_WATCHER_FLAGS_NONE,on_name_appeared, on_name_vanished, NULL, NULL);
     }
-        if (videoConnected){
+    if (videoConnected){
         if ((busName != NULL) && (objectPath != NULL)){
             videoProxy= g_dbus_proxy_new_sync(conn, G_DBUS_CALL_FLAGS_NONE,NULL,busName,objectPath,busName,NULL,&error);
             if (error != NULL) {
-                #if VERBOSE >= 1
+#if VERBOSE >= 1
                 g_error("Somethings wrong:dbus_g_proxy_new_for_name_owner(SHELL)\n");
                 g_error("%s\n",error->message);
-                #endif
+#endif
                 conn =NULL;
                 return FALSE;
             }
         }
     }
     if (busName != NULL){
-            g_free(busName);
-            busName = NULL;
-        }
-        if (objectPath != NULL){
-            g_free(objectPath);
-            objectPath = NULL;
-        }
+        g_free(busName);
+        busName = NULL;
+    }
+    if (objectPath != NULL){
+        g_free(objectPath);
+        objectPath = NULL;
+    }
 
     return TRUE;
 }
@@ -143,10 +143,10 @@ gboolean new_proxy(char* type, char* busName,char* objectPath){
     if (g_strcmp0(type,"MUSIC") == 0){
         musicProxy= g_dbus_proxy_new_sync(conn, G_DBUS_CALL_FLAGS_NONE,NULL,busName,objectPath,busName,NULL,&error);
         if (error != NULL) {
-            #if VERBOSE >= 1
+#if VERBOSE >= 1
             g_error("Somethings wrong:dbus_g_proxy_new_for_name_owner(SHELL)\n");
             g_error("%s\n",error->message);
-            #endif
+#endif
             conn =NULL;
             return FALSE;
         }
@@ -154,10 +154,10 @@ gboolean new_proxy(char* type, char* busName,char* objectPath){
     } else if (g_strcmp0(type,"video") == 0){
         videoProxy= g_dbus_proxy_new_sync(conn, G_DBUS_CALL_FLAGS_NONE,NULL,busName,objectPath,busName,NULL,&error);
         if (error != NULL) {
-            #if VERBOSE >= 1
+#if VERBOSE >= 1
             g_error("Somethings wrong:dbus_g_proxy_new_for_name_owner(SHELL)\n");
             g_error("%s\n",error->message);
-            #endif
+#endif
             conn =NULL;
             return FALSE;
         }
@@ -205,11 +205,11 @@ gboolean send_command_to_music_player(char* command_name) {
         }
         g_dbus_proxy_call_sync(musicProxy,command_name,NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
         if (error != NULL) {
-             #if VERBOSE >= 1
+#if VERBOSE >= 1
             g_error("Error with getPlaying: %s\n",error->message);
-            #endif
+#endif
             return FALSE;
-         } else {
+        } else {
             return TRUE;
         }
     } else {
@@ -221,17 +221,17 @@ gboolean send_command_to_music_player_with_argument(char* command_name,char* typ
         GError *error = NULL;
         char* incomingObject = get_object(command_name);
         if (g_strcmp0(incomingObject,currentMusicObject) != 0 ){
-                new_proxy("MUSIC",xml_get_bus_name("MUSIC"),incomingObject);
-                g_free(incomingObject);
-            }
+            new_proxy("MUSIC",xml_get_bus_name("MUSIC"),incomingObject);
+            g_free(incomingObject);
+        }
         printf("commandName: %s\n",command_name);
         g_dbus_proxy_call_sync(musicProxy,command_name,g_variant_new (type,&argument),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
         if (error != NULL) {
-            #if VERBOSE >= 1
+#if VERBOSE >= 1
             g_error("Error with getPlaying: %s\n",error->message);
-            #endif
+#endif
             return FALSE;
-         } else {
+        } else {
             return TRUE;
         }
     } else {
@@ -244,34 +244,34 @@ gboolean send_command_to_video_player(char* command_name) {
         GError *error = NULL;
         g_dbus_proxy_call_sync(videoProxy,command_name,NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
         if (error != NULL) {
-            #if VERBOSE >= 1
+#if VERBOSE >= 1
             g_error("Error with getPlaying: %s\n",error->message);
-            #endif
+#endif
             return FALSE;
         } else {
             return TRUE;
         }
     } else {
-                return FALSE;
-        }
+        return FALSE;
+    }
 }
 gboolean send_command_to_video_player_with_argument(char* command_name,char* type, char* argument) {
     if (musicConnected){
         GError *error = NULL;
         g_dbus_proxy_call_sync(videoProxy,command_name,g_variant_new (type,&argument),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
         if (error != NULL) {
-            #if VERBOSE >= 1
+#if VERBOSE >= 1
             g_error("Error with getPlaying: %s\n",error->message);
-            #endif
+#endif
             return FALSE;
         } else {
             return TRUE;
         }
     } else {
-                return FALSE;
-        }
+        return FALSE;
+    }
 }
-    /* get playing info from music player */
+/* get playing info from music player */
 struct playing_info_music dbus_get_playing_info_music() {
     struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
     if (musicConnected){
@@ -282,18 +282,18 @@ struct playing_info_music dbus_get_playing_info_music() {
              * dbus and rhythmbox are raticlly diffrent here
              * I don't know if we can combind this into one command, but i should look into it
              */
-            #ifdef RHYTHMBOX
+#ifdef RHYTHMBOX
             gboolean playing;
             char* stateObject = "/org/gnome/Rhythmbox/Player";
-                    if (g_strcmp0(stateObject,currentMusicObject) != 0 ){
-                            new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
-                    }
+            if (g_strcmp0(stateObject,currentMusicObject) != 0 ){
+                new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
+            }
             /* Check to see if the player is playing, if it's not, no point going any further*/
             GVariant* results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox.Player.getPlaying",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
             if (error != NULL) {
-                #if VERBOSE >= 1
+#if VERBOSE >= 1
                 g_error("Error with getPlaying: %s\n",error->message);
-                #endif
+#endif
             }
             playing = g_variant_get_boolean(g_variant_get_child_value(results,0));
             if (playing){
@@ -337,9 +337,9 @@ struct playing_info_music dbus_get_playing_info_music() {
                     results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox.Player.getElapsed",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
                     pInfo.Elapised_time = g_variant_get_uint32(g_variant_get_child_value(results,0));
                 } else {
-                    #if VERBOSE >= 1
+#if VERBOSE >= 1
                     g_error("ERROR:%s\n",error->message);
-                    #endif
+#endif
                 }
             } else {
                 /* if playing is false, or we are not playing, set values to empty */
@@ -350,13 +350,13 @@ struct playing_info_music dbus_get_playing_info_music() {
                 pInfo.Elapised_time = 0;
                 pInfo.Duration = 0;
             }
-            #endif
-            #ifdef BANSHEE
+#endif
+#ifdef BANSHEE
             /* GetCurrentState returns playing or not playing */
             char* stateObject = "/org/bansheeproject/Banshee/PlayerEngine";
-                if (g_strcmp0(stateObject,currentMusicObject) != 0 ){
-                        new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
-                }
+            if (g_strcmp0(stateObject,currentMusicObject) != 0 ){
+                new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
+            }
             GVariant* result = g_dbus_proxy_call_sync(musicProxy,"org.bansheeproject.Banshee.PlayerEngine.GetCurrentState",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
             if (error == NULL){
                 /* if we are not playing set playing = true, else get the res of the info*/
@@ -402,11 +402,11 @@ struct playing_info_music dbus_get_playing_info_music() {
                     pInfo.Elapised_time = (c*pInfo.Duration)/t;
                 }
             } else {
-                #if VERBOSE >= 1
+#if VERBOSE >= 1
                 g_warning("problem with banshee get Current State::%s\n",error->message);
-                #endif
+#endif
             }
-            #endif
+#endif
         }
     }
     return pInfo;
@@ -415,17 +415,17 @@ struct playing_info_music dbus_get_playing_info_music() {
 /* This outputs the information in human readable */
 void print_playing_info_music(const struct playing_info_music pInfo){
     if ( pInfo.Artist == NULL ){
-        #if VERBOSE >= 4
+#if VERBOSE >= 4
         g_printf("Artist\t\t%s\nAlbum\t\t%s\nSong\t\t%s\nElapised Time\t%i\nDuration\t%i\nIs Playing\t%i\n\n",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying);
-        #endif
+#endif
     }
 }
 
 void on_name_appeared (GDBusConnection *connection, const gchar *name, const gchar *name_owner, gpointer user_data)
 {
-    #if VERBOSE >= 3
-          g_print ("Name %s on %s is owned by %s\n", name,"the session bus", name_owner);
-    #endif
+#if VERBOSE >= 3
+    g_print ("Name %s on %s is owned by %s\n", name,"the session bus", name_owner);
+#endif
     if (g_strcmp0(name,xml_get_bus_path("MUSIC"))){
         musicConnected = TRUE;
     } else if (g_strcmp0(name,xml_get_bus_path("VIDEO"))) {
@@ -436,13 +436,13 @@ void on_name_appeared (GDBusConnection *connection, const gchar *name, const gch
 
 void on_name_vanished (GDBusConnection *connection, const gchar *name, gpointer user_data)
 {
-    #if VERBOSE >=3
-        g_print ("Name %s does not exist on %s\n", name,"the session bus");
-    #endif
-        if (g_strcmp0(name,xml_get_bus_path("MUSIC"))){
-                musicConnected = FALSE;
-        } else if (g_strcmp0(name,xml_get_bus_path("VIDEO"))) {
-                videoConnected = FALSE;
-        }
+#if VERBOSE >=3
+    g_print ("Name %s does not exist on %s\n", name,"the session bus");
+#endif
+    if (g_strcmp0(name,xml_get_bus_path("MUSIC"))){
+        musicConnected = FALSE;
+    } else if (g_strcmp0(name,xml_get_bus_path("VIDEO"))) {
+        videoConnected = FALSE;
+    }
     dbus_init();
 }

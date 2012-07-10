@@ -1,9 +1,9 @@
 m4_define([rchip_version_major], [0])
 m4_define([rchip_version_minor], [3])
-m4_define([rchip_version_micro], [0])
+m4_define([rchip_version_micro], [1])
 
 dnl set to 0 when doing an official release
-m4_define([rchip_version_pre_release], [2])
+m4_define([rchip_version_pre_release], [0])
 
 m4_define([concat], $1$2$3$4)
 
@@ -28,7 +28,7 @@ m4_define([rchip_asm_version],
 
 
 AC_PREREQ([2.67])
-AC_INIT([rchip], rchip_version, [kevin@nosideracing.com])
+AC_INIT([rchip], rchip_version, [kevin.s.anthony@gmail.com])
 AC_CONFIG_MACRO_DIR(m4)
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([rchip], rchip_version)
@@ -38,7 +38,7 @@ AC_SUBST(ACLOCAL_AMFLAGS, "-I m4")
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 
-AC_DEFINE(COMPILE_YEAR,2011,"Year Compiled")
+AC_DEFINE(COMPILE_YEAR,2012,"Year Compiled")
 AC_DEFINE(PROGRAMMERS_NAME,"Kevin Anthony","The Name of the Programmer")
 
 # Checks for programs.

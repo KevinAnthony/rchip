@@ -1,22 +1,22 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
-*
-*    rchip, Remote Controlled Home Integration Program
-*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
-*
-*    This program is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
-*
-*    This program is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU General Public License for more details.
-*
-*    You should have received a copy of the GNU General Public License
-*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+/*
+ *
+ *    rchip, Remote Controlled Home Integration Program
+ *    Copyright (C) 2011-2012 <kevin.s.anthony@gmail.com>
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include <config.h>
 
@@ -36,7 +36,7 @@
  *
  */
 gboolean set_notification(char* tickerString,char* notificationTitle,char* notificationText) {
-    #ifdef _SQL
+#ifdef _SQL
     /*
      * nelem is the number of elements in the array
      * size is the size in bytes of each element
@@ -77,7 +77,7 @@ gboolean set_notification(char* tickerString,char* notificationTitle,char* notif
     g_free(name);
     g_free(base);
     return TRUE;
-    #else
+#else
     return FALSE;
-    #endif
+#endif
 }

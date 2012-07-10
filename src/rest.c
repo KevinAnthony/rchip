@@ -1,7 +1,7 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+/*
  *
  *    rchip, Remote Controlled Home Integration Program
- *    Copyright (C) 2011 <Kevin@NoSideRacing.com>
+ *    Copyright (C) 2011-2012 <kevin.s.anthony@gmail.com>
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by

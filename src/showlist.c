@@ -1,22 +1,22 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
-*
-*    rchip, Remote Controlled Home Integration Program
-*    Copyright (C) 2011 <Kevin@NoSideRacing.com>
-*
-*    This program is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
-*
-*    This program is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU General Public License for more details.
-*
-*    You should have received a copy of the GNU General Public License
-*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+/*
+ *
+ *    rchip, Remote Controlled Home Integration Program
+ *    Copyright (C) 2011-2012 <kevin.s.anthony@gmail.com>
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #include <config.h>
 
@@ -136,10 +136,10 @@ char* live_action(char* filepath){
         for (; *ptr!='.' ; ptr++){
             if (*ptr == '\0'){
                 if (i == 2){ break; }
-                #if VERBOSE >= 2
+#if VERBOSE >= 2
                 g_warning("Error: badly formed file name\n");
                 g_warning("File Name: %s\n",filepath);
-                #endif
+#endif
                 return NULL;
             }
             if (i == 0){ lenOfName++; }
@@ -171,9 +171,9 @@ char* live_action(char* filepath){
         *ptr++=*sptr++;
     }
     *ptr='\0';
-    #if VERBOSE >= 4
-        g_printf("returnValue of live_action in showlist.c\n%s\n",retval);
-    #endif
+#if VERBOSE >= 4
+    g_printf("returnValue of live_action in showlist.c\n%s\n",retval);
+#endif
     return retval;
 }
 
@@ -249,26 +249,26 @@ char* std_anime(char* filepath,char* name){
     sptr=ptr;
     for (; *ptr!='_' ; ptr++){
         if (*ptr == '\0'){
-            #if VERBOSE >= 2
+#if VERBOSE >= 2
             printf("Error: badly formed file name\n");
             printf("File Name: %s\n",filepath);
-            #endif
+#endif
             return NULL;
-             }
+        }
         lenOfEpsNumber++;
     }
     ptr++;
     ptr++;
     for (; *ptr!=']' ; ptr++){
-           if (*ptr == '\0'){
-               #if VERBOSE >= 2
-               printf("Error: badly formed file name\n");
-               printf("File Name: %s\n",filepath);
-               #endif
-               return NULL;
-           }
-           lenOfSubgroup++;
-       }
+        if (*ptr == '\0'){
+#if VERBOSE >= 2
+            printf("Error: badly formed file name\n");
+            printf("File Name: %s\n",filepath);
+#endif
+            return NULL;
+        }
+        lenOfSubgroup++;
+    }
 
     if (*ptr == '\0'){ lenOfSubgroup = 0;}
     totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfSubgroup;
@@ -292,7 +292,7 @@ char* std_anime(char* filepath,char* name){
     *ptr++='|';
     sptr=filepath;
     for (int i = 0; i < fnamelen; i++){
-              *ptr++=*sptr++;
+        *ptr++=*sptr++;
     }
     *ptr='\0';
     return retval;
