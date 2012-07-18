@@ -25,6 +25,8 @@
 #define for_each_hostname(hn) \
     for (hn=Hosts->data; hn != NULL; next_hostname(hn))
 
+#define             SLEEP_TIME                  100
+
 gchar*              replace_str                 ( const gchar* , const gchar*, const gchar* );
 void                add                         ( char* );
 void                delete                      ( char* );

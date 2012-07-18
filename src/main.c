@@ -93,7 +93,6 @@ int main(int argc, char** argv) {
     g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
     init_status_window(FALSE);
     start_tray();
-    printf("Got Here\n");
     deauthenticate();
     return 0;
 }

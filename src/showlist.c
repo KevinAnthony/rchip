@@ -45,6 +45,8 @@ void file_thread_handler(gpointer *NotUsed){
             g_free(function_data->data);
             g_free(function_data);
         }
+        if (g_async_queue_length(file_async_queue) == 0)
+            usleep(SLEEP_TIME);
     }
 }
 
@@ -226,7 +228,6 @@ char* other(char* filepath){
     }
     *ptr='\0';
     return retval;
-
 }
 
 char* std_anime(char* filepath,char* name){

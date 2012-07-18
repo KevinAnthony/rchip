@@ -54,6 +54,9 @@ void rest_thread_handler(gpointer* NotUsed){
             function_data->func(function_data->data);
             g_free(function_data);
         }
+        if (g_async_queue_length(network_async_queue) == 0)
+            usleep(SLEEP_TIME);
+
     }
 }
 
