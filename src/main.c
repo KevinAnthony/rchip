@@ -40,9 +40,11 @@ gboolean    parse_command_line_options(int,char**);
 gboolean    update_song_info(gpointer);
 gboolean    get_next_command(gpointer);
 gboolean    update_active_devices(gpointer);
-char*       build_playing_info_sql_query(const struct playing_info_music,char*);
+char*       build_playing_info_sql_query(const playing_info_music,char*);
 
-extern GAsyncQueue *network_async_queue;
+extern GAsyncQueue  *network_async_queue;
+extern GMutex       *Hosts_lock;
+extern hostname     *Hosts;
 
 /*The Main Program*/
 int main(int argc, char** argv) {
@@ -52,6 +54,7 @@ int main(int argc, char** argv) {
     parse_command_line_options(argc,argv);
     g_thread_init(NULL);
     gtk_init(&argc, &argv);
+    Hosts_lock = g_mutex_new();
     settings_init();
     rest_init();
     if (!queue_init())
@@ -61,7 +64,7 @@ int main(int argc, char** argv) {
     init_hostname();
     /*sets the tray icon from the create_tray_icon*/
     tray_icon = create_tray_icon();
-    struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
+    playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
     /* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
 #if VERBOSE >= 4
     print_playing_info_music(pInfo);
@@ -73,7 +76,6 @@ int main(int argc, char** argv) {
     print_playing_info_music(pInfo);
 #endif
     get_active_devices(NULL);
-
     GError *error;
     GThread *network_thread;
     GThread *file_thread;
@@ -87,9 +89,8 @@ int main(int argc, char** argv) {
         g_error("Error Creating Network Thread %s",error->message);
         g_error_free(error);
     }
-
     g_timeout_add (1000,(GSourceFunc) get_next_command,NULL);
-    g_timeout_add (10000,(GSourceFunc) update_song_info,NULL);
+    g_timeout_add (5000,(GSourceFunc) update_song_info,NULL);
     g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
     init_status_window(FALSE);
     start_tray();
@@ -129,16 +130,22 @@ void print_version(){
 
 gboolean update_song_info(gpointer data) {
     /*if the dbus is active, do the following, else try and connect*/
+    if (Hosts != NULL)
     if (dbus_is_connected(TRUE)) {
-        struct playing_info_music pInfo = dbus_get_playing_info_music();
+        playing_info_music pInfo = dbus_get_playing_info_music();
 #if VERBOSE >= 4
         print_playing_info_music(pInfo);
 #endif
         hostname_node *hosts;
-
+        g_mutex_lock(Hosts_lock);
         for_each_hostname(hosts){
             song_info_data* info = g_malloc(sizeof(song_info_data));
-            info->pInfo = pInfo;
+            info->pInfo.Artist = g_strdup(pInfo.Artist);
+            info->pInfo.Album = g_strdup(pInfo.Album);
+            info->pInfo.Song = g_strdup(pInfo.Song); 
+            info->pInfo.Elapised_time = pInfo.Elapised_time;
+            info->pInfo.Duration = pInfo.Duration;
+            info->pInfo.isPlaying = pInfo.isPlaying;
             info->hostname = g_strdup(hosts->hostname);
             queue_function_data* func = g_malloc(sizeof(queue_function_data));
             func->func = *set_song_info_rest;
@@ -146,6 +153,7 @@ gboolean update_song_info(gpointer data) {
             func->priority = TP_NORMAL;
             g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
         }
+        g_mutex_unlock(Hosts_lock);
 
         if (pInfo.isPlaying){
             if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}

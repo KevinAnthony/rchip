@@ -27,6 +27,7 @@
 #include <glib/gprintf.h>
 #include <glob.h>
 #include <dirent.h>
+#include <unistd.h>
 #include "showlist.h"
 #include "cmdhandler.h"
 #include "settings.h"

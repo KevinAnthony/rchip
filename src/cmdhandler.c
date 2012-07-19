@@ -39,7 +39,9 @@
  * (insert mad scientist type laughter here)
  */
 
-extern GAsyncQueue *network_async_queue;
+extern GAsyncQueue  *network_async_queue;
+extern GMutex       *Hosts_lock;
+extern hostname     *Hosts;
 
 void get_next_cmd() {
     /*uts.nodename is the hostname of the computer*/
@@ -137,6 +139,7 @@ void send_cmd(char* cmd, char* cmdTxt, thread_priority priority) {
     printf("Sending\ncmd  : %s\ntext:%s\n",cmd,cmdTxt);
 #endif
     hostname_node *hosts;
+    g_mutex_lock(Hosts_lock);
     for_each_hostname(hosts){
         queue_function_data* func = g_malloc(sizeof(queue_function_data));
         command_data* data = g_malloc(sizeof(command_data));
@@ -148,4 +151,5 @@ void send_cmd(char* cmd, char* cmdTxt, thread_priority priority) {
         func->data = (gpointer)data;
         g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
     }
+    g_mutex_unlock(Hosts_lock);
 }

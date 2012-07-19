@@ -43,14 +43,14 @@ typedef enum {
     TP_CRITICAL
 } thread_priority;
 
-struct playing_info_music {
+typedef struct PlayingInfoMusic {
     char    *Artist;
     char    *Album;
     char    *Song;
     int     Elapised_time;
     int     Duration;
     int     isPlaying;
-};
+} playing_info_music;
 
 typedef struct HostNamesNodeStruct {
     char* hostname;
@@ -71,6 +71,4 @@ typedef struct QueueFunctionData{
 } queue_function_data;
 
 hostname*            get_host_head                ( void );
-hostname* Hosts;
-
 #endif

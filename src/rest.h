@@ -47,7 +47,7 @@ typedef struct CommandData{
 } command_data;
 
 typedef struct SongInfoData{
-    struct playing_info_music pInfo;
+    playing_info_music pInfo;
     char* hostname;
 } song_info_data;
 

@@ -96,17 +96,17 @@ void credentials(GtkWidget *widget, gpointer gdata){
     gtk_dialog_add_button( GTK_DIALOG( dialog ), GTK_STOCK_NO,  2 );
     GtkWidget *box = gtk_dialog_get_content_area( GTK_DIALOG( dialog ) );
 
-    GtkWidget *username = gtk_entry_new();
-    GtkWidget *password = gtk_entry_new();
-    gtk_entry_set_text (GTK_ENTRY (username), get_setting_str(REST_USERNAME));
-    gtk_entry_set_text (GTK_ENTRY (password), get_setting_str(REST_PASSWORD));
+    GtkEntry *username = gtk_entry_new();
+    GtkEntry *password = gtk_entry_new();
+    gtk_entry_set_text (username, get_setting_str(REST_USERNAME));
+    gtk_entry_set_text (password, get_setting_str(REST_PASSWORD));
     gtk_entry_set_visibility(GTK_ENTRY(password),FALSE);
 
 
     gtk_box_pack_start( GTK_BOX( box ), gtk_label_new( "Username" ), TRUE, TRUE, 0 );
-    gtk_box_pack_start( GTK_BOX( box ), username, TRUE, TRUE, 0 );
+    gtk_box_pack_start( GTK_BOX( box ), GTK_WIDGET(username), TRUE, TRUE, 0 );
     gtk_box_pack_start( GTK_BOX( box ), gtk_label_new( "Password" ), TRUE, TRUE, 0 );
-    gtk_box_pack_start( GTK_BOX( box ), password, TRUE, TRUE, 0 );
+    gtk_box_pack_start( GTK_BOX( box ), GTK_WIDGET(password), TRUE, TRUE, 0 );
 
     gtk_widget_show_all( dialog );
     if (gtk_dialog_run( GTK_DIALOG (dialog) ) == 1){
@@ -184,7 +184,7 @@ void add_folders(GtkWidget *widget, gpointer gdata){
 #endif
             queue_function_data* func = g_malloc(sizeof(queue_function_data));
             func->func  = *add_folder_to_playqueue;
-            func->data = g_strdup(filename);
+            func->data = (gpointer*)g_strdup(filename);
             func->priority = TP_NORMAL;
             g_async_queue_push_sorted(file_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
             node=node->next;

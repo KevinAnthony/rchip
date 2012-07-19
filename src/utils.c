@@ -32,6 +32,9 @@ GAsyncQueue         *network_async_queue = NULL;
 GAsyncQueue         *file_async_queue = NULL;
 GAsyncQueue         *gui_async_queue = NULL;
 
+GMutex              *Hosts_lock = NULL;
+hostname*           Hosts = NULL;
+
 gchar* replace_str (const gchar *src,const gchar *find,const gchar *replace){
     gchar* retval = g_strdup(src);
     gchar* ptr = NULL;
@@ -101,7 +104,6 @@ void delete (char* data){
 }
 
 int find (char* token){
-
     hostname_node* hostname_p = Hosts->data;
     for_each_hostname(hostname_p){
         if (g_strcmp0(hostname_p->hostname, token) == 0){

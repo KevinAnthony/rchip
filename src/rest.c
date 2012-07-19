@@ -28,14 +28,17 @@
 #include    <glib/gprintf.h>
 #include    <string.h>
 #include    <stdlib.h>
+#include    <unistd.h>
 #include    "rest.h"
 #include    "settings.h"
 #include    "utils.h"
 #include    "cmdhandler.h"
 #include    <sys/utsname.h>
 
-extern gboolean program_active;
-extern GAsyncQueue *network_async_queue;
+extern gboolean     program_active;
+extern GAsyncQueue  *network_async_queue;
+extern GMutex       *Hosts_lock;
+extern hostname     *Hosts;
 
 //TODO: This should be a setting, not hard coded
 char* URL = "http://www.nosideholdings.com/json";
@@ -138,11 +141,14 @@ size_t get_active_decives_callback(void *ptr,size_t size, size_t count, void* st
     json_object *json_success = json_object_object_get(jarray, "success");
     if (g_strcmp0(json_object_to_json_string(json_success),"true") == 0){
         json_object *json_data = json_object_object_get(jarray, "data");
+        g_mutex_lock(Hosts_lock);
         for (int i = 0; i< json_object_array_length(json_data); i++){
             json_object_object_foreach(json_object_array_get_idx(json_data, i), key, val){
-                Hosts->add(json_object_get_string(val));
+                char* host = json_object_get_string(val);
+                Hosts->add(host);
             }
         }
+        g_mutex_unlock(Hosts_lock);
     }
     return 0;
 }
@@ -174,6 +180,9 @@ gpointer* set_song_info_rest(gpointer *data) {
             curl_easy_setopt(session, CURLOPT_URL, url);
             curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
             curl_easy_perform(session);
+            g_free(info->pInfo.Artist);
+            g_free(info->pInfo.Album);
+            g_free(info->pInfo.Song);
             g_free(url);
         }
     }

@@ -132,7 +132,6 @@ gboolean dbus_init(){
         g_free(objectPath);
         objectPath = NULL;
     }
-
     return TRUE;
 }
 
@@ -272,8 +271,8 @@ gboolean send_command_to_video_player_with_argument(char* command_name,char* typ
     }
 }
 /* get playing info from music player */
-struct playing_info_music dbus_get_playing_info_music() {
-    struct playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
+playing_info_music dbus_get_playing_info_music() {
+    playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
     if (musicConnected){
         GError *error = NULL;
         /* Make sure we are connected to dbus */
@@ -413,7 +412,8 @@ struct playing_info_music dbus_get_playing_info_music() {
 }
 
 /* This outputs the information in human readable */
-void print_playing_info_music(const struct playing_info_music pInfo){
+void print_playing_info_music(const playing_info_music pInfo){
+    g_printf("Artist\t\t%s\nAlbum\t\t%s\nSong\t\t%s\nElapised Time\t%i\nDuration\t%i\nIs Playing\t%i\n\n",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying);
     if ( pInfo.Artist == NULL ){
 #if VERBOSE >= 4
         g_printf("Artist\t\t%s\nAlbum\t\t%s\nSong\t\t%s\nElapised Time\t%i\nDuration\t%i\nIs Playing\t%i\n\n",pInfo.Artist,pInfo.Album,pInfo.Song,pInfo.Elapised_time,pInfo.Duration,pInfo.isPlaying);

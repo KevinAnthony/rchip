@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
 
-CFLAGS=-std=c99 -Wall -g
+CFLAGS=-std=gnu99 -Wall -g
 CPPFLAGS = -DPREFIX='"$(datadir)"' @CPPFLAGS@
 
 AM_CFLAGS = 	$(CFLAGS)   \
