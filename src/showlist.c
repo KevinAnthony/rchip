@@ -180,18 +180,6 @@ char* live_action(char* filepath){
     return retval;
 }
 
-char* anime(char* filepath){
-    if (g_strstr_len(filepath,-1,"One_Piece") != NULL) {
-        return std_anime(filepath,"One_Piece");
-    } else if (g_strstr_len(filepath,-1,"Fairy_Tail") != NULL) {
-        return std_anime(filepath,"Fairy_Tail");
-    } else {
-        return other(filepath);
-    }
-
-
-}
-
 char* other(char* filepath){
     char* posOfLastSlash=filepath;
     int fnamelen=0;
@@ -231,71 +219,23 @@ char* other(char* filepath){
     return retval;
 }
 
-char* std_anime(char* filepath,char* name){
-    char* posOfLastSlash=filepath;
-    int fnamelen=0;
-    int lenOfName=strlen(name);
-    int lenOfEpsNumber=0;
-    int lenOfSubgroup=0;
-    int totallen=0;
-    char* ptr = filepath;
-    char* sptr = filepath;
-    for (; *ptr != '\0';ptr++) {
-        if (*ptr == '/') {
-            posOfLastSlash = ptr;
-        }
-        fnamelen++;
-    }
-    ptr = posOfLastSlash+1;
-    ptr = ptr+lenOfName+1;
-    sptr=ptr;
-    for (; *ptr!='_' ; ptr++){
-        if (*ptr == '\0'){
-#if VERBOSE >= 2
-            printf("Error: badly formed file name\n");
-            printf("File Name: %s\n",filepath);
-#endif
-            return NULL;
-        }
-        lenOfEpsNumber++;
-    }
-    ptr++;
-    ptr++;
-    for (; *ptr!=']' ; ptr++){
-        if (*ptr == '\0'){
-#if VERBOSE >= 2
-            printf("Error: badly formed file name\n");
-            printf("File Name: %s\n",filepath);
-#endif
-            return NULL;
-        }
-        lenOfSubgroup++;
-    }
+char* anime (char* filepath){
+    char* original_file_path = g_strdup(filepath);
+    char* result = strtok(original_file_path,"/");
+    char* filename = NULL;
 
-    if (*ptr == '\0'){ lenOfSubgroup = 0;}
-    totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfSubgroup;
-    char* retval = g_malloc(totallen+5);
-    ptr = retval;
-    sptr=name;
-    for (int i = 0; i < lenOfName; i++){
-        *ptr++=*sptr++;
+    while (result != NULL){
+        filename = result;
+        result = strtok(NULL,"/");
     }
-    *ptr++='|';
-    sptr=posOfLastSlash+lenOfName+2;
-    for (int i = 0; i < lenOfEpsNumber; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr++='|';
-    while (*sptr++ != '['){ lenOfSubgroup--; }
-    lenOfSubgroup++;
-    for (int i = 0; i < lenOfSubgroup; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr++='|';
-    sptr=filepath;
-    for (int i = 0; i < fnamelen; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr='\0';
-    return retval;
+    g_free(original_file_path);
+    if (filename == NULL)
+        return other(filepath);
+    char* show_name = strtok(filename,".");
+    if ( show_name == NULL )
+        return other(filepath);
+    char* episode = strtok(NULL,".");
+    if ( episode == NULL )
+        return other(filepath);
+    return g_strdup_printf("%s|%s|%s %s|%s",show_name,episode,episode,show_name,filepath);
 }

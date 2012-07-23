@@ -105,6 +105,7 @@ size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
 
 gpointer* send_cmd_to_server(gpointer* data){
     command_data* command = (command_data*) data;
+    printf("Command going to server = %s  %s\n",command->command,command->command_text);
     struct utsname uts;
     uname( &uts );
     if (session) {

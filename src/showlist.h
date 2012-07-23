@@ -33,6 +33,5 @@ int                  file_type                    ( char* );
 char*                live_action                  ( char* );
 char*                anime                        ( char* );
 char*                other                        ( char* );
-char*                std_anime                    ( char*,char* );
 
 #endif
