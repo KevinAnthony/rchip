@@ -30,8 +30,7 @@ void                 file_thread_handler          ( gpointer* );
 gpointer*            add_file_to_playqueue        ( gpointer* );
 gpointer*            add_folder_to_playqueue      ( gpointer* );
 int                  file_type                    ( char* );
-char*                live_action                  ( char* );
-char*                anime                        ( char* );
-char*                other                        ( char* );
+char*                standard_name                ( char* );
+char*                unstandard_name              ( char* );
 
 #endif

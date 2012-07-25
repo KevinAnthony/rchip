@@ -28,6 +28,7 @@
 #include <glob.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <regex.h>
 #include "showlist.h"
 #include "cmdhandler.h"
 #include "settings.h"
@@ -52,18 +53,9 @@ void file_thread_handler(gpointer *NotUsed){
 }
 
 gpointer* add_file_to_playqueue(gpointer* data){
-    //here i really should somehow figure out if it's an anime, a live action, or something else
-    // for now, it's all live action
     char* filepath = (char*)data;
-    if ((is_valid_extension(filepath))){
-        if ((g_strstr_len(filepath,-1,"/English/Live_Action/") != NULL)) {
-            send_cmd("ADDS",live_action(filepath),TP_LOW);
-        } else if (g_strstr_len(filepath,-1,"/Foreign/Animeted/") != NULL) {
-            send_cmd("ADDS",anime(filepath),TP_LOW);
-        } else {
-            send_cmd("ADDS",other(filepath),TP_LOW);
-        }
-    }
+    if ((is_valid_extension(filepath)))
+        send_cmd("ADDS",standard_name(filepath),TP_LOW);
     return NULL;
 }
 
@@ -117,109 +109,52 @@ int file_type(char *name){
     return ret;
 }
 
-char* live_action(char* filepath){
-    char* posOfLastSlash=filepath;
-    int fnamelen=0;
-    int lenOfName=0;
-    int lenOfEpsNumber=0;
-    int lenOfEpsName=0;
-    int totallen=0;
-    char* ptr = filepath;
-    char* sptr = filepath;
-    for (; *ptr != '\0';ptr++) {
-        if (*ptr == '/') {
-            posOfLastSlash = ptr;
-        }
-        fnamelen++;
+char* standard_name (char* filepath){
+    char* original_file_path = g_strdup(filepath);
+    char* result = strtok(original_file_path,"/");
+    char* filename = NULL;
+    regex_t regex;
+
+    while (result != NULL){
+        filename = result;
+        result = strtok(NULL,"/");
     }
-    ptr = posOfLastSlash;
-    ptr++;
-    sptr=ptr;
-    for (int i = 0; i < 3; i++){
-        for (; *ptr!='.' ; ptr++){
-            if (*ptr == '\0'){
-                if (i == 2){ break; }
-#if VERBOSE >= 2
-                g_warning("Error: badly formed file name\n");
-                g_warning("File Name: %s\n",filepath);
-#endif
-                return NULL;
-            }
-            if (i == 0){ lenOfName++; }
-            else if (i == 1){ lenOfEpsNumber++; }
-            else if (i == 2){ lenOfEpsName++; }
-        }
-        ptr++;
+    g_free(original_file_path);
+
+    if (filename == NULL)
+        return unstandard_name(filepath);
+
+    char* show_name = g_strdup(strtok(filename,"."));
+    if ( show_name == NULL )
+        return unstandard_name(filepath);
+
+    char* episode_number =  g_strdup(strtok(NULL,"."));
+    if ( episode_number == NULL )
+        return unstandard_name(filepath);
+
+    char* episode_name =  g_strdup(strtok(NULL,"."));
+    if (episode_name == NULL)
+        return unstandard_name(filepath);
+
+    char* retval = NULL;
+
+    if (regcomp(&regex,"S[0-9]{2}E[0-9]{2}",REG_EXTENDED))
+        g_error("Problem Setting up Regular Expression");
+    else {
+        int regi = regexec(&regex, filepath, 0, NULL, 0);
+        if (!regi )
+            retval = g_strdup_printf("%s|%s|%s|%s",show_name,episode_number,episode_name,filepath);
+        else if ( regi == REG_NOMATCH )
+            retval = g_strdup_printf("%s|%s|%s %s|%s",show_name,episode_number,episode_number,show_name,filepath);
     }
-    if (*ptr == '\0'){ lenOfEpsName = 0;}
-    totallen=fnamelen+lenOfName+lenOfEpsNumber+lenOfEpsName;
-    char* retval = g_malloc(totallen+5);
-    ptr = retval;
-    for (int i = 0; i < lenOfName; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr++='|';
-    sptr++;
-    for (int i = 0; i < lenOfEpsNumber; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr++='|';
-    sptr++;
-    for (int i = 0; i < lenOfEpsName; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr++='|';
-    sptr=filepath;
-    for (int i = 0; i < fnamelen; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr='\0';
-#if VERBOSE >= 4
-    g_printf("returnValue of live_action in showlist.c\n%s\n",retval);
-#endif
+    g_free(show_name);
+    g_free(episode_number);
+    g_free(episode_name);
+    regfree(&regex);
     return retval;
 }
 
-char* other(char* filepath){
-    char* posOfLastSlash=filepath;
-    int fnamelen=0;
-    int lenOfName=0;
-    int totallen=0;
-    char* ptr = filepath;
-    char* sptr = filepath;
-    for (; *ptr != '\0';ptr++) {
-        if (*ptr == '/') {
-            posOfLastSlash = ptr;
-        }
-        fnamelen++;
-    }
-    ptr = posOfLastSlash +1;
-    for (; *ptr != '\0'; ptr++){
-        lenOfName++;
-    }
-    totallen=fnamelen+lenOfName+5;
-    char* retval = g_malloc(totallen+5);
-    ptr=retval;
-    sptr = posOfLastSlash+1;
-    char* other = "Other";
-    for (int i = 0; i < 5; i++) {
-        *ptr++=*other++;
-    }
-    *ptr++='|';
-    for (int i = 0; i < lenOfName; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr++='|';
-    *ptr++='|';
-    sptr=filepath;
-    for (int i = 0; i < fnamelen; i++){
-        *ptr++=*sptr++;
-    }
-    *ptr='\0';
-    return retval;
-}
-
-char* anime (char* filepath){
+char* unstandard_name(char* filepath){
     char* original_file_path = g_strdup(filepath);
     char* result = strtok(original_file_path,"/");
     char* filename = NULL;
@@ -229,13 +164,5 @@ char* anime (char* filepath){
         result = strtok(NULL,"/");
     }
     g_free(original_file_path);
-    if (filename == NULL)
-        return other(filepath);
-    char* show_name = strtok(filename,".");
-    if ( show_name == NULL )
-        return other(filepath);
-    char* episode = strtok(NULL,".");
-    if ( episode == NULL )
-        return other(filepath);
-    return g_strdup_printf("%s|%s|%s %s|%s",show_name,episode,episode,show_name,filepath);
+    return g_strdup_printf("Other|%s|%s|%s",filename,filename,filepath);
 }
