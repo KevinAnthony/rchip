@@ -16,4 +16,4 @@ missing
 src/.deps/
 src/rchip
 stamp-h1
-
+*.swp
