@@ -39,16 +39,15 @@ extern GAsyncQueue *file_async_queue;
 
 
 void file_thread_handler(gpointer *NotUsed){
-    while(program_active){
-        gpointer *data = g_async_queue_try_pop (file_async_queue);
+    while(1){
+        gpointer *data = g_async_queue_pop (file_async_queue);
         if (data){
-            queue_function_data* function_data = (queue_function_data*) data;
+            if (data == THREAD_EXIT)
+                g_thread_exit (NULL);
+            queue_function_data *function_data = (queue_function_data*) data;
             function_data->func(function_data->data);
-            g_free(function_data->data);
             g_free(function_data);
         }
-        if (g_async_queue_length(file_async_queue) == 0)
-            usleep(SLEEP_TIME);
     }
 }
 

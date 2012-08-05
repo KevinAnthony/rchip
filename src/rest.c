@@ -30,13 +30,14 @@
 #include    <stdlib.h>
 #include    <unistd.h>
 #include    "rest.h"
+#include    "status.h"
 #include    "settings.h"
 #include    "utils.h"
 #include    "cmdhandler.h"
 #include    <sys/utsname.h>
 
-extern gboolean     program_active;
 extern GAsyncQueue  *network_async_queue;
+extern GAsyncQueue  *gui_async_queue;
 extern GMutex       *Hosts_lock;
 extern hostname     *Hosts;
 
@@ -50,16 +51,15 @@ void rest_init() {
 }
 
 void rest_thread_handler(gpointer* NotUsed){
-    while (program_active){
-        gpointer *data = g_async_queue_try_pop (network_async_queue);
+    while(1){
+        gpointer *data = g_async_queue_pop (network_async_queue);
         if (data){
+            if (data == THREAD_EXIT)
+                g_thread_exit (NULL);
             queue_function_data *function_data = (queue_function_data*) data;
             function_data->func(function_data->data);
             g_free(function_data);
         }
-        if (g_async_queue_length(network_async_queue) == 0)
-            usleep(SLEEP_TIME);
-
     }
 }
 
@@ -86,17 +86,28 @@ size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
         if (g_strcmp0(json_object_to_json_string(json_success),"true") == 0){
             json_object *json_data = json_object_object_get(jarray, "data");
             for (int i = 0; i< json_object_array_length(json_data); i++){
-                char *cmd;
-                char *cmd_txt;
+                char *cmd = NULL;
+                char *cmd_txt = NULL;
                 json_object_object_foreach(json_object_array_get_idx(json_data, i), key, val){
-                    if (g_strcmp0(key,"command") == 0){
+                    if (g_strcmp0(key,"command") == 0)
                         cmd = json_object_get_string(val);
-                    }
-                    if (g_strcmp0(key,"command_text") == 0){
+                    if (g_strcmp0(key,"command_text") == 0)
                         cmd_txt = json_object_get_string(val);
-                    }
                 }
-                process_cmd(cmd,cmd_txt);
+                if (cmd != NULL){
+                    queue_function_data* func = g_malloc(sizeof(queue_function_data));
+                    func->func = *insert_into_window;
+                    func->priority = TP_LOW;
+                    char* line;
+                    if (cmd_txt == NULL)
+                        line = g_strdup_printf("REST RECV COMMAND:%s\n",cmd);
+                    else
+                        line = g_strdup_printf("REST RECV COMMAND:%s %s\n",cmd,cmd_txt);
+
+                    func->data = line;
+                    g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
+                    process_cmd(cmd,cmd_txt);
+                }
             }
         }
     }

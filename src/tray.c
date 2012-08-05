@@ -32,7 +32,12 @@
 #include "status.h"
 #include "xml.h"
 
-extern GAsyncQueue *file_async_queue;
+extern GAsyncQueue  *file_async_queue;
+extern GAsyncQueue  *gui_async_queue;
+extern GAsyncQueue  *network_async_queue;
+extern GThread      *network_thread;
+extern GThread      *file_thread;
+extern GThread      *gui_thread;
 
 void start_tray(){
 #ifdef GTK3
@@ -56,6 +61,7 @@ void start_tray(){
     gtk_main ();
 #endif
 }
+
 #if GTK_MAJOR_VERSION >= 3
 void activate (GtkApplication *app)
 {
@@ -65,6 +71,7 @@ void activate (GtkApplication *app)
     gtk_main();
 }
 #endif
+
 void tray_click(GtkStatusIcon *status_icon,gpointer user_data)
 {
     /* on primary click(default:left) we either show or hide the status window */
@@ -196,6 +203,17 @@ void add_folders(GtkWidget *widget, gpointer gdata){
 
 }
 
+void on_quit(GtkWidget *widget, gpointer gdata){
+    gint* exit = THREAD_EXIT;
+    g_async_queue_push(network_async_queue,(gpointer)exit);
+    g_thread_join ( network_thread );
+    g_async_queue_push(file_async_queue,(gpointer)exit);
+    g_thread_join ( file_thread );
+    g_async_queue_push(gui_async_queue,(gpointer)exit);
+    g_thread_join ( gui_thread );
+
+    gtk_main_quit();
+}
 void about_box(GtkWidget *widget, gpointer gdata){
 #if VERBOSE >= 3
     g_printf("about Clicked\n");
@@ -309,7 +327,7 @@ GtkWidget* create_tray_menu(GtkStatusIcon* tray_icon) {
     g_signal_connect_swapped(showsadd_item, "activate",G_CALLBACK(add_files),NULL);
     g_signal_connect_swapped(folderadd_item, "activate",G_CALLBACK(add_folders),NULL);
     g_signal_connect_swapped(about_item, "activate",G_CALLBACK(about_box),NULL);
-    g_signal_connect_swapped(quit_item, "activate",gtk_main_quit,(gpointer) "file.quit");
+    g_signal_connect_swapped(quit_item, "activate",G_CALLBACK(on_quit),(gpointer) "file.quit");
 
     gtk_widget_show_all(tray_menu);
     return tray_menu;

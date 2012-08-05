@@ -22,13 +22,17 @@
 #define STATUS_H
 #include            <gtk/gtk.h>
 
+void                gui_thread_handler              ( gpointer* );
 void                init_status_window              ( gboolean );
-void                init_status_labels              ( void );
-void                init_info_labels                ( void );
-void                init_xml_labels                 ( void );
-void                init_buttons                    ( void );
+void                init_status_labels              ( GtkBuilder* );
+void                init_info_labels                ( GtkBuilder* );
+void                init_xml_labels                 ( GtkBuilder* );
+void                init_buttons                    ( GtkBuilder* );
 void                window_destroyed                ( GtkWidget*,gpointer );
 void                close_window                    ( GtkWidget*,gpointer );
 void                show_hide_window                ( void );
 char*               get_file_name_from_path         ( char* );
+gpointer*           insert_into_window              ( gpointer* );
+gpointer*           read_to_buffer                  ( gpointer* );
+gpointer*           write_to_buffer                 ( gpointer* );
 #endif

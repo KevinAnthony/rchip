@@ -42,9 +42,16 @@ gboolean    get_next_command(gpointer);
 gboolean    update_active_devices(gpointer);
 char*       build_playing_info_sql_query(const playing_info_music,char*);
 
+
+extern GThread      *network_thread;
+extern GThread      *file_thread;
+extern GThread      *gui_thread;
 extern GAsyncQueue  *network_async_queue;
 extern GMutex       *Hosts_lock;
 extern hostname     *Hosts;
+extern GMutex       *Userpath_lock;
+extern char*        Userpath;
+
 
 /*The Main Program*/
 int main(int argc, char** argv) {
@@ -54,7 +61,13 @@ int main(int argc, char** argv) {
     parse_command_line_options(argc,argv);
     g_thread_init(NULL);
     gtk_init(&argc, &argv);
+
     Hosts_lock = g_mutex_new();
+    Userpath_lock = g_mutex_new();
+    g_mutex_lock(Userpath_lock);
+    Userpath = g_strdup(getenv("HOME"));
+    g_mutex_unlock(Userpath_lock);
+
     settings_init();
     rest_init();
     if (!queue_init())
@@ -76,10 +89,8 @@ int main(int argc, char** argv) {
     print_playing_info_music(pInfo);
 #endif
     get_active_devices(NULL);
-    GError *error;
-    GThread *network_thread;
-    GThread *file_thread;
 
+    GError *error;
     if ( (network_thread = g_thread_create((GThreadFunc)rest_thread_handler, NULL, FALSE, &error)) == NULL){
         g_error("Error Creating Network Thread %s",error->message);
         g_error_free(error);
@@ -89,11 +100,18 @@ int main(int argc, char** argv) {
         g_error("Error Creating Network Thread %s",error->message);
         g_error_free(error);
     }
+    if ( (gui_thread = g_thread_create((GThreadFunc)gui_thread_handler, NULL, FALSE, &error)) == NULL){
+        g_error("Error Creating Network Thread %s",error->message);
+        g_error_free(error);
+    }
+
     g_timeout_add (1000,(GSourceFunc) get_next_command,NULL);
     g_timeout_add (5000,(GSourceFunc) update_song_info,NULL);
     g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
     init_status_window(FALSE);
     start_tray();
+    g_free(Userpath);
+
     deauthenticate();
     return 0;
 }
@@ -142,7 +160,7 @@ gboolean update_song_info(gpointer data) {
             song_info_data* info = g_malloc(sizeof(song_info_data));
             info->pInfo.Artist = g_strdup(pInfo.Artist);
             info->pInfo.Album = g_strdup(pInfo.Album);
-            info->pInfo.Song = g_strdup(pInfo.Song); 
+            info->pInfo.Song = g_strdup(pInfo.Song);
             info->pInfo.Elapised_time = pInfo.Elapised_time;
             info->pInfo.Duration = pInfo.Duration;
             info->pInfo.isPlaying = pInfo.isPlaying;

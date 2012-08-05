@@ -31,6 +31,7 @@
 #endif
 #include "cmdhandler.h"
 #include "settings.h"
+#include "status.h"
 #include "rest.h"
 #include "utils.h"
 #include "xml.h"
@@ -40,6 +41,7 @@
  */
 
 extern GAsyncQueue  *network_async_queue;
+extern GAsyncQueue  *gui_async_queue;
 extern GMutex       *Hosts_lock;
 extern hostname     *Hosts;
 
@@ -55,6 +57,7 @@ void get_next_cmd() {
 }
 
 gboolean process_cmd(char* cmd,char* cmdTxt) {
+
 
     if ((cmd != NULL) && (g_strcmp0(cmd,"") != 0)){
         gboolean xmli = xml_init();
@@ -138,6 +141,12 @@ void send_cmd(char* cmd, char* cmdTxt, thread_priority priority) {
 #if VERBOSE >= 4
     printf("Sending\ncmd  : %s\ntext:%s\n",cmd,cmdTxt);
 #endif
+    queue_function_data* func = g_malloc(sizeof(queue_function_data));
+    func->func = *insert_into_window;
+    func->priority = TP_LOW;
+    func->data = (gpointer)g_strdup_printf("REST SEND COMMAND:%s %s\n",cmd,cmdTxt);
+    g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
+
     hostname_node *hosts;
     g_mutex_lock(Hosts_lock);
     for_each_hostname(hosts){

@@ -26,14 +26,20 @@
 #include <glib/gprintf.h>
 #include "utils.h"
 
-gboolean            program_active = FALSE;
 
 GAsyncQueue         *network_async_queue = NULL;
 GAsyncQueue         *file_async_queue = NULL;
 GAsyncQueue         *gui_async_queue = NULL;
 
+GThread             *network_thread;
+GThread             *file_thread;
+GThread             *gui_thread;
+
 GMutex              *Hosts_lock = NULL;
 hostname*           Hosts = NULL;
+
+GMutex              *Userpath_lock = NULL;
+char*               Userpath = NULL;
 
 gchar* replace_str (const gchar *src,const gchar *find,const gchar *replace){
     gchar* retval = g_strdup(src);
@@ -127,7 +133,6 @@ gboolean queue_init( void ){
     gui_async_queue = g_async_queue_new();
     if (!gui_async_queue)
         return FALSE;
-    program_active = TRUE;
     return TRUE;
 }
 

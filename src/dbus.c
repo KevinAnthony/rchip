@@ -223,7 +223,6 @@ gboolean send_command_to_music_player_with_argument(char* command_name,char* typ
             new_proxy("MUSIC",xml_get_bus_name("MUSIC"),incomingObject);
             g_free(incomingObject);
         }
-        printf("commandName: %s\n",command_name);
         g_dbus_proxy_call_sync(musicProxy,command_name,g_variant_new (type,&argument),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
         if (error != NULL) {
 #if VERBOSE >= 1
