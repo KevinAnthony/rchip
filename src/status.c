@@ -29,6 +29,7 @@
 
 GtkWidget           *window;
 GtkTextBuffer       *status_buffer = NULL;
+GMutex              *status_buffer_lock = NULL;
 
 extern GMutex       *Userpath_lock;
 extern char*        Userpath;
@@ -41,9 +42,11 @@ void gui_thread_handler(gpointer* NotUsed){
             if (data == THREAD_EXIT) {
                 GtkTextIter start_iter;
                 GtkTextIter end_iter;
+                g_mutex_lock(status_buffer_lock);
                 gtk_text_buffer_get_start_iter(status_buffer,&start_iter);
                 gtk_text_buffer_get_end_iter(status_buffer,&end_iter);
                 write_to_buffer(g_strdup(gtk_text_buffer_get_text ( status_buffer, &start_iter, &end_iter, TRUE)));
+                g_mutex_unlock(status_buffer_lock);
                 g_thread_exit (NULL);
             }
             queue_function_data *function_data = (queue_function_data*) data;
@@ -54,6 +57,8 @@ void gui_thread_handler(gpointer* NotUsed){
 }
 
 void init_status_window (gboolean showWindow) {
+    if (status_buffer_lock == NULL)
+        status_buffer_lock = g_mutex_new();
     GtkBuilder* builder = gtk_builder_new ();
     gtk_builder_add_from_file (builder, PREFIX "/noside/ui/rchip_status_window.glade", NULL);
     window = GTK_WIDGET (gtk_builder_get_object (builder, "statusWindow"));
@@ -61,7 +66,9 @@ void init_status_window (gboolean showWindow) {
 
     init_status_labels(builder);
     init_xml_labels(builder);
+    g_mutex_lock(status_buffer_lock);
     status_buffer = GTK_TEXT_BUFFER(gtk_builder_get_object(builder, "status_text_buffer"));
+    g_mutex_unlock(status_buffer_lock);
     g_object_unref (G_OBJECT (builder));
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(window_destroyed), NULL);
 
@@ -97,6 +104,7 @@ void init_xml_labels(GtkBuilder* builder){
 }
 
 void window_destroyed(GtkWidget *widget, gpointer gdata){
+    g_mutex_lock(status_buffer_lock);
     if ( status_buffer != NULL ) {
         GtkTextIter start_iter;
         GtkTextIter end_iter;
@@ -110,6 +118,7 @@ void window_destroyed(GtkWidget *widget, gpointer gdata){
         g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
 
     }
+    g_mutex_unlock(status_buffer_lock);
     printf("Window Destroyed\n");
     window=NULL;
 }
@@ -144,11 +153,13 @@ char* get_file_name_from_path(char* path){
 
 gpointer* insert_into_window(gpointer *data){
     char* line = (char*) data;
+    g_mutex_lock(status_buffer_lock);
     if (status_buffer != NULL){
         GtkTextIter iter;
         gtk_text_buffer_get_start_iter(status_buffer,&iter);
         gtk_text_buffer_insert (status_buffer,&iter,line,-1);
     }
+    g_mutex_unlock(status_buffer_lock);
 
 }
 
@@ -158,6 +169,7 @@ gpointer* read_to_buffer(gpointer *data){
     g_mutex_unlock(Userpath_lock);
 
     FILE *file = fopen(path,"rb");
+    g_mutex_lock(status_buffer_lock);
     if (file){
         fseek(file, 0, SEEK_END);
         unsigned long file_len = ftell(file);
@@ -171,6 +183,7 @@ gpointer* read_to_buffer(gpointer *data){
         fclose(file);
     } else
         gtk_text_buffer_set_text (status_buffer,"",-1);
+    g_mutex_unlock(status_buffer_lock);
     g_free(path);
     return NULL;
 }
