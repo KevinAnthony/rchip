@@ -67,12 +67,12 @@ int get_setting_int( gchar* keyname) {
 #if VERBOSE >= 3
     printf("Trying to get Setting for Value:%s\n",keyname);
 #endif
-    int valueInt = 0;
+    int valueInt = -1;
     valueInt = g_settings_get_int(settings,keyname);
 #if VERBOSE >= 4
     printf("Value for key is:%d\n",valueInt);
 #endif
-    if (valueInt == 0) {
+    if (valueInt == -1) {
 #if VERBOSE >= 2
         g_error("Error: No Value for %s",keyname);
 #endif

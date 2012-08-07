@@ -160,7 +160,7 @@ gpointer* insert_into_window(gpointer *data){
         gtk_text_buffer_insert (status_buffer,&iter,line,-1);
     }
     g_mutex_unlock(status_buffer_lock);
-
+    check_reduce_buffer();
 }
 
 gpointer* read_to_buffer(gpointer *data){
@@ -185,6 +185,7 @@ gpointer* read_to_buffer(gpointer *data){
         gtk_text_buffer_set_text (status_buffer,"",-1);
     g_mutex_unlock(status_buffer_lock);
     g_free(path);
+    check_reduce_buffer();
     return NULL;
 }
 
@@ -201,4 +202,19 @@ gpointer* write_to_buffer(gpointer *data){
     }
     g_free(path);
     return NULL;
+}
+
+void check_reduce_buffer(){
+    int buffer_max_size = get_setting_int(STATUS_BUFFER_MAX_SIZE);
+    if (buffer_max_size < 0)
+        return;
+    g_mutex_lock(status_buffer_lock);
+    if (gtk_text_buffer_get_line_count(status_buffer) > buffer_max_size){
+        GtkTextIter start_iter;
+        GtkTextIter end_iter;
+        gtk_text_buffer_get_iter_at_line(status_buffer,&start_iter,buffer_max_size);
+        gtk_text_buffer_get_end_iter(status_buffer,&end_iter);
+        gtk_text_buffer_delete (status_buffer,&start_iter,&end_iter);
+    }
+    g_mutex_unlock(status_buffer_lock);
 }

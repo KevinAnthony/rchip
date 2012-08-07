@@ -34,6 +34,7 @@
 #define             SQL_MAX_NAME                "sql-hostnamesize"
 #define             MUSIC_XML                   "xml-music"
 #define             VIDEO_XML                   "xml-video"
+#define             STATUS_BUFFER_MAX_SIZE      "status-buffer-max-size"
 
 char*               get_setting_str             ( gchar* );
 gboolean            set_setting_str             ( gchar*,gchar* );
