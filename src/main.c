@@ -42,7 +42,6 @@ gboolean    get_next_command(gpointer);
 gboolean    update_active_devices(gpointer);
 char*       build_playing_info_sql_query(const playing_info_music,char*);
 
-
 extern GThread      *network_thread;
 extern GThread      *file_thread;
 extern GThread      *gui_thread;
@@ -51,15 +50,16 @@ extern GMutex       *Hosts_lock;
 extern hostname     *Hosts;
 extern GMutex       *Userpath_lock;
 extern char*        Userpath;
-
+char*               glade_file = NULL;
 
 /*The Main Program*/
 int main(int argc, char** argv) {
     /* defines the tray_icon, as well as init gtk*/
     g_set_application_name(PACKAGE_NAME);
-    GtkStatusIcon *tray_icon;
     parse_command_line_options(argc,argv);
+    printf("Glade File %s\n",glade_file);
     g_thread_init(NULL);
+    gtk_init(NULL,NULL);
     gtk_init(&argc, &argv);
 
     Hosts_lock = g_mutex_new();
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
         g_error("xml_init FAILED\n");
     init_hostname();
     /*sets the tray icon from the create_tray_icon*/
-    tray_icon = create_tray_icon();
+    create_tray_icon();
     playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
     /* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
 #if VERBOSE >= 4
@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
     g_timeout_add (1000,(GSourceFunc) get_next_command,NULL);
     g_timeout_add (5000,(GSourceFunc) update_song_info,NULL);
     g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
-    init_status_window(FALSE);
+    init_status_window(FALSE,glade_file);
     start_tray();
     g_free(Userpath);
 
@@ -121,7 +121,8 @@ gboolean parse_command_line_options(int argc, char **argv) {
     GError *error;
     GOptionContext *context;
     static const GOptionEntry options []  = {
-        {"version",'v',0, G_OPTION_ARG_NONE,&version,("Version Info"),NULL},
+        {"version",'v',0, G_OPTION_ARG_NONE,&version,"Version Info",NULL},
+        {"gui",'g',0,G_OPTION_ARG_STRING,&glade_file,"Optional Glade File",NULL},
         {NULL}
     };
     context = g_option_context_new (NULL);

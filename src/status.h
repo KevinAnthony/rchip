@@ -23,7 +23,7 @@
 #include            <gtk/gtk.h>
 
 void                gui_thread_handler              ( gpointer* );
-void                init_status_window              ( gboolean );
+void                init_status_window              ( gboolean,char* );
 void                init_status_labels              ( GtkBuilder* );
 void                init_info_labels                ( GtkBuilder* );
 void                init_xml_labels                 ( GtkBuilder* );

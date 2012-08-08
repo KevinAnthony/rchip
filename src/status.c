@@ -56,11 +56,14 @@ void gui_thread_handler(gpointer* NotUsed){
     }
 }
 
-void init_status_window (gboolean showWindow) {
+void init_status_window (gboolean showWindow,char* glade_file) {
     if (status_buffer_lock == NULL)
         status_buffer_lock = g_mutex_new();
     GtkBuilder* builder = gtk_builder_new ();
-    gtk_builder_add_from_file (builder, PREFIX "/noside/ui/rchip_status_window.glade", NULL);
+    if (!glade_file)
+        gtk_builder_add_from_file (builder, PREFIX "/noside/ui/rchip_status_window.glade", NULL);
+    else
+        gtk_builder_add_from_file (builder, glade_file, NULL);
     window = GTK_WIDGET (gtk_builder_get_object (builder, "statusWindow"));
 
 
@@ -135,7 +138,7 @@ void show_hide_window(){
             gtk_widget_show_all(window);
         }
     } else {
-        init_status_window(TRUE);
+        init_status_window(TRUE,NULL);
     }
 }
 
