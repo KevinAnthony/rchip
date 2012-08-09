@@ -60,7 +60,7 @@ void init_status_window (gboolean showWindow,char* glade_file) {
     else
         gtk_builder_add_from_file (builder, glade_file, NULL);
     window = GTK_WIDGET (gtk_builder_get_object (builder, "statusWindow"));
-
+    gtk_window_set_icon_name(window,"rchip-server");
 
     init_status_labels(builder);
     init_xml_labels(builder);

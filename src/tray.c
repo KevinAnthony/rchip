@@ -123,6 +123,7 @@ void add_files(GtkWidget *widget, gpointer gdata){
             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
             GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
             NULL);
+    gtk_window_set_icon_name(dialog,"rchip-server");
     /* default to the VIDEO ROOT path */
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),get_setting_str(VIDEO_ROOT));
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog),TRUE);
@@ -162,6 +163,7 @@ void add_folders(GtkWidget *widget, gpointer gdata){
             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
             GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
             NULL);
+    gtk_window_set_icon_name(dialog,"rchip-server");
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),get_setting_str(VIDEO_ROOT));
     gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog),TRUE);
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){
