@@ -18,7 +18,6 @@ sourceinclude_HEADERS = \
 	dbus.h  			\
 	tray.h				\
 	status.h			\
-	notifications.h		\
 	settings.h			\
 	showlist.h			\
 	xml.h				\
@@ -31,7 +30,6 @@ sourceinclude_SOURCE =	\
 	dbus.c				\
 	tray.c				\
 	status.c			\
-	notifications.c		\
 	settings.c			\
 	showlist.c			\
 	xml.c				\
