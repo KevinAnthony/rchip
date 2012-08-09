@@ -47,6 +47,7 @@ CURL *session;
 
 void rest_init() {
     authenticate();
+    printf("\n");
     update_daemon_server();
 }
 
@@ -95,7 +96,7 @@ size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
                         cmd_txt = json_object_get_string(val);
                 }
                 if (cmd != NULL){
-                    print (cmd,cmd_txt,0);
+                    print (cmd,cmd_txt,INFO);
                     process_cmd(cmd,cmd_txt);
                 }
             }
@@ -210,7 +211,6 @@ void deauthenticate( void ){
     if (session) {
         curl_easy_setopt(session, CURLOPT_URL, url);
         curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");
-        curl_easy_setopt(session,CURLOPT_WRITEDATA,NULL);
         curl_easy_perform(session);
     }
     g_free(url);

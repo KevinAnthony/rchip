@@ -33,6 +33,6 @@ void                close_window                    ( GtkWidget*,gpointer );
 void                show_hide_window                ( void );
 char*               get_file_name_from_path         ( char* );
 gpointer*           insert_into_window              ( gpointer* );
-gpointer*           read_to_buffer                  ( gpointer* );
-gpointer*           write_to_buffer                 ( gpointer* );
+gpointer*           save_liststore_to_file          ( gpointer* );
+gpointer*           load_liststore_from_file        ( gpointer* );
 #endif

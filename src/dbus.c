@@ -405,7 +405,7 @@ void print_playing_info_music(const playing_info_music pInfo){
 
 void on_name_appeared (GDBusConnection *connection, const gchar *name, const gchar *name_owner, gpointer user_data)
 {
-    char* msg = g_strdup_printf ("Name %s on %s is owned by %s\n", name,"the session bus", name_owner);
+    char* msg = g_strdup_printf ("Name %s on %s is owned by %s", name,"the session bus", name_owner);
     print(msg,NULL,INFO);
     g_free(msg);
     if (g_strcmp0(name,xml_get_bus_path("MUSIC"))){

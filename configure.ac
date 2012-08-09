@@ -1,9 +1,9 @@
 m4_define([rchip_version_major], [0])
 m4_define([rchip_version_minor], [3])
-m4_define([rchip_version_micro], [1])
+m4_define([rchip_version_micro], [2])
 
 dnl set to 0 when doing an official release
-m4_define([rchip_version_pre_release], [8])
+m4_define([rchip_version_pre_release], [0])
 
 m4_define([concat], $1$2$3$4)
 

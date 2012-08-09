@@ -137,7 +137,7 @@ void add_files(GtkWidget *widget, gpointer gdata){
              * or in windows c:\path\to\file, sql can't handle that, as \ is an escape char
              * so we set it default to c:/path/to/file and set it back to c:\path\to\file when it plays
              */
-            print("Adding Filename",filename,DEBUG);
+            print("Adding Filename",filename,INFO);
             /* because the user may not use the same machine to watch as they did to add, we replace the local path with a server absoulte path*/
             filename = replace_str(filename,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
             queue_function_data* func = g_malloc(sizeof(queue_function_data));

@@ -28,8 +28,8 @@
 
 
 GtkWidget           *window;
-GtkTextBuffer       *status_buffer = NULL;
-GMutex              *status_buffer_lock = NULL;
+GtkListStore        *status_liststore = NULL;
+GMutex              *liststore_lock = NULL;
 
 extern GMutex       *Userpath_lock;
 extern char*        Userpath;
@@ -40,13 +40,8 @@ void gui_thread_handler(gpointer* NotUsed){
         gpointer *data = g_async_queue_pop (gui_async_queue);
         if (data){
             if (data == THREAD_EXIT) {
-                GtkTextIter start_iter;
-                GtkTextIter end_iter;
-                g_mutex_lock(status_buffer_lock);
-                gtk_text_buffer_get_start_iter(status_buffer,&start_iter);
-                gtk_text_buffer_get_end_iter(status_buffer,&end_iter);
-                write_to_buffer(g_strdup(gtk_text_buffer_get_text ( status_buffer, &start_iter, &end_iter, TRUE)));
-                g_mutex_unlock(status_buffer_lock);
+                //TODO Save ListStore
+                save_liststore_to_file(NULL);
                 g_thread_exit (NULL);
             }
             queue_function_data *function_data = (queue_function_data*) data;
@@ -57,8 +52,8 @@ void gui_thread_handler(gpointer* NotUsed){
 }
 
 void init_status_window (gboolean showWindow,char* glade_file) {
-    if (status_buffer_lock == NULL)
-        status_buffer_lock = g_mutex_new();
+    if (liststore_lock == NULL)
+        liststore_lock = g_mutex_new();
     GtkBuilder* builder = gtk_builder_new ();
     if (!glade_file)
         gtk_builder_add_from_file (builder, PREFIX "/noside/ui/rchip_status_window.glade", NULL);
@@ -69,17 +64,16 @@ void init_status_window (gboolean showWindow,char* glade_file) {
 
     init_status_labels(builder);
     init_xml_labels(builder);
-    g_mutex_lock(status_buffer_lock);
-    status_buffer = GTK_TEXT_BUFFER(gtk_builder_get_object(builder, "status_text_buffer"));
-    g_mutex_unlock(status_buffer_lock);
+    g_mutex_lock(liststore_lock);
+    status_liststore = GTK_LIST_STORE(gtk_builder_get_object(builder, "status_window_liststore"));
+    g_mutex_unlock(liststore_lock);
     g_object_unref (G_OBJECT (builder));
     g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(window_destroyed), NULL);
 
     queue_function_data* func = g_malloc(sizeof(queue_function_data));
-    func->func = *read_to_buffer;
-    func->priority = TP_NORMAL;
-
+    func->func = *load_liststore_from_file;
     func->data = NULL;
+    func->priority = TP_NORMAL;
     g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
 
     if (showWindow)
@@ -107,21 +101,17 @@ void init_xml_labels(GtkBuilder* builder){
 }
 
 void window_destroyed(GtkWidget *widget, gpointer gdata){
-    g_mutex_lock(status_buffer_lock);
-    if ( status_buffer != NULL ) {
-        GtkTextIter start_iter;
-        GtkTextIter end_iter;
-        gtk_text_buffer_get_start_iter(status_buffer,&start_iter);
-        gtk_text_buffer_get_end_iter(status_buffer,&end_iter);
+    g_mutex_lock(liststore_lock);
+    if ( status_liststore != NULL ) {
 
         queue_function_data* func = g_malloc(sizeof(queue_function_data));
-        func->func = *write_to_buffer;
+        func->func = *save_liststore_to_file;
         func->priority = TP_NORMAL;
-        func->data = g_strdup(gtk_text_buffer_get_text ( status_buffer, &start_iter, &end_iter, TRUE));
+        func->data = NULL;
         g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
 
     }
-    g_mutex_unlock(status_buffer_lock);
+    g_mutex_unlock(liststore_lock);
     window=NULL;
 }
 
@@ -155,17 +145,21 @@ char* get_file_name_from_path(char* path){
 
 gpointer* insert_into_window(gpointer *data){
     print_data* line = (print_data*) data;
-    g_mutex_lock(status_buffer_lock);
-    if (status_buffer != NULL){
-        GtkTextIter iter;
-        gtk_text_buffer_get_start_iter(status_buffer,&iter);
-        gtk_text_buffer_insert (status_buffer,&iter,line,-1);
+    g_mutex_lock(liststore_lock);
+    if (status_liststore != NULL){
+        GtkTreeIter insert_iter;
+        gtk_list_store_insert(status_liststore,&insert_iter,0);
+        gtk_list_store_set(status_liststore,&insert_iter,0,line->thread_id,1,line->time,2,line->event,3,line->data,-1);
     }
-    g_mutex_unlock(status_buffer_lock);
-    check_reduce_buffer();
+    g_mutex_unlock(liststore_lock);
+    g_free(line->thread_id);
+    g_free(line->time);
+    g_free(line->event);
+    g_free(line->data);
+//    check_reduce_buffer();
 }
 
-gpointer* read_to_buffer(gpointer *data){
+gpointer* load_liststore_from_file(gpointer *data){
     /*g_mutex_lock(Userpath_lock);
     char* path = g_strdup_printf("%s/.rchip_buffer",Userpath);
     g_mutex_unlock(Userpath_lock);
@@ -191,7 +185,7 @@ gpointer* read_to_buffer(gpointer *data){
     return NULL;
 }
 
-gpointer* write_to_buffer(gpointer *data){
+gpointer* save_liststore_to_file(gpointer *data){
     /*g_mutex_lock(Userpath_lock);
     char* path = g_strdup_printf("%s/.rchip_buffer",Userpath);
     g_mutex_unlock(Userpath_lock);

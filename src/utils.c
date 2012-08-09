@@ -148,26 +148,33 @@ gint sort_async_queue(gconstpointer a, gconstpointer b, gpointer user_data){
 }
 
 void print (const gchar* event, const char* data,int verbosity){
-    time_t timer;
-    char* timestring[64];
-    struct tm datetime;
-    time_t now;
-    now = time(NULL);
-    datetime = *(localtime(&now));
-    strftime(timestring,64,"%m-%d-%y %H:%M:%S",&datetime);
-    char* threadID = g_strdup_printf("%p",g_thread_self());
-    
-    if (VERBOSE >= verbosity)
-        printf("%s\t%s\t%s\t%s\n",threadID,timestring,event,data);
-    
-    print_data* pdata = g_malloc(sizeof(print_data));
-    pdata->thread_id = g_strdup(threadID);
-    pdata->time = g_strdup(timestring);
-    pdata->event = g_strdup(event);
-    pdata->data = g_strdup(data);
-    queue_function_data* func = g_malloc(sizeof(queue_function_data));
-    func->func = *insert_into_window;
-    func->data = (gpointer)pdata;
-    func->priority = TP_LOW;
-    g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
+    if (VERBOSE >= verbosity){
+        time_t timer;
+        char* timestring[64];
+        struct tm datetime;
+        time_t now;
+        now = time(NULL);
+        datetime = *(localtime(&now));
+        strftime(timestring,64,"%m-%d-%y %H:%M:%S",&datetime);
+        char* threadID = g_strdup_printf("%p",g_thread_self());
+
+        char* event_output = g_strdup(event != NULL ? event : " " );
+        char* data_output = g_strdup(data != NULL ? data : " " );
+
+        printf("%s\t%s\t%s\t%s\n",threadID,timestring,event_output,data_output);
+
+        print_data* pdata = g_malloc(sizeof(print_data));
+        pdata->thread_id = g_strdup(threadID);
+        pdata->time = g_strdup(timestring);
+        pdata->event = g_strdup(event_output);
+        pdata->data = g_strdup(data_output);
+        queue_function_data* func = g_malloc(sizeof(queue_function_data));
+        func->func = *insert_into_window;
+        func->data = (gpointer)pdata;
+        func->priority = TP_LOW;
+        g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
+
+        g_free(event_output);
+        g_free(data_output);
+    }
 }

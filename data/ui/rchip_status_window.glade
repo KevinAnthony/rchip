@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-  <object class="GtkTextBuffer" id="status_text_buffer">
-    <property name="text" translatable="yes">This is filler Text
-This is not real
-This is blah blah blah</property>
+  <object class="GtkListStore" id="status_window_liststore">
+    <columns>
+      <!-- column-name Thread -->
+      <column type="gchararray"/>
+      <!-- column-name Time -->
+      <column type="gchararray"/>
+      <!-- column-name Event -->
+      <column type="gchararray"/>
+      <!-- column-name Data -->
+      <column type="gchararray"/>
+    </columns>
   </object>
   <object class="GtkWindow" id="statusWindow">
-    <property name="width_request">500</property>
+    <property name="width_request">800</property>
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">RCHIP</property>
     <property name="resizable">False</property>
     <property name="window_position">center</property>
     <child>
@@ -190,7 +198,6 @@ Connect to Automation Network</property>
         </child>
         <child>
           <object class="GtkScrolledWindow" id="scrolledwindow1">
-            <property name="width_request">500</property>
             <property name="height_request">500</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -199,19 +206,67 @@ Connect to Automation Network</property>
             <property name="resize_mode">immediate</property>
             <property name="shadow_type">in</property>
             <child>
-              <object class="GtkTextView" id="status_window">
-                <property name="width_request">500</property>
-                <property name="height_request">500</property>
+              <object class="GtkViewport" id="viewport1">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
-                <property name="resize_mode">immediate</property>
-                <property name="editable">False</property>
-                <property name="wrap_mode">char</property>
-                <property name="buffer">status_text_buffer</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkTreeView" id="status_window_treeview">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">status_window_liststore</property>
+                    <property name="headers_clickable">False</property>
+                    <property name="enable_grid_lines">both</property>
+                    <property name="enable_tree_lines">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="treeview-selection1"/>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="thread">
+                        <property name="title" translatable="yes">Thread</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="thread_cell_render"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="time">
+                        <property name="resizable">True</property>
+                        <property name="title" translatable="yes">Time</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="time_cell_render"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="event">
+                        <property name="title" translatable="yes">Event</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="event_cell_render"/>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="data">
+                        <property name="title" translatable="yes">Data</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="data_cell_render"/>
+                          <attributes>
+                            <attribute name="text">3</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
