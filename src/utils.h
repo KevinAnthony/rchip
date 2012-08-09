@@ -27,14 +27,13 @@
 
 #define             THREAD_EXIT                 0x0051
 
-gchar*              replace_str                 ( const gchar* , const gchar*, const gchar* );
-void                add                         ( char* );
-void                delete                      ( char* );
-int                 find                        ( char* );
-void                init_hostname               ( void );
-gboolean            is_valid_extension          ( const gchar* );
-gboolean            queue_init                  ( void );
-gint                sort_async_queue            ( gconstpointer a, gconstpointer b, gpointer user_data );
+
+typedef enum {
+    ERROR,
+    WARNING,
+    INFO,
+    DEBUG
+} log_level;
 
 typedef enum {
     TP_LOW,
@@ -70,5 +69,22 @@ typedef struct QueueFunctionData{
     thread_priority priority;
 } queue_function_data;
 
-hostname*            get_host_head                ( void );
+typedef struct _print_data{
+    char*   thread_id;
+    char*   time;
+    char*   event;
+    char*   data;
+} print_data;
+
+hostname*           get_host_head               ( void );
+gchar*              replace_str                 ( const gchar* , const gchar*, const gchar* );
+void                add                         ( char* );
+void                delete                      ( char* );
+int                 find                        ( char* );
+void                init_hostname               ( void );
+gboolean            is_valid_extension          ( const gchar* );
+gboolean            queue_init                  ( void );
+gint                sort_async_queue            ( gconstpointer a, gconstpointer b, gpointer user_data );
+void                print                       ( const gchar*, const gchar*, int);
+
 #endif

@@ -34,7 +34,6 @@
 #include "settings.h"
 #include "utils.h"
 
-extern gboolean program_active;
 extern GAsyncQueue *file_async_queue;
 
 

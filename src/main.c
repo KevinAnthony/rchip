@@ -57,11 +57,10 @@ int main(int argc, char** argv) {
     /* defines the tray_icon, as well as init gtk*/
     g_set_application_name(PACKAGE_NAME);
     parse_command_line_options(argc,argv);
-    printf("Glade File %s\n",glade_file);
+    print("Glade File",glade_file,DEBUG);
     g_thread_init(NULL);
     gtk_init(NULL,NULL);
     gtk_init(&argc, &argv);
-
     Hosts_lock = g_mutex_new();
     Userpath_lock = g_mutex_new();
     g_mutex_lock(Userpath_lock);
@@ -71,37 +70,32 @@ int main(int argc, char** argv) {
     settings_init();
     rest_init();
     if (!queue_init())
-        g_error("queue_init FAILED\n");
+        print("queue_init FAILED",NULL,ERROR);
     if (!xml_init())
-        g_error("xml_init FAILED\n");
+        print("xml_init FAILED",NULL,ERROR);
     init_hostname();
     /*sets the tray icon from the create_tray_icon*/
     create_tray_icon();
     playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
     /* declares the playing info struct, and print if, if _DEBUG is definded at the top of msdaemon.c*/
-#if VERBOSE >= 4
-    print_playing_info_music(pInfo);
-#endif
     /*inits the dbus and get the first set of info*/
     dbus_init();
     pInfo = dbus_get_playing_info_music();
-#if VERBOSE >= 4
     print_playing_info_music(pInfo);
-#endif
     get_active_devices(NULL);
 
     GError *error;
     if ( (network_thread = g_thread_create((GThreadFunc)rest_thread_handler, NULL, FALSE, &error)) == NULL){
-        g_error("Error Creating Network Thread %s",error->message);
+        print("Error Creating Network Thread",error->message,ERROR);
         g_error_free(error);
     }
 
     if ( (file_thread = g_thread_create((GThreadFunc)file_thread_handler, NULL, FALSE, &error)) == NULL){
-        g_error("Error Creating Network Thread %s",error->message);
+        print("Error Creating Network Thread",error->message,ERROR);
         g_error_free(error);
     }
     if ( (gui_thread = g_thread_create((GThreadFunc)gui_thread_handler, NULL, FALSE, &error)) == NULL){
-        g_error("Error Creating Network Thread %s",error->message);
+        print("Error Creating Network Thread",error->message,ERROR);
         g_error_free(error);
     }
 
@@ -150,37 +144,35 @@ void print_version(){
 gboolean update_song_info(gpointer data) {
     /*if the dbus is active, do the following, else try and connect*/
     if (Hosts != NULL)
-    if (dbus_is_connected(TRUE)) {
-        playing_info_music pInfo = dbus_get_playing_info_music();
-#if VERBOSE >= 4
-        print_playing_info_music(pInfo);
-#endif
-        hostname_node *hosts;
-        g_mutex_lock(Hosts_lock);
-        for_each_hostname(hosts){
-            song_info_data* info = g_malloc(sizeof(song_info_data));
-            info->pInfo.Artist = g_strdup(pInfo.Artist);
-            info->pInfo.Album = g_strdup(pInfo.Album);
-            info->pInfo.Song = g_strdup(pInfo.Song);
-            info->pInfo.Elapised_time = pInfo.Elapised_time;
-            info->pInfo.Duration = pInfo.Duration;
-            info->pInfo.isPlaying = pInfo.isPlaying;
-            info->hostname = g_strdup(hosts->hostname);
-            queue_function_data* func = g_malloc(sizeof(queue_function_data));
-            func->func = *set_song_info_rest;
-            func->data = (gpointer)info;
-            func->priority = TP_NORMAL;
-            g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
-        }
-        g_mutex_unlock(Hosts_lock);
+        if (dbus_is_connected(TRUE)) {
+            playing_info_music pInfo = dbus_get_playing_info_music();
+            print_playing_info_music(pInfo);
+            hostname_node *hosts;
+            g_mutex_lock(Hosts_lock);
+            for_each_hostname(hosts){
+                song_info_data* info = g_malloc(sizeof(song_info_data));
+                info->pInfo.Artist = g_strdup(pInfo.Artist);
+                info->pInfo.Album = g_strdup(pInfo.Album);
+                info->pInfo.Song = g_strdup(pInfo.Song);
+                info->pInfo.Elapised_time = pInfo.Elapised_time;
+                info->pInfo.Duration = pInfo.Duration;
+                info->pInfo.isPlaying = pInfo.isPlaying;
+                info->hostname = g_strdup(hosts->hostname);
+                queue_function_data* func = g_malloc(sizeof(queue_function_data));
+                func->func = *set_song_info_rest;
+                func->data = (gpointer)info;
+                func->priority = TP_NORMAL;
+                g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
+            }
+            g_mutex_unlock(Hosts_lock);
 
-        if (pInfo.isPlaying){
-            if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
-            if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
-            if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
-        }
+            if (pInfo.isPlaying){
+                if (g_strcmp0(pInfo.Artist,"")!=0){g_free(pInfo.Artist);}
+                if (g_strcmp0(pInfo.Album,"") != 0){g_free(pInfo.Album);}
+                if (g_strcmp0(pInfo.Song,"") != 0){g_free(pInfo.Song);}
+            }
 
-    }
+        }
     return TRUE;
 }
 gboolean get_next_command(gpointer data) {

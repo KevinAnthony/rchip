@@ -26,6 +26,7 @@
 
 #include "xml.h"
 #include "settings.h"
+#include "utils.h"
 
 #ifdef VALID_XML
 
@@ -40,11 +41,9 @@ gboolean xml_init(){
     settings_init();
     gboolean retVal = TRUE;
     if (!(xml_file_exists())){
-        #if VERBOSE >= 1
-        g_error("xml_file_exists RETURNED FALSE\n");
-        #endif
+        print("xml_file_exists RETURNED FALSE",NULL,ERROR);
         return FALSE;
-           }
+    }
 
     LIBXML_TEST_VERSION
 
@@ -55,15 +54,11 @@ gboolean xml_init(){
     doc_video = xmlReadFile(videoxml, NULL, 0);
 
     if (doc_music == NULL) {
-        #if VERBOSE >= 1
-        g_error("error: could not parse file %s\n", musicxml);
-        #endif
+        print("Could not parse file",musicxml,ERROR);
         retVal = FALSE;
     }
     if (doc_video == NULL) {
-        #if VERBOSE >= 1
-        g_error("error: could not parse file %s\n",videoxml);
-        #endif
+        print("Could not parse file",videoxml,ERROR);
         retVal = FALSE;
     }
 
@@ -82,9 +77,7 @@ void xml_free(){
 void xml_settings_callback(){
     xml_free();
     if (!xml_init()){
-        #if VERBOSE >= 1
-                g_error("xml_init Failed after setting changed\n");
-                #endif
+        print("xml_init Failed after setting changed",NULL,ERROR);
     }
 }
 gboolean xml_find_command(char* command){
@@ -143,10 +136,10 @@ char* xml_get_type(){
     xmlNode *child_node = cmd_node->xmlChildrenNode;
     while (child_node != NULL){
         if (!(g_strcmp0((char*)child_node->name,"type"))){
-                    return (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
-                }
-                child_node = child_node->next;
+            return (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
         }
+        child_node = child_node->next;
+    }
     return NULL;
 }
 
@@ -158,70 +151,67 @@ gboolean xml_has_system_argument(){
     assert(cmd_node != NULL);
     gboolean retVal = FALSE;
     xmlNode *child_node = cmd_node->xmlChildrenNode;
-        while (child_node != NULL){
-                if (!(g_strcmp0((char*)child_node->name,"argument"))){
-                        if (g_strcmp0((char*)xmlNodeGetContent(child_node->xmlChildrenNode),"TRUE")){
+    while (child_node != NULL){
+        if (!(g_strcmp0((char*)child_node->name,"argument"))){
+            if (g_strcmp0((char*)xmlNodeGetContent(child_node->xmlChildrenNode),"TRUE")){
                 retVal = TRUE;
             }
-                }
-                child_node = child_node->next;
         }
+        child_node = child_node->next;
+    }
     return retVal;
 }
 
 char* xml_get_dbus_argument(){
     assert(cmd_node != NULL);
     char* retVal = NULL;
-        xmlNode *child_node = cmd_node->xmlChildrenNode;
-        while (child_node != NULL){
-                if (!(g_strcmp0((char*)child_node->name,"argument"))){
-                        retVal= (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
-            #if VERBOSE >= 4
-            g_printf("found Argument\n");
-            #endif
-                }
-                child_node = child_node->next;
+    xmlNode *child_node = cmd_node->xmlChildrenNode;
+    while (child_node != NULL){
+        if (!(g_strcmp0((char*)child_node->name,"argument"))){
+            retVal= (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
         }
-        return retVal;
+        child_node = child_node->next;
+    }
+    return retVal;
 }
 
 char* xml_get_dbus_argument_type(){
     assert(cmd_node != NULL);
     char* retVal = NULL;
-        xmlNode *child_node = cmd_node->xmlChildrenNode;
-        while (child_node != NULL){
-                if (!(g_strcmp0((char*)child_node->name,"argument_type"))){
-                        retVal = (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
-                }
-                child_node = child_node->next;
+    xmlNode *child_node = cmd_node->xmlChildrenNode;
+    while (child_node != NULL){
+        if (!(g_strcmp0((char*)child_node->name,"argument_type"))){
+            retVal = (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
         }
-        return retVal;
+        child_node = child_node->next;
+    }
+    return retVal;
 }
 
 char* xml_get_dbus_command(){
     assert(cmd_node != NULL);
-        char* retVal = NULL;
+    char* retVal = NULL;
     xmlNode *child_node = cmd_node->xmlChildrenNode;
-        while (child_node != NULL){
-                if (!(g_strcmp0((char*)child_node->name,"dbus_command"))){
-                        retVal =  (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
-                }
-                child_node = child_node->next;
+    while (child_node != NULL){
+        if (!(g_strcmp0((char*)child_node->name,"dbus_command"))){
+            retVal =  (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
         }
-        return retVal;
+        child_node = child_node->next;
+    }
+    return retVal;
 }
 
 char* xml_get_system_command(){
     assert(cmd_node != NULL);
     char* retVal = NULL;
-        xmlNode *child_node = cmd_node->xmlChildrenNode;
-        while (child_node != NULL){
-                if (!(g_strcmp0((char*)child_node->name,"system_command"))){
-                        retVal =  (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
-                }
-                child_node = child_node->next;
+    xmlNode *child_node = cmd_node->xmlChildrenNode;
+    while (child_node != NULL){
+        if (!(g_strcmp0((char*)child_node->name,"system_command"))){
+            retVal =  (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
         }
-        return retVal;
+        child_node = child_node->next;
+    }
+    return retVal;
 }
 
 char* xml_get_bus_name( char* type ){
@@ -236,7 +226,7 @@ char* xml_get_bus_name( char* type ){
         return NULL;
     }
     assert(top_node != NULL);
-        while (top_node != NULL){
+    while (top_node != NULL){
         if (!(g_strcmp0((char*)top_node->name,"connection"))){
             conn_node = top_node->xmlChildrenNode;
             break;
@@ -244,56 +234,52 @@ char* xml_get_bus_name( char* type ){
         top_node = top_node->next;
     }
     if (conn_node == NULL){
-        #if VERBOSE >= 1
-        g_error("No Connection node in XML for %s\n",type);
-        #endif
+        print(type,"No Connection node in XML",ERROR);
         return NULL;
     }
     xmlNode *child_node = conn_node;
     while (child_node != NULL){
-                if (!(g_strcmp0((char*)child_node->name,"bus_name"))){
-                        retVal= (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
+        if (!(g_strcmp0((char*)child_node->name,"bus_name"))){
+            retVal= (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
             break;
-                }
-                child_node = child_node->next;
         }
-        return retVal;
+        child_node = child_node->next;
+    }
+    return retVal;
 }
 
 char* xml_get_bus_path ( char* type ){
-xmlNode *top_node = NULL;
-        xmlNode *conn_node = NULL;
-        char* retVal = NULL;
-        if (!(g_strcmp0(type,"MUSIC"))){
-                top_node = root_element_music->xmlChildrenNode;
-        } else if (!(g_strcmp0(type,"VIDEO"))){
-                top_node = root_element_video->xmlChildrenNode;
-        } else {
-                return NULL;
-        }
-        assert(top_node != NULL);
-        while (top_node != NULL){
-                if (!(g_strcmp0((char*)top_node->name,"connection"))){
-                        conn_node = top_node->xmlChildrenNode;
+    xmlNode *top_node = NULL;
+    xmlNode *conn_node = NULL;
+    char* retVal = NULL;
+    if (!(g_strcmp0(type,"MUSIC"))){
+        top_node = root_element_music->xmlChildrenNode;
+    } else if (!(g_strcmp0(type,"VIDEO"))){
+        top_node = root_element_video->xmlChildrenNode;
+    } else {
+        return NULL;
+    }
+    assert(top_node != NULL);
+    while (top_node != NULL){
+        if (!(g_strcmp0((char*)top_node->name,"connection"))){
+            conn_node = top_node->xmlChildrenNode;
             break;
-                }
-                top_node = top_node->next;
         }
-        if (conn_node == NULL){
-        #if VERBOSE >= 1
-                g_error("No Connection node in XML for %s\n",type);
-        #endif
-                return NULL;
-        }
-        xmlNode *child_node = conn_node;
-        while (child_node != NULL){
-                if (!(g_strcmp0((char*)child_node->name,"bus_path"))){
-                        retVal= (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
+        top_node = top_node->next;
+    }
+    if (conn_node == NULL){
+        print(type,"No Connection node in XML",ERROR);
+        return NULL;
+    }
+    xmlNode *child_node = conn_node;
+    while (child_node != NULL){
+        if (!(g_strcmp0((char*)child_node->name,"bus_path"))){
+            retVal= (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
             break;
-                }
-                child_node = child_node->next;
         }
-        return retVal;
+        child_node = child_node->next;
+    }
+    return retVal;
 
 }
 

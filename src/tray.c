@@ -65,9 +65,7 @@ void start_tray(){
 #if GTK_MAJOR_VERSION >= 3
 void activate (GtkApplication *app)
 {
-#if VERBOSE >= 3
-    g_printf("Application Activated\n");
-#endif
+    print("Application Activated","org.noside.rchip",INFO);
     gtk_main();
 }
 #endif
@@ -75,18 +73,12 @@ void activate (GtkApplication *app)
 void tray_click(GtkStatusIcon *status_icon,gpointer user_data)
 {
     /* on primary click(default:left) we either show or hide the status window */
-#if VERBOSE >= 3
-    g_printf("clicked on Icon\n");
-#endif
     show_hide_window();
 }
 
 void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gpointer user_data)
 {
     /* on secondary clicks(default:right) we show the menu */
-#if VERBOSE >= 3
-    g_printf("clicked on menu\n");
-#endif
     GtkWidget *tray_menu = create_tray_menu(status_icon);
     gtk_menu_popup (GTK_MENU (tray_menu), NULL, NULL,gtk_status_icon_position_menu,status_icon,button,activate_time);
 }
@@ -124,9 +116,6 @@ void credentials(GtkWidget *widget, gpointer gdata){
 }
 void add_files(GtkWidget *widget, gpointer gdata){
     /*Add Show files to remote watch list*/
-#if VERBOSE >= 3
-    g_printf("addShows Clicked\n");
-#endif
     GtkWidget *dialog;
     dialog = gtk_file_chooser_dialog_new ("Open File",
             NULL,
@@ -148,9 +137,7 @@ void add_files(GtkWidget *widget, gpointer gdata){
              * or in windows c:\path\to\file, sql can't handle that, as \ is an escape char
              * so we set it default to c:/path/to/file and set it back to c:\path\to\file when it plays
              */
-#if VERBOSE >= 3
-            g_printf("Adding Filename:%s\n",filename);
-#endif
+            print("Adding Filename",filename,DEBUG);
             /* because the user may not use the same machine to watch as they did to add, we replace the local path with a server absoulte path*/
             filename = replace_str(filename,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
             queue_function_data* func = g_malloc(sizeof(queue_function_data));
@@ -168,9 +155,6 @@ void add_files(GtkWidget *widget, gpointer gdata){
 
 void add_folders(GtkWidget *widget, gpointer gdata){
     /* this works the same as the add_files above, but recursivly adds folders instead of single or multiple files in 1 folder */
-#if VERBOSE >= 3
-    g_printf("addFolders Clicked\n");
-#endif
     GtkWidget *dialog;
     dialog = gtk_file_chooser_dialog_new ("Open File",
             NULL,
@@ -186,9 +170,7 @@ void add_folders(GtkWidget *widget, gpointer gdata){
         GSList* node = filelist;
         while (node != NULL){
             filename = (char*)node->data;
-#if VERBOSE >= 3
-            g_printf("Adding Filename%s\n",filename);
-#endif
+            print("Adding Filename",filename,DEBUG);
             queue_function_data* func = g_malloc(sizeof(queue_function_data));
             func->func  = *add_folder_to_playqueue;
             func->data = (gpointer*)g_strdup(filename);
@@ -215,9 +197,6 @@ void on_quit(GtkWidget *widget, gpointer gdata){
     gtk_main_quit();
 }
 void about_box(GtkWidget *widget, gpointer gdata){
-#if VERBOSE >= 3
-    g_printf("about Clicked\n");
-#endif
     GtkWidget *dialog, *label;
 
     /* Create the widgets */
@@ -343,14 +322,10 @@ void set_xml_menu_with_path(GtkWidget *music_menu, GtkWidget *video_menu,char* p
         case 0:
             break;
         case GLOB_NOSPACE:
-#if VERBOSE >= 1
-            g_error( "Out of memory\n" );
-#endif
+            print("Out of memory","You Should NEVER see this, unless it's doomsday, then it's OK", ERROR );
             break;
         case GLOB_ABORTED:
-#if VERBOSE >= 1
-            g_error( "Reading error\n" );
-#endif
+            print( "Reading error",NULL,ERROR );
             break;
         default:
             break;

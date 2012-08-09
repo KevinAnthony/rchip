@@ -122,7 +122,6 @@ void window_destroyed(GtkWidget *widget, gpointer gdata){
 
     }
     g_mutex_unlock(status_buffer_lock);
-    printf("Window Destroyed\n");
     window=NULL;
 }
 
@@ -155,7 +154,7 @@ char* get_file_name_from_path(char* path){
 }
 
 gpointer* insert_into_window(gpointer *data){
-    char* line = (char*) data;
+    print_data* line = (print_data*) data;
     g_mutex_lock(status_buffer_lock);
     if (status_buffer != NULL){
         GtkTextIter iter;
@@ -167,7 +166,7 @@ gpointer* insert_into_window(gpointer *data){
 }
 
 gpointer* read_to_buffer(gpointer *data){
-    g_mutex_lock(Userpath_lock);
+    /*g_mutex_lock(Userpath_lock);
     char* path = g_strdup_printf("%s/.rchip_buffer",Userpath);
     g_mutex_unlock(Userpath_lock);
 
@@ -188,12 +187,12 @@ gpointer* read_to_buffer(gpointer *data){
         gtk_text_buffer_set_text (status_buffer,"",-1);
     g_mutex_unlock(status_buffer_lock);
     g_free(path);
-    check_reduce_buffer();
+    check_reduce_buffer();*/
     return NULL;
 }
 
 gpointer* write_to_buffer(gpointer *data){
-    g_mutex_lock(Userpath_lock);
+    /*g_mutex_lock(Userpath_lock);
     char* path = g_strdup_printf("%s/.rchip_buffer",Userpath);
     g_mutex_unlock(Userpath_lock);
 
@@ -203,11 +202,12 @@ gpointer* write_to_buffer(gpointer *data){
         fprintf(file,buffer);
         fclose(file);
     }
-    g_free(path);
+    g_free(path);*/
     return NULL;
 }
 
 void check_reduce_buffer(){
+    /*
     int buffer_max_size = get_setting_int(STATUS_BUFFER_MAX_SIZE);
     if (buffer_max_size < 0)
         return;
@@ -219,5 +219,5 @@ void check_reduce_buffer(){
         gtk_text_buffer_get_end_iter(status_buffer,&end_iter);
         gtk_text_buffer_delete (status_buffer,&start_iter,&end_iter);
     }
-    g_mutex_unlock(status_buffer_lock);
+    g_mutex_unlock(status_buffer_lock);*/
 }

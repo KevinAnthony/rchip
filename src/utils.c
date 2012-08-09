@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <glib.h>
 #include <glib/gprintf.h>
+#include "status.h"
 #include "utils.h"
 
 
@@ -144,4 +145,29 @@ gint sort_async_queue(gconstpointer a, gconstpointer b, gpointer user_data){
     id2 = ((queue_function_data*) b)->priority;
 
     return (id1 > id2 ? +1 : id1 == id2 ? 0 : -1);
+}
+
+void print (const gchar* event, const char* data,int verbosity){
+    time_t timer;
+    char* timestring[64];
+    struct tm datetime;
+    time_t now;
+    now = time(NULL);
+    datetime = *(localtime(&now));
+    strftime(timestring,64,"%m-%d-%y %H:%M:%S",&datetime);
+    char* threadID = g_strdup_printf("%p",g_thread_self());
+    
+    if (VERBOSE >= verbosity)
+        printf("%s\t%s\t%s\t%s\n",threadID,timestring,event,data);
+    
+    print_data* pdata = g_malloc(sizeof(print_data));
+    pdata->thread_id = g_strdup(threadID);
+    pdata->time = g_strdup(timestring);
+    pdata->event = g_strdup(event);
+    pdata->data = g_strdup(data);
+    queue_function_data* func = g_malloc(sizeof(queue_function_data));
+    func->func = *insert_into_window;
+    func->data = (gpointer)pdata;
+    func->priority = TP_LOW;
+    g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
 }

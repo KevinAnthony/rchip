@@ -57,17 +57,15 @@ void get_next_cmd() {
 }
 
 gboolean process_cmd(char* cmd,char* cmdTxt) {
-
-
     if ((cmd != NULL) && (g_strcmp0(cmd,"") != 0)){
         gboolean xmli = xml_init();
         gboolean xmlf = xml_find_command(cmd);
         if (!xmli){
-            g_printf("XML_INIT PROBLEM\n");
+            print("XML_INIT PROBLEM",NULL,ERROR);
             return FALSE;
         }
         if (!xmlf){
-            g_printf("XML_FIND_COMMAND(%s) PROBLEM\n",cmd);
+            print("XML_FIND_COMMAND PROBLEM",NULL,ERROR);
             return FALSE;
         }
         if (xmli && xmlf){
@@ -138,15 +136,7 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
 
 /* insert command and command text into cmdQueue, once per hsotname*/
 void send_cmd(char* cmd, char* cmdTxt, thread_priority priority) {
-#if VERBOSE >= 4
-    printf("Sending\ncmd  : %s\ntext:%s\n",cmd,cmdTxt);
-#endif
-    queue_function_data* func = g_malloc(sizeof(queue_function_data));
-    func->func = *insert_into_window;
-    func->priority = TP_LOW;
-    func->data = (gpointer)g_strdup_printf("REST SEND COMMAND:%s %s\n",cmd,cmdTxt);
-    g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
-
+    print(cmd,cmdTxt,DEBUG);
     hostname_node *hosts;
     g_mutex_lock(Hosts_lock);
     for_each_hostname(hosts){

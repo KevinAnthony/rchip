@@ -95,17 +95,7 @@ size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
                         cmd_txt = json_object_get_string(val);
                 }
                 if (cmd != NULL){
-                    queue_function_data* func = g_malloc(sizeof(queue_function_data));
-                    func->func = *insert_into_window;
-                    func->priority = TP_LOW;
-                    char* line;
-                    if (cmd_txt == NULL)
-                        line = g_strdup_printf("REST RECV COMMAND:%s\n",cmd);
-                    else
-                        line = g_strdup_printf("REST RECV COMMAND:%s %s\n",cmd,cmd_txt);
-
-                    func->data = line;
-                    g_async_queue_push_sorted(gui_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
+                    print (cmd,cmd_txt,0);
                     process_cmd(cmd,cmd_txt);
                 }
             }
@@ -116,7 +106,6 @@ size_t get_commands_callback(void *ptr,size_t size, size_t count, void* stream){
 
 gpointer* send_cmd_to_server(gpointer* data){
     command_data* command = (command_data*) data;
-    printf("Command going to server = %s  %s\n",command->command,command->command_text);
     struct utsname uts;
     uname( &uts );
     if (session) {

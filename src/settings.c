@@ -22,6 +22,8 @@
 
 #include "settings.h"
 #include "status.h"
+#include "utils.h"
+#include <stdlib.h>
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <glib.h>
@@ -32,31 +34,23 @@ char* get_setting_str( gchar* keyname) {
     /*
      * we search based on keyname, and return the value
      */
-#if VERBOSE >= 3
-    printf("Trying to get Setting for Value:%s\n",keyname);
-#endif
+    print("Trying to get Setting for Value",keyname,DEBUG);
     char* valueStr = NULL;
     if (settings != NULL) {
         valueStr = g_settings_get_string (settings,keyname);
     } else {
         return NULL;
     }
-#if VERBOSE >= 4
-    printf("Value for key is:%s\n",valueStr);
-#endif
+    print("Value for key",valueStr,DEBUG);
     if (valueStr == NULL) {
-#if VERBOSE >= 2
-        g_error("Error: No Value for %s",keyname);
-#endif
+        print("No Value",keyname,WARNING);
         return NULL;
     }
     return valueStr;
 }
 
 gboolean set_setting_str( gchar* keyname, gchar* settingValue ){
-#if VERBOSE >= 3
-    printf("Trying to set Setting with value:%s--%s\n",keyname,settingValue);
-#endif
+    print("Setting Value",g_strdup_printf("%s->%s",keyname,settingValue),INFO);
     return g_settings_set_string(settings,keyname,settingValue);
 }
 
@@ -64,34 +58,26 @@ int get_setting_int( gchar* keyname) {
     /*
      * we search based on keyname, and return the value
      */
-#if VERBOSE >= 3
-    printf("Trying to get Setting for Value:%s\n",keyname);
-#endif
+    print("Trying to get Setting for Value",keyname,DEBUG);
     int valueInt = -1;
     valueInt = g_settings_get_int(settings,keyname);
-#if VERBOSE >= 4
-    printf("Value for key is:%d\n",valueInt);
-#endif
+    char* tempitoa = g_strdup_printf("%i",valueInt);
+    print("Value for key",tempitoa,DEBUG);
+    g_free(tempitoa);
     if (valueInt == -1) {
-#if VERBOSE >= 2
-        g_error("Error: No Value for %s",keyname);
-#endif
+        print("No Value",keyname,WARNING);
         return -1;
     }
     return valueInt;
 }
 
 gboolean set_setting_int( gchar* keyname, int settingValue ){
-#if VERBOSE >= 3
-    printf("Trying to set Setting with value:%s--%d\n",keyname,settingValue);
-#endif
+    print("Setting Value",g_strdup_printf("%s->%i",keyname,settingValue),INFO);
     return g_settings_set_int(settings,keyname,settingValue);
 }
 
 void setting_changed( GSettings *settings, gchar *key, gpointer user_data){
-#if VERBOSE >=3
-    g_printf("Setting %s Changed\n",key);
-#endif
+    print("Setting Changed",key,DEBUG);
 }
 
 
