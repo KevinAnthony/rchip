@@ -257,132 +257,63 @@ playing_info_music dbus_get_playing_info_music() {
         GError *error = NULL;
         /* Make sure we are connected to dbus */
         if (dbus_is_connected(TRUE)) {
-            /*
-             * dbus and rhythmbox are raticlly diffrent here
-             * I don't know if we can combind this into one command, but i should look into it
-             */
-#ifdef RHYTHMBOX
-            gboolean playing;
-            char* stateObject = "/org/gnome/Rhythmbox/Player";
-            if (g_strcmp0(stateObject,currentMusicObject) != 0 ){
-                new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
-            }
-            /* Check to see if the player is playing, if it's not, no point going any further*/
-            GVariant* results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox.Player.getPlaying",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+            //new_proxy("MUSIC",xml_get_bus_name("MUSIC"),"/org/mpris/MediaPlayer2");
+            //GVariant* result = g_dbus_proxy_call_sync(musicProxy,"org.mpris.MediaPlayer2.Player.Metadata",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+            new_proxy("MUSIC",xml_get_bus_name("MUSIC"),"/org/mpris/MediaPlayer2");
+            GVariant* result = g_dbus_proxy_call_sync(musicProxy,"org.freedesktop.DBus.Properties.Get",g_variant_new("(ss)","org.mpris.MediaPlayer2.Player","Metadata"),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
             if (error != NULL) {
-                print("Error in sending command to music player",command_name,ERROR);
                 print("Error Message",error->message,ERROR);
-            }
-            playing = g_variant_get_boolean(g_variant_get_child_value(results,0));
-            if (playing){
-                /* Get the current playing URI so we can get it's properties*/
-                results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox.Player.getPlayingUri",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-                if (error == NULL) {
-                    /* TODO: we need to check that results <> NULL */
-                    const char* uri = g_variant_get_string(g_variant_get_child_value(results,0),NULL);
-                    new_proxy("MUSIC",xml_get_bus_name("MUSIC"),"/org/gnome/Rhythmbox/Shell/");
-                    /* using the URI above, we need to the the songPorperties */
-                    results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox..Shell.getSongProperties",g_variant_new ("(s)",uri),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-                    new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
-                    /* TODO: we need to check the error and that result is not NULL */
-                    double doubleValue;
-                    GVariant* dict = g_variant_get_child_value(results,0);
-                    /* We don't know how long the information is, so we allocate 8K of chariters */
-                    char* tempVar=g_malloc(8192);
-                    /*
-                     * Each segment below is similar
-                     * we pull the infomation out of the dict and into tempVar
-                     * we then allocate the pInfo field using the length +1(for the \0 char
-                     */
-                    g_variant_lookup(dict,"artist","s",&tempVar);
-                    pInfo.Artist = g_strdup(tempVar);
-                    g_free(tempVar);
-
-                    tempVar=g_malloc(8192);
-                    g_variant_lookup(dict,"album","s",&tempVar);
-                    pInfo.Album = g_strdup(tempVar);
-                    g_free(tempVar);
-
-                    tempVar=g_malloc(8192);
-                    g_variant_lookup(dict,"title","s",&tempVar);
-                    pInfo.Song = g_strdup(tempVar);
-                    g_free(tempVar);
-
-                    g_variant_lookup(dict,"duration","d",&doubleValue);
-                    pInfo.Duration = doubleValue;
-                    pInfo.isPlaying=playing;
-                    /* we get the elaped time playing*/
-                    results =g_dbus_proxy_call_sync(musicProxy,"org.gnome.Rhythmbox.Player.getElapsed",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-                    pInfo.Elapised_time = g_variant_get_uint32(g_variant_get_child_value(results,0));
-                } else {
-                    print("Error getting player state",error->message,ERROR); 
-                }
+                return pInfo;
             } else {
-                /* if playing is false, or we are not playing, set values to empty */
-                pInfo.Artist = "";
-                pInfo.Album = "";
-                pInfo.Song = "";
-                pInfo.isPlaying=playing;
-                pInfo.Elapised_time = 0;
-                pInfo.Duration = 0;
+                GVariant* dict = g_variant_get_child_value(g_variant_get_child_value(result,0),0);
+                char* tempVar;
+                
+                GVariantIter *iter;
+                GVariant *artist_value;
+                artist_value = g_variant_lookup_value(dict,"xesam:artist","as");
+                g_variant_get (artist_value, "as", &iter);
+                g_variant_iter_loop (iter, "s", &tempVar);
+                pInfo.Artist = g_strdup(tempVar);
+                g_variant_iter_free (iter);
+                g_variant_unref (artist_value);
+
+                g_variant_lookup(dict,"xesam:album","s",&tempVar);
+                pInfo.Album = g_strdup(tempVar);
+
+                g_variant_lookup(dict,"xesam:title","s",&tempVar);
+                pInfo.Song = g_strdup(tempVar);
+
+                gint64 temp;
+                GVariant *duration_value;
+                duration_value = g_variant_lookup_value(dict,"mpris:length","x");
+                temp = g_variant_get_int64(duration_value);
+                temp = temp/1000000;
+                pInfo.Duration = temp;
+                g_variant_unref (duration_value);
+                g_variant_unref (dict);
             }
-#endif
-#ifdef BANSHEE
-            /* GetCurrentState returns playing or not playing */
-            char* stateObject = "/org/bansheeproject/Banshee/PlayerEngine";
-            if (g_strcmp0(stateObject,currentMusicObject) != 0 ){
-                new_proxy("MUSIC",xml_get_bus_name("MUSIC"),stateObject);
-            }
-            GVariant* result = g_dbus_proxy_call_sync(musicProxy,"org.bansheeproject.Banshee.PlayerEngine.GetCurrentState",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-            if (error == NULL){
-                /* if we are not playing set playing = true, else get the res of the info*/
-                if (strcmp(g_variant_get_string(g_variant_get_child_value(result,0),NULL),"playing") != 0){
-                    pInfo.isPlaying=FALSE;
-                    pInfo.Artist = "";
-                    pInfo.Album = "";
-                    pInfo.Song = "";
-                    pInfo.Elapised_time = 0;
-                    pInfo.Duration = 0;
-                } else {
-                    pInfo.isPlaying=TRUE;
-                    /* We get the current playing information*/
-                    result =g_dbus_proxy_call_sync(musicProxy,"org.bansheeproject.Banshee.PlayerEngine.GetCurrentTrack",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-                    GVariant* dict = g_variant_get_child_value(result,0);
-                    double doubleValue;
-                    /* this works like like loopup above*/
-                    char* tempVar = g_malloc(8192);
-                    g_variant_lookup(dict,"artist","s",&tempVar);
-                    pInfo.Artist = g_strdup(tempVar);
-                    g_free(tempVar);
-
-                    tempVar=g_malloc(8192);
-                    g_variant_lookup(dict,"album","s",&tempVar);
-                    pInfo.Album = g_strdup(tempVar);
-                    g_free(tempVar);
-
-                    tempVar=g_malloc(8192);
-                    g_variant_lookup(dict,"name","s",&tempVar);
-                    pInfo.Song = g_strdup(tempVar);
-                    g_free(tempVar);
-
-                    g_variant_lookup(dict,"length","d",&doubleValue);
-                    pInfo.Duration = doubleValue;
-                    /*
-                     * this is tricky, c and t are current posistion and total length in bytes
-                     * we use basic algebra to get the position in secounds using cross-multiply and divide
-                     */
-                    result = g_dbus_proxy_call_sync(musicProxy,"org.bansheeproject.Banshee.PlayerEngine.GetPosition",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-                    unsigned int c = g_variant_get_uint32(g_variant_get_child_value(result,0));
-                    result = g_dbus_proxy_call_sync(musicProxy,"org.bansheeproject.Banshee.PlayerEngine.GetLength",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
-                    unsigned int t = g_variant_get_uint32(g_variant_get_child_value(result,0));
-                    pInfo.Elapised_time = (c*pInfo.Duration)/t;
-                }
+            g_variant_unref (result);
+            result = g_dbus_proxy_call_sync(musicProxy,"org.freedesktop.DBus.Properties.Get",g_variant_new("(ss)","org.mpris.MediaPlayer2.Player","PlaybackStatus"),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
+            if  (error != NULL) {
+                print("Error Message",error->message,ERROR);
+                return pInfo;
             } else {
-                print("problem with banshee get Current State",error->message,WARNING);
+                GVariant* varient = g_variant_get_child_value(result,0);
+                GVariant* value = g_variant_get_child_value(varient,0);
+                if (g_strcmp0(g_variant_get_string(value,0),"Playing") == 0)
+                    pInfo.isPlaying = 1;
+                else
+                    pInfo.isPlaying = 0;
+                g_variant_unref (varient);
+                g_variant_unref (value);
+                g_variant_unref (result);
             }
-#endif
+        } else {
+            return pInfo;
         }
+
     }
+    print_playing_info_music(pInfo);
     return pInfo;
 }
 
@@ -392,15 +323,12 @@ void print_playing_info_music(const playing_info_music pInfo){
     print("Artist",pInfo.Artist,DEBUG);
     print("Album",pInfo.Album,DEBUG);
     print("Song Title",pInfo.Song,DEBUG);
-    tempitoa = g_strdup_printf("%d",pInfo.Elapised_time);
-    print("Elapised Time",tempitoa,DEBUG);
-    g_free(tempitoa);
     tempitoa = g_strdup_printf("%d",pInfo.Duration);
-    g_free(tempitoa);
     print("Duration",tempitoa,DEBUG);
-    tempitoa = g_strdup_printf("%d",pInfo.isPlaying);
     g_free(tempitoa);
+    tempitoa = g_strdup_printf("%d",pInfo.isPlaying);
     print("Is Playing",tempitoa,DEBUG);
+    g_free(tempitoa);
 }
 
 void on_name_appeared (GDBusConnection *connection, const gchar *name, const gchar *name_owner, gpointer user_data)
