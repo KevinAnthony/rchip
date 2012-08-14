@@ -47,7 +47,6 @@ typedef struct PlayingInfoMusic {
     char    *Artist;
     char    *Album;
     char    *Song;
-    int     Elapised_time;
     int     Duration;
     int     isPlaying;
 } playing_info_music;

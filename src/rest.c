@@ -173,11 +173,11 @@ gpointer* set_song_info_rest(gpointer *data) {
     song_info_data* info = (song_info_data*) data;
     if (info->pInfo.isPlaying != 0){
         if (session) {
-            char* url = g_strdup_printf("%s/setsonginfo/?artist=%s&album=%s&song=%s&elapsed_time=%d&total_time=%d&is_playing=%d&dest_hostname=%s",
+            char* url = g_strdup_printf("%s/setsonginfo/?artist=%s&album=%s&song=%s&total_time=%d&is_playing=%d&dest_hostname=%s",
                     URL,curl_easy_escape(session,info->pInfo.Artist,strlen(info->pInfo.Artist)),
                     curl_easy_escape(session,info->pInfo.Album,strlen(info->pInfo.Album)),
                     curl_easy_escape(session,info->pInfo.Song,strlen(info->pInfo.Song)),
-                    info->pInfo.Elapised_time,info->pInfo.Duration,info->pInfo.isPlaying,
+                    info->pInfo.Duration,info->pInfo.isPlaying,
                     curl_easy_escape(session,info->hostname,strlen(info->hostname)));
             curl_easy_setopt(session, CURLOPT_URL, url);
             curl_easy_setopt(session, CURLOPT_COOKIEFILE,"~/.cache/rchipcookies");

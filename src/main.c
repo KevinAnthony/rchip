@@ -154,7 +154,6 @@ gboolean update_song_info(gpointer data) {
                 info->pInfo.Artist = g_strdup(pInfo.Artist);
                 info->pInfo.Album = g_strdup(pInfo.Album);
                 info->pInfo.Song = g_strdup(pInfo.Song);
-                info->pInfo.Elapised_time = pInfo.Elapised_time;
                 info->pInfo.Duration = pInfo.Duration;
                 info->pInfo.isPlaying = pInfo.isPlaying;
                 info->hostname = g_strdup(hosts->hostname);
