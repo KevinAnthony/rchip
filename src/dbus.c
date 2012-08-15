@@ -23,6 +23,7 @@
 #include    "dbus.h"
 #include    "utils.h"
 #include    "xml.h"
+#include    "rest.h"
 #include    <string.h>
 #include    <gio/gio.h>
 #include    <glib.h>
@@ -32,17 +33,22 @@
 /*we set the dbus timeout to 3 seconds*/
 #define        DBUS_TIMEOUT    3000
 /* two proxies and the connection*/
-static GDBusProxy *musicProxy = NULL;
-static GDBusProxy *videoProxy = NULL;
-static GDBusConnection *conn = NULL;
-guint watcher_id_music = 0;
-guint watcher_id_video = 0;
+static              GDBusProxy *musicProxy = NULL;
+static              GDBusProxy *videoProxy = NULL;
+static              GDBusConnection *conn = NULL;
 
-static char* currentMusicObject = NULL;
-static char* currentVideoObject = NULL;
+guint               watcher_id_music = 0;
+guint               watcher_id_video = 0;
 
-static gboolean musicConnected = FALSE;
-static gboolean videoConnected = FALSE;
+static char*        currentMusicObject = NULL;
+static char*        currentVideoObject = NULL;
+
+static gboolean     musicConnected = FALSE;
+static gboolean     videoConnected = FALSE;
+
+extern GAsyncQueue  *network_async_queue;
+extern GMutex       *Hosts_lock;
+extern hostname     *Hosts;
 
 /*
  * if connection(conn) is null, and we tryOnDisconnced is true it try and reconnect.
@@ -123,6 +129,10 @@ gboolean dbus_init(){
         g_free(objectPath);
         objectPath = NULL;
     }
+
+    GDBusProxy *proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, NULL,xml_get_bus_name("MUSIC"),"/org/mpris/MediaPlayer2","org.freedesktop.DBus.Properties",NULL, NULL);
+    g_signal_connect (proxy,"g-signal",G_CALLBACK (on_properties_changed),NULL);
+
     return TRUE;
 }
 
@@ -177,8 +187,6 @@ gchar* get_object (gchar* incoming_command){
     return retval;
 }
 
-
-
 gboolean send_command_to_music_player(char* command_name) {
     if (musicConnected){
         GError *error = NULL;
@@ -199,6 +207,7 @@ gboolean send_command_to_music_player(char* command_name) {
         return FALSE;
     }
 }
+
 gboolean send_command_to_music_player_with_argument(char* command_name,char* type, char* argument) {
     if (musicConnected){
         GError *error = NULL;
@@ -235,6 +244,7 @@ gboolean send_command_to_video_player(char* command_name) {
         return FALSE;
     }
 }
+
 gboolean send_command_to_video_player_with_argument(char* command_name,char* type, char* argument) {
     if (musicConnected){
         GError *error = NULL;
@@ -250,6 +260,68 @@ gboolean send_command_to_video_player_with_argument(char* command_name,char* typ
         return FALSE;
     }
 }
+
+void on_properties_changed (GDBusProxy *proxy, const char* sender_name, const char* signal_name, GVariant* parameter, gpointer user_data){
+    GError *error = NULL;
+
+    GVariant* signal = g_variant_get_child_value(parameter,1);
+    GVariant* metadata = g_variant_lookup_value(signal,"Metadata","a{sv}");
+    if (metadata != NULL){
+        playing_info_music pInfo;
+        pInfo.isPlaying = TRUE;
+        char* tempVar;
+
+        GVariantIter *iter;
+        GVariant *artist_value;
+        artist_value = g_variant_lookup_value(metadata,"xesam:artist","as");
+        g_variant_get (artist_value, "as", &iter);
+        g_variant_iter_loop (iter, "s", &tempVar);
+        pInfo.Artist = g_strdup(tempVar);
+        g_variant_iter_free (iter);
+        g_variant_unref (artist_value);
+
+        g_variant_lookup(metadata,"xesam:album","s",&tempVar);
+        pInfo.Album = g_strdup(tempVar);
+
+        g_variant_lookup(metadata,"xesam:title","s",&tempVar);
+        pInfo.Song = g_strdup(tempVar);
+
+        gint64 temp;
+        GVariant *duration_value;
+        duration_value = g_variant_lookup_value(metadata,"mpris:length","x");
+        temp = g_variant_get_int64(duration_value);
+        temp = temp/1000000;
+        pInfo.Duration = temp;
+        g_variant_unref (duration_value);
+        printf("Artist:     %s\n",pInfo.Artist);
+        printf("Album:      %s\n",pInfo.Album);
+        printf("Song Title: %s\n",pInfo.Song);
+        printf("Duration:   %d\n",pInfo.Duration);
+        printf("Is Playing: %d\n",pInfo.isPlaying);
+        print_playing_info_music(pInfo);
+
+        hostname_node *hosts;
+        g_mutex_lock(Hosts_lock);
+        for_each_hostname(hosts){
+            song_info_data* info = g_malloc(sizeof(song_info_data));
+            info->pInfo.Artist = g_strdup(pInfo.Artist);
+            info->pInfo.Album = g_strdup(pInfo.Album);
+            info->pInfo.Song = g_strdup(pInfo.Song);
+            info->pInfo.Duration = pInfo.Duration;
+            info->pInfo.isPlaying = pInfo.isPlaying;
+            info->hostname = g_strdup(hosts->hostname);
+            queue_function_data* func = g_malloc(sizeof(queue_function_data));
+            func->func = *set_song_info_rest;
+            func->data = (gpointer)info;
+            func->priority = TP_NORMAL;
+            g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
+        }
+        g_mutex_unlock(Hosts_lock);
+        g_variant_unref(metadata);
+    }
+    g_variant_unref(signal);
+}
+
 /* get playing info from music player */
 playing_info_music dbus_get_playing_info_music() {
     playing_info_music pInfo = {"Artist","Album","Song",0,0,0};
@@ -257,8 +329,6 @@ playing_info_music dbus_get_playing_info_music() {
         GError *error = NULL;
         /* Make sure we are connected to dbus */
         if (dbus_is_connected(TRUE)) {
-            //new_proxy("MUSIC",xml_get_bus_name("MUSIC"),"/org/mpris/MediaPlayer2");
-            //GVariant* result = g_dbus_proxy_call_sync(musicProxy,"org.mpris.MediaPlayer2.Player.Metadata",NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
             new_proxy("MUSIC",xml_get_bus_name("MUSIC"),"/org/mpris/MediaPlayer2");
             GVariant* result = g_dbus_proxy_call_sync(musicProxy,"org.freedesktop.DBus.Properties.Get",g_variant_new("(ss)","org.mpris.MediaPlayer2.Player","Metadata"),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
             if (error != NULL) {
@@ -267,7 +337,7 @@ playing_info_music dbus_get_playing_info_music() {
             } else {
                 GVariant* dict = g_variant_get_child_value(g_variant_get_child_value(result,0),0);
                 char* tempVar;
-                
+
                 GVariantIter *iter;
                 GVariant *artist_value;
                 artist_value = g_variant_lookup_value(dict,"xesam:artist","as");

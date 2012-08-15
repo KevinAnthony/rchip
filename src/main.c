@@ -37,7 +37,7 @@
 
 void        print_version();
 gboolean    parse_command_line_options(int,char**);
-gboolean    update_song_info(gpointer);
+void        update_song_info();
 gboolean    get_next_command(gpointer);
 gboolean    update_active_devices(gpointer);
 char*       build_playing_info_sql_query(const playing_info_music,char*);
@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     pInfo = dbus_get_playing_info_music();
     print_playing_info_music(pInfo);
     get_active_devices(NULL);
-
+    update_song_info();
     GError *error;
     if ( (network_thread = g_thread_create((GThreadFunc)rest_thread_handler, NULL, FALSE, &error)) == NULL){
         print("Error Creating Network Thread",error->message,ERROR);
@@ -100,7 +100,6 @@ int main(int argc, char** argv) {
     }
 
     g_timeout_add (1000,(GSourceFunc) get_next_command,NULL);
-    g_timeout_add (5000,(GSourceFunc) update_song_info,NULL);
     g_timeout_add (300000,(GSourceFunc) update_active_devices,NULL);
     init_status_window(FALSE,glade_file);
     start_tray();
@@ -141,7 +140,7 @@ void print_version(){
 
 
 
-gboolean update_song_info(gpointer data) {
+void update_song_info() {
     /*if the dbus is active, do the following, else try and connect*/
     if (Hosts != NULL)
         if (dbus_is_connected(TRUE)) {
@@ -172,12 +171,13 @@ gboolean update_song_info(gpointer data) {
             }
 
         }
-    return TRUE;
 }
+
 gboolean get_next_command(gpointer data) {
     get_next_cmd();
     return TRUE;
 }
+
 gboolean update_active_devices(gpointer data){
     queue_function_data* func = g_malloc(sizeof(queue_function_data));
     func->func = *get_active_devices;
