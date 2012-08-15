@@ -293,11 +293,6 @@ void on_properties_changed (GDBusProxy *proxy, const char* sender_name, const ch
         temp = temp/1000000;
         pInfo.Duration = temp;
         g_variant_unref (duration_value);
-        printf("Artist:     %s\n",pInfo.Artist);
-        printf("Album:      %s\n",pInfo.Album);
-        printf("Song Title: %s\n",pInfo.Song);
-        printf("Duration:   %d\n",pInfo.Duration);
-        printf("Is Playing: %d\n",pInfo.isPlaying);
         print_playing_info_music(pInfo);
 
         hostname_node *hosts;
