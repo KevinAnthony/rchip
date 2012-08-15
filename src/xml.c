@@ -248,7 +248,7 @@ char* xml_get_bus_name( char* type ){
     return retVal;
 }
 
-char* xml_get_bus_path ( char* type ){
+char* xml_get_object_path ( char* type ){
     xmlNode *top_node = NULL;
     xmlNode *conn_node = NULL;
     char* retVal = NULL;
@@ -273,7 +273,7 @@ char* xml_get_bus_path ( char* type ){
     }
     xmlNode *child_node = conn_node;
     while (child_node != NULL){
-        if (!(g_strcmp0((char*)child_node->name,"bus_path"))){
+        if (!(g_strcmp0((char*)child_node->name,"object_path"))){
             retVal= (char*)xmlNodeGetContent(child_node->xmlChildrenNode);
             break;
         }

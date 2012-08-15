@@ -42,7 +42,7 @@ char*               xml_get_dbus_argument_type  ( void );
 char*               xml_get_dbus_command        ( void );
 char*               xml_get_system_command      ( void );
 char*               xml_get_bus_name            ( char* );
-char*               xml_get_bus_path            ( char* );
+char*               xml_get_object_path            ( char* );
 
 #endif
 #endif

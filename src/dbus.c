@@ -40,7 +40,6 @@ static              GDBusConnection *conn = NULL;
 guint               watcher_id_music = 0;
 guint               watcher_id_video = 0;
 
-static char*        currentMusicObject = NULL;
 static char*        currentVideoObject = NULL;
 
 static gboolean     musicConnected = FALSE;
@@ -83,8 +82,7 @@ gboolean dbus_init(){
     char* busName = NULL;
     busName = xml_get_bus_name("MUSIC");
     char* objectPath = NULL;
-    objectPath = xml_get_bus_path("MUSIC");
-    currentMusicObject = objectPath;
+    objectPath = xml_get_object_path("MUSIC");
     if (watcher_id_music == 0){
         watcher_id_music = g_bus_watch_name(G_BUS_TYPE_SESSION,busName,G_BUS_NAME_WATCHER_FLAGS_NONE,on_name_appeared, on_name_vanished, NULL, NULL);
     }
@@ -107,7 +105,7 @@ gboolean dbus_init(){
         objectPath = NULL;
     }
     busName = xml_get_bus_name("VIDEO");
-    objectPath = xml_get_bus_path("VIDEO");
+    objectPath = xml_get_object_path("VIDEO");
     if ((watcher_id_video == 0) && (busName != NULL)){
         watcher_id_video = g_bus_watch_name(G_BUS_TYPE_SESSION,busName,G_BUS_NAME_WATCHER_FLAGS_NONE,on_name_appeared, on_name_vanished, NULL, NULL);
     }
@@ -147,7 +145,6 @@ gboolean new_proxy(char* type, char* busName,char* objectPath){
             conn =NULL;
             return FALSE;
         }
-        currentMusicObject = objectPath;
     } else if (g_strcmp0(type,"video") == 0){
         videoProxy= g_dbus_proxy_new_sync(conn, G_DBUS_CALL_FLAGS_NONE,NULL,busName,objectPath,busName,NULL,&error);
         if (error != NULL) {
@@ -190,11 +187,7 @@ gchar* get_object (gchar* incoming_command){
 gboolean send_command_to_music_player(char* command_name) {
     if (musicConnected){
         GError *error = NULL;
-        char* incomingObject = get_object(command_name);
-        if (g_strcmp0(incomingObject,currentMusicObject) != 0 ){
-            new_proxy("MUSIC",xml_get_bus_name("MUSIC"),incomingObject);
-            g_free(incomingObject);
-        }
+        new_proxy("MUSIC",xml_get_bus_name("MUSIC"),xml_get_object_path("MUSIC"));
         g_dbus_proxy_call_sync(musicProxy,command_name,NULL,G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
         if (error != NULL) {
             print("Error in sending command to music player",command_name,ERROR);
@@ -211,11 +204,7 @@ gboolean send_command_to_music_player(char* command_name) {
 gboolean send_command_to_music_player_with_argument(char* command_name,char* type, char* argument) {
     if (musicConnected){
         GError *error = NULL;
-        char* incomingObject = get_object(command_name);
-        if (g_strcmp0(incomingObject,currentMusicObject) != 0 ){
-            new_proxy("MUSIC",xml_get_bus_name("MUSIC"),incomingObject);
-            g_free(incomingObject);
-        }
+        new_proxy("MUSIC",xml_get_bus_name("MUSIC"),xml_get_object_path("MUSIC"));
         g_dbus_proxy_call_sync(musicProxy,command_name,g_variant_new (type,&argument),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,&error);
         if (error != NULL) {
             print("Error in sending command to music player",command_name,ERROR);
@@ -401,9 +390,9 @@ void on_name_appeared (GDBusConnection *connection, const gchar *name, const gch
     char* msg = g_strdup_printf ("Name %s on %s is owned by %s", name,"the session bus", name_owner);
     print(msg,NULL,INFO);
     g_free(msg);
-    if (g_strcmp0(name,xml_get_bus_path("MUSIC"))){
+    if (g_strcmp0(name,xml_get_object_path("MUSIC"))){
         musicConnected = TRUE;
-    } else if (g_strcmp0(name,xml_get_bus_path("VIDEO"))) {
+    } else if (g_strcmp0(name,xml_get_object_path("VIDEO"))) {
         videoConnected = TRUE;
     }
     dbus_init();
@@ -414,9 +403,9 @@ void on_name_vanished (GDBusConnection *connection, const gchar *name, gpointer 
     char* msg = g_strdup_printf ("Name %s does not exist on %s\n", name,"the session bus");
     print(msg,NULL,INFO);
     g_free(msg);
-    if (g_strcmp0(name,xml_get_bus_path("MUSIC"))){
+    if (g_strcmp0(name,xml_get_object_path("MUSIC"))){
         musicConnected = FALSE;
-    } else if (g_strcmp0(name,xml_get_bus_path("VIDEO"))) {
+    } else if (g_strcmp0(name,xml_get_object_path("VIDEO"))) {
         videoConnected = FALSE;
     }
     dbus_init();

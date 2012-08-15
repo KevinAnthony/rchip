@@ -3,32 +3,27 @@
 	<connection>
 		<type>DBUS</type>
 		<bus_name>org.bansheeproject.Banshee</bus_name>
-	        <bus_path>/org/mpris/MediaPlayer2</bus_path>
+	    <object_path>/org/mpris/MediaPlayer2</object_path>
 	</connection>
 	<command>
 	        <name>NEXT</name>
 	        <type>DBUS</type>
-	        <dbus_command>org.mrpis.MediaPlayer2.Player.Next</dbus_command>
+	        <dbus_command>org.mpris.MediaPlayer2.Player.Next</dbus_command>
 	</command>
 	<command>
 	        <name>BACK</name>
 	        <type>DBUS</type>
-	        <dbus_command>org.mrpis.MediaPlayer2.Player.Previous</dbus_command>
+	        <dbus_command>org.mpris.MediaPlayer2.Player.Previous</dbus_command>
 	</command>
 	<command>
 	        <name>PLAY</name>
 	        <type>DBUS</type>
-	        <dbus_command>org.mrpis.MediaPlayer2.Player.PlayPause</dbus_command>
+	        <dbus_command>org.mpris.MediaPlayer2.Player.PlayPause</dbus_command>
 	</command>
 	<command>
 	        <name>STOP</name>
 	        <type>DBUS</type>
-	        <dbus_command>org.mrpis.MediaPlayer2.Player.Stop</dbus_command>
+	        <dbus_command>org.mpris.MediaPlayer2.Player.Stop</dbus_command>
 	</command>
-    <property>
-            <name>TRACKINFO</name>
-            <type>DBUS</type>
-	        <dbus_command>org.bansheeproject.Banshee.PlaybackController.Metadata</dbus_command>
-    </property>
 </MUSIC>
 
