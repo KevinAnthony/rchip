@@ -66,6 +66,7 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
         }
         if (!xmlf){
             print("XML_FIND_COMMAND PROBLEM",NULL,ERROR);
+            print(cmd,cmdTxt,ERROR);
             return FALSE;
         }
         if (xmli && xmlf){
