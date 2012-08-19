@@ -252,10 +252,11 @@ gboolean send_command_to_video_player_with_argument(char* command_name,char* typ
 
 void on_properties_changed (GDBusProxy *proxy, const char* sender_name, const char* signal_name, GVariant* parameter, gpointer user_data){
     GError *error = NULL;
-
     GVariant* signal = g_variant_get_child_value(parameter,1);
+    GVariant* signalDict = g_variant_get_child_value(signal,0);
+    char* key = g_variant_get_string (g_variant_get_child_value(signalDict,0),0);
     GVariant* metadata = g_variant_lookup_value(signal,"Metadata","a{sv}");
-    if (metadata != NULL){
+    if (g_strcmp0(key,"Metadata") == 0){
         playing_info_music pInfo;
         pInfo.isPlaying = TRUE;
         char* tempVar;
@@ -302,6 +303,26 @@ void on_properties_changed (GDBusProxy *proxy, const char* sender_name, const ch
         }
         g_mutex_unlock(Hosts_lock);
         g_variant_unref(metadata);
+    } else if (g_strcmp0(key,"PlaybackStatus")==0){
+        playing_info_music pInfo = dbus_get_playing_info_music();
+        print_playing_info_music(pInfo);
+        hostname_node *hosts;
+        g_mutex_lock(Hosts_lock);
+        for_each_hostname(hosts){
+            song_info_data* info = g_malloc(sizeof(song_info_data));
+            info->pInfo.Artist = g_strdup(pInfo.Artist);
+            info->pInfo.Album = g_strdup(pInfo.Album);
+            info->pInfo.Song = g_strdup(pInfo.Song);
+            info->pInfo.Duration = pInfo.Duration;
+            info->pInfo.isPlaying = pInfo.isPlaying;
+            info->hostname = g_strdup(hosts->hostname);
+            queue_function_data* func = g_malloc(sizeof(queue_function_data));
+            func->func = *set_song_info_rest;
+            func->data = (gpointer)info;
+            func->priority = TP_HIGH;
+            g_async_queue_push_sorted(network_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);
+        }
+        g_mutex_unlock(Hosts_lock);
     }
     g_variant_unref(signal);
 }
@@ -355,9 +376,10 @@ playing_info_music dbus_get_playing_info_music() {
                 GVariant* varient = g_variant_get_child_value(result,0);
                 GVariant* value = g_variant_get_child_value(varient,0);
                 if (g_strcmp0(g_variant_get_string(value,0),"Playing") == 0)
-                    pInfo.isPlaying = 1;
+                    pInfo.isPlaying = TRUE;
                 else
-                    pInfo.isPlaying = 0;
+                    pInfo.isPlaying = FALSE;
+
                 g_variant_unref (varient);
                 g_variant_unref (value);
                 g_variant_unref (result);
