@@ -59,7 +59,7 @@ gchar* replace_str (const gchar *src,const gchar *find,const gchar *replace){
 }
 
 void init_hostname ( void ){
-    Hosts = malloc(sizeof(hostname*));
+    Hosts = malloc(sizeof(hostname));
     Hosts->add = *add;
     Hosts->delete = *delete;
     Hosts->find = *find;
@@ -68,7 +68,7 @@ void init_hostname ( void ){
 
 void add (char* data){
     if (!Hosts->find(data)){
-        hostname_node* new_node = malloc(sizeof(hostname_node*));
+        hostname_node* new_node = malloc(sizeof(hostname_node));
         new_node->hostname = g_strdup(data);
         new_node->next = NULL;
         if (Hosts->data == NULL){
