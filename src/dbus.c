@@ -157,33 +157,6 @@ gboolean new_proxy(char* type, char* busName,char* objectPath){
     return TRUE;
 }
 
-gchar* get_object (gchar* incoming_command){
-    gchar* q = g_strdup(incoming_command);
-    gchar* retval = NULL;
-    gchar* temp = NULL;
-    gchar* p = NULL;
-    int numOfDots = 0;
-    int len = 0;
-    int wordLen = 0;
-    p = q;
-    while (*p != '\0'){
-        if (*p == '.'){
-            *p = '/';
-            numOfDots++;
-            wordLen = -1;
-        }
-        len++;
-        wordLen++;
-        p++;
-    }
-    len = len - wordLen - 1;
-    temp = g_strndup(q,len);
-    retval = g_strdup_printf("/%s",temp);
-    g_free(temp);
-    g_free(q);
-    return retval;
-}
-
 gboolean send_command_to_music_player(char* command_name) {
     if (musicConnected){
         GError *error = NULL;

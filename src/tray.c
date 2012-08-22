@@ -333,59 +333,31 @@ void set_xml_menu_with_path(GtkWidget *music_menu, GtkWidget *video_menu,char* p
             break;
     }
     for (int i =0;i<data.gl_pathc; i++){
-        char* posOfLastSlash=data.gl_pathv[i];
-        char* ptr = data.gl_pathv[i];
-        char* sptr = data.gl_pathv[i];
-        char* progName;
-        char* progType;
-        char* nameP;
-        char* typeP;
-        progName = g_malloc(strlen(ptr));
-        progType = g_malloc(strlen(ptr));
-        nameP = progName;
-        typeP = progType;
-        for (; *ptr != '\0';ptr++) {
-            if (*ptr == '/') {
-                posOfLastSlash = ptr;
-            }
+        char* program_type;
+        char* filename;
+        char* program_name;
+        char* temp = strtok(data.gl_pathv[i],"/");
+        while (temp != NULL){
+            filename = temp;
+            temp = strtok(NULL,"/");
         }
-        ptr = posOfLastSlash;
-        ptr++;
-        sptr=ptr;
-        for (int i = 0; i < 3; i++){
-            for (; *ptr!='.' ; ptr++){
-                if (*ptr == '\0'){
-                    if (i == 2){ break; }
-#if VERBOSE >= 2
-                    g_warning("Error: badly formed file name\n");
-                    g_warning("File Name: %s\n",data.gl_pathv[i]);
-#endif
-                    return;
-                }
-                if (i == 0){ *nameP++=*ptr; }
-                else if (i == 1){ *typeP++=*ptr; }
-                else if (i == 2){ break; }
-            }
-            ptr++;
-        }
-        *nameP='\0';
-        *typeP='\0';
-        *progName= g_ascii_toupper(*progName);
-        if (!(g_strcmp0(progType,"music"))){
+        temp = g_strdup(filename);
+        program_name = strtok(temp,".");
+        program_type = strtok(NULL,".");
+        if (!(g_strcmp0(program_type,"music"))){
             GtkWidget *item;
-            item = gtk_menu_item_new_with_label(progName);
+            item = gtk_menu_item_new_with_label(program_name);
             gtk_menu_shell_append(GTK_MENU_SHELL (music_menu), item);
-            char* filePath= g_strconcat(path,sptr,NULL);
+            char* filePath= g_strconcat(path,filename,NULL);
             g_signal_connect(item,"activate",G_CALLBACK(change_music),(gpointer)filePath);
-        }else if (!(g_strcmp0(progType,"video"))){
+        }else if (!(g_strcmp0(program_type,"video"))){
             GtkWidget *item2;
-            item2 = gtk_menu_item_new_with_label(progName);
+            item2 = gtk_menu_item_new_with_label(program_name);
             gtk_menu_shell_append(GTK_MENU_SHELL (video_menu), item2);
-            char* filePath= g_strconcat(path,sptr,NULL);
+            char* filePath= g_strconcat(path,filename,NULL);
             g_signal_connect(item2,"activate",G_CALLBACK(change_video),(gpointer)filePath);
         }
-        g_free(progName);
-        g_free(progType);
+        g_free(temp);
     }
     globfree( &data );
 }
