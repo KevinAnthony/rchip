@@ -45,6 +45,8 @@ static char*        currentVideoObject = NULL;
 static gboolean     musicConnected = FALSE;
 static gboolean     videoConnected = FALSE;
 
+static gboolean     listening_for_property_change = FALSE;
+
 extern GAsyncQueue  *network_async_queue;
 extern GMutex       *Hosts_lock;
 extern hostname     *Hosts;
@@ -128,8 +130,11 @@ gboolean dbus_init(){
         objectPath = NULL;
     }
 
-    GDBusProxy *proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, NULL,xml_get_bus_name("MUSIC"),"/org/mpris/MediaPlayer2","org.freedesktop.DBus.Properties",NULL, NULL);
-    g_signal_connect (proxy,"g-signal",G_CALLBACK (on_properties_changed),NULL);
+    if (!listening_for_property_change){
+        GDBusProxy *proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, NULL,xml_get_bus_name("MUSIC"),"/org/mpris/MediaPlayer2","org.freedesktop.DBus.Properties",NULL, NULL);
+        g_signal_connect (proxy,"g-signal",G_CALLBACK (on_properties_changed),NULL);
+        listening_for_property_change = TRUE;
+    }
 
     return TRUE;
 }
