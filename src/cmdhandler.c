@@ -74,12 +74,22 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
             char* musicOrVideo = xml_get_music_or_video();
             if(g_strcmp0(type,"SYSTEM") == 0){
                 if (g_strcmp0(cmdTxt,"") != 0){
-                    printf("cmdTxt before:%s\n",cmdTxt);
-                    cmdTxt = g_strescape(cmdTxt,"");
-                    gchar* command = g_strdup_printf ("%s %s&",xml_get_system_command(),cmdTxt);
-                    system(command);
-                    g_free(command);
+                    char* temp_cmdTxt = g_strescape(cmdTxt,"");
+                    g_free(cmdTxt);
+                    cmdTxt = replace_str(temp_cmdTxt,"(","\\(");
+                    g_free(temp_cmdTxt);
+                    temp_cmdTxt = replace_str(cmdTxt,")","\\)");
+                    g_free(cmdTxt);
+                    cmdTxt = replace_str(temp_cmdTxt,"\'","\\\'");
+                    g_free(temp_cmdTxt);
+                    temp_cmdTxt = replace_str(cmdTxt,";","\\;");
+                    g_free(cmdTxt);
+                    cmdTxt = g_strdup(temp_cmdTxt);
+                    g_free(temp_cmdTxt);
                 }
+                gchar* command = g_strdup_printf ("%s %s&",xml_get_system_command(),cmdTxt);
+                system(command);
+                g_free(command);
             } else if (g_strcmp0(type,"DBUS") == 0) {
                 char* argument = xml_get_dbus_argument();
                 char* argument_str = xml_get_dbus_argument_type();
