@@ -20,6 +20,7 @@
 
 #include <config.h>
 
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <glib.h>
@@ -41,6 +42,9 @@ hostname*           Hosts = NULL;
 
 GMutex              *Userpath_lock = NULL;
 char*               Userpath = NULL;
+
+GMutex              *Threads_lock = NULL;
+running_threads*    Threads = NULL;
 
 gchar* replace_str (const gchar *src,const gchar *find,const gchar *replace){
     gchar* retval = g_strdup(src);
@@ -76,7 +80,7 @@ void add (char* data){
             return;
         }
         hostname_node* hostname_p = Hosts->data;
-        while (hostname_p->next != NULL){next_hostname(hostname_p);}
+        while (hostname_p->next != NULL){next_node(hostname_p);}
         hostname_p->next = new_node;
     }
 }
@@ -104,9 +108,9 @@ void delete (char* data){
         if (prev == NULL){
             prev = Hosts->data;
         } else {
-            next_hostname(prev);
+            next_node(prev);
         }
-        next_hostname(cur);
+        next_node(cur);
     }
 }
 
@@ -156,7 +160,7 @@ void print (const gchar* event, const char* data,int verbosity){
         now = time(NULL);
         datetime = *(localtime(&now));
         strftime(timestring,64,"%m-%d-%y %H:%M:%S",&datetime);
-        char* threadID = g_strdup_printf("%p",g_thread_self());
+        char* threadID = thread_name(g_thread_self());
 
         char* event_output = g_strdup(event != NULL ? event : " " );
         char* data_output = g_strdup(data != NULL ? data : " " );
@@ -178,3 +182,64 @@ void print (const gchar* event, const char* data,int verbosity){
         g_free(data_output);
     }
 }
+
+void register_thread(char* name) {
+    if (Threads_lock == NULL)
+        Threads_lock = g_mutex_new();
+    g_mutex_lock(Threads_lock);
+    GThread* self = g_thread_self();
+    running_threads* thread;
+    for_each_thread(thread){
+        if (thread->thread_id == self){
+            g_free(thread->thread_name);
+            thread->thread_name = g_strdup(name);
+            g_mutex_unlock(Threads_lock);
+            return;
+        }
+    }
+    thread = g_malloc(sizeof(running_threads));
+    thread->thread_id = self;
+    thread->thread_name = g_strdup(name);
+    thread->next = NULL;
+    if (Threads == NULL){
+        Threads = thread;
+        g_mutex_unlock(Threads_lock);
+        return;
+    }
+    running_threads* cur_thread = Threads;
+    while (cur_thread->next != NULL)
+        next_node(cur_thread);
+    cur_thread->next = thread;
+    g_mutex_unlock(Threads_lock);
+}
+
+void unregister_thread(){
+    assert(Threads);
+    g_mutex_lock(Threads_lock);
+    GThread* self = g_thread_self();
+    if (Threads->next == NULL){
+        g_free(Threads->thread_name);
+        Threads = NULL;
+        return;
+    }
+    running_threads* thread = Threads->next;
+    running_threads* last_thread = Threads;
+    for_each_thread(thread){
+        if (thread->thread_id == self){
+            g_free(thread->thread_name);
+            last_thread->next = thread->next;
+        }
+        next_node(last_thread);
+    }
+    g_mutex_unlock(Threads_lock);
+}
+
+char* thread_name(GThread* self){
+    assert(Threads);
+    running_threads* thread = Threads;
+    for_each_thread(thread)
+        if (thread->thread_id == self)
+            return thread->thread_name;
+    return "ERROR";
+}
+            

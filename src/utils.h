@@ -20,10 +20,13 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define next_hostname(hn) \
-    hn=hn->next
+#define next_node(node) \
+    node=node->next
 #define for_each_hostname(hn) \
-    for (hn=Hosts->data; hn != NULL; next_hostname(hn))
+    for (hn=Hosts->data; hn != NULL; next_node(hn))
+
+#define for_each_thread(thread) \
+    for (thread=Threads; thread !=NULL; next_node(thread))
 
 #define             THREAD_EXIT                 0x0051
 
@@ -63,6 +66,13 @@ typedef struct HostNameStruct{
     int (*find)(char *);
 } hostname;
 
+typedef struct _running_threads {
+    GThread* thread_id;
+    char* thread_name;
+    struct _running_threads* next;
+} running_threads;
+
+
 typedef struct QueueFunctionData{
     gpointer* (*func)(gpointer*);
     gpointer* data;
@@ -86,5 +96,7 @@ gboolean            is_valid_extension          ( const gchar* );
 gboolean            queue_init                  ( void );
 gint                sort_async_queue            ( gconstpointer a, gconstpointer b, gpointer user_data );
 void                print                       ( const gchar*, const gchar*, int);
-
+void                register_thread             ( char* );
+void                unregister_thread           ( void );
+char*               thread_name                 ( GThread* );
 #endif

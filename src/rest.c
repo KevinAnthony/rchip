@@ -52,11 +52,14 @@ void rest_init() {
 }
 
 void rest_thread_handler(gpointer* NotUsed){
+    register_thread("Network Thread");
     while(1){
         gpointer *data = g_async_queue_pop (network_async_queue);
         if (data){
-            if (data == THREAD_EXIT)
+            if (data == THREAD_EXIT){
+                unregister_thread();
                 g_thread_exit (NULL);
+            }
             queue_function_data *function_data = (queue_function_data*) data;
             function_data->func(function_data->data);
             g_free(function_data);

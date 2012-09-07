@@ -36,12 +36,14 @@ extern char*        Userpath;
 extern GAsyncQueue  *gui_async_queue;
 
 void gui_thread_handler(gpointer* NotUsed){
+    register_thread("GUI Thread");
     while(1){
         gpointer *data = g_async_queue_pop (gui_async_queue);
         if (data){
             if (data == THREAD_EXIT) {
                 //TODO Save ListStore
                 save_liststore_to_file(NULL);
+                unregister_thread();
                 g_thread_exit (NULL);
             }
             queue_function_data *function_data = (queue_function_data*) data;

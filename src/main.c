@@ -57,6 +57,7 @@ int main(int argc, char** argv) {
     /* defines the tray_icon, as well as init gtk*/
     g_set_application_name(PACKAGE_NAME);
     parse_command_line_options(argc,argv);
+    register_thread("Main Thread");
     if (!queue_init())
         print("queue_init FAILED",NULL,ERROR);
     print("Glade File",glade_file,DEBUG);
