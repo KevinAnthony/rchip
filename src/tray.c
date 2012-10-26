@@ -74,6 +74,7 @@ void tray_click(GtkStatusIcon *status_icon,gpointer user_data)
 {
     /* on primary click(default:left) we either show or hide the status window */
     show_hide_window();
+    print("Got Here","Tray Click",ERROR);
 }
 
 void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gpointer user_data)
@@ -81,6 +82,7 @@ void tray_menu(GtkStatusIcon *status_icon, guint button, guint activate_time, gp
     /* on secondary clicks(default:right) we show the menu */
     GtkWidget *tray_menu = create_tray_menu(status_icon);
     gtk_menu_popup (GTK_MENU (tray_menu), NULL, NULL,gtk_status_icon_position_menu,status_icon,button,activate_time);
+    print("Got Here","Tray MENU",ERROR);
 }
 
 void credentials(GtkWidget *widget, gpointer gdata){
@@ -100,7 +102,6 @@ void credentials(GtkWidget *widget, gpointer gdata){
     gtk_entry_set_text (username, get_setting_str(REST_USERNAME));
     gtk_entry_set_text (password, get_setting_str(REST_PASSWORD));
     gtk_entry_set_visibility(GTK_ENTRY(password),FALSE);
-
 
     gtk_box_pack_start( GTK_BOX( box ), gtk_label_new( "Username" ), TRUE, TRUE, 0 );
     gtk_box_pack_start( GTK_BOX( box ), GTK_WIDGET(username), TRUE, TRUE, 0 );
@@ -318,6 +319,7 @@ void set_xml_menu(GtkWidget *music_menu, GtkWidget *video_menu){
     set_xml_menu_with_path(music_menu,video_menu,PREFIX"/noside/xml/");
     set_xml_menu_with_path(music_menu,video_menu,"~/.noside/xml/");
 }
+
 void set_xml_menu_with_path(GtkWidget *music_menu, GtkWidget *video_menu,char* path){
     glob_t data;
     switch( glob(g_strconcat(path,"*.xml",NULL), 0, NULL, &data ) ){

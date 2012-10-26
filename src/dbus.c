@@ -135,7 +135,6 @@ gboolean dbus_init(){
         g_signal_connect (proxy,"g-signal",G_CALLBACK (on_properties_changed),NULL);
         listening_for_property_change = TRUE;
     }
-
     return TRUE;
 }
 
@@ -371,6 +370,50 @@ playing_info_music dbus_get_playing_info_music() {
     return pInfo;
 }
 
+void send_command_to_mpris(char* command,char* command_argument,char* type){
+    GDBusProxy *proxy = NULL;
+    if(g_strcmp0(type,"MUSIC") == 0) {
+        new_proxy("MUSIC",xml_get_bus_name("MUSIC"),"/org/mpris/MediaPlayer2");
+        proxy = musicProxy;
+    } else {
+        new_proxy("VIDEO",xml_get_bus_name("VIDEO"),"/org/mpris/MediaPlayer2");
+        proxy = videoProxy;
+    }
+    
+    char* dbus_command = NULL;
+    char* dbus_argument_signature = NULL;
+    char* dbus_argument = NULL;
+    
+    if (g_strcmp0(command,"STOPSM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Stop";
+    }else if (g_strcmp0(command,"OPENSM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.OPENSM";
+        dbus_argument_signature="s";
+        dbus_argument = command_argument;
+    } else if (g_strcmp0(command,"PLAYSM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Play";
+    } else if (g_strcmp0(command,"PAUSESM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Pause";
+    } else if (g_strcmp0(command,"SKIPFSM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Seek";
+        dbus_argument_signature = "i";
+        GVariant* result = g_dbus_proxy_call_sync(proxy,"org.freedesktop.DBus.Properties.Get",g_variant_new("(si)","org.mpris.MediaPlayer2.Player","Position"),G_DBUS_CALL_FLAGS_NONE,DBUS_TIMEOUT,NULL,NULL);
+        GVariant* varient = g_variant_get_child_value(result,0);
+        GVariant* value = g_variant_get_child_value(varient,0);
+    } else if (g_strcmp0(command,"SKIPBSM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Stop";
+    } else if (g_strcmp0(command,"FULLONSM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Stop";
+    } else if (g_strcmp0(command,"FULLOFFSM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Stop";
+    } else if (g_strcmp0(command,"MUTESM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Stop";
+    } else if (g_strcmp0(command,"QUITSM") == 0) {
+        dbus_command="org.mpris.MediaPlayer2.Stop";
+    }
+}
+
+
 /* This outputs the information in human readable */
 void print_playing_info_music(const playing_info_music pInfo){
     char* tempitoa = NULL;
@@ -385,16 +428,15 @@ void print_playing_info_music(const playing_info_music pInfo){
     g_free(tempitoa);
 }
 
-void on_name_appeared (GDBusConnection *connection, const gchar *name, const gchar *name_owner, gpointer user_data)
-{
+
+void on_name_appeared (GDBusConnection *connection, const gchar *name, const gchar *name_owner, gpointer user_data) {
     char* msg = g_strdup_printf ("Name %s on %s is owned by %s", name,"the session bus", name_owner);
     print(msg,NULL,INFO);
     g_free(msg);
-    if (g_strcmp0(name,xml_get_object_path("MUSIC"))){
+    if (g_strcmp0(name,xml_get_bus_name("MUSIC")) == 0)
         musicConnected = TRUE;
-    } else if (g_strcmp0(name,xml_get_object_path("VIDEO"))) {
+    else if (g_strcmp0(name,xml_get_bus_name("VIDEO")) == 0)
         videoConnected = TRUE;
-    }
     dbus_init();
 }
 
@@ -403,10 +445,9 @@ void on_name_vanished (GDBusConnection *connection, const gchar *name, gpointer 
     char* msg = g_strdup_printf ("Name %s does not exist on %s\n", name,"the session bus");
     print(msg,NULL,INFO);
     g_free(msg);
-    if (g_strcmp0(name,xml_get_object_path("MUSIC"))){
+    if (g_strcmp0(name,xml_get_bus_name("MUSIC")))
         musicConnected = FALSE;
-    } else if (g_strcmp0(name,xml_get_object_path("VIDEO"))) {
+    else if (g_strcmp0(name,xml_get_bus_name("VIDEO")))
         videoConnected = FALSE;
-    }
     dbus_init();
 }

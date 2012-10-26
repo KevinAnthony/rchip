@@ -66,7 +66,6 @@ gpointer* add_folder_to_playqueue(gpointer* data){
     struct dirent *ep;
     char *newDirFile;
     char* dirFile = (char*) data;
-
     if ((dp=opendir(dirFile))==NULL) {
         dirFile = replace_str(dirFile,get_setting_str(VIDEO_ROOT),"/mnt/raid/");
         add_file_to_playqueue((gpointer*)dirFile);
@@ -75,9 +74,10 @@ gpointer* add_folder_to_playqueue(gpointer* data){
             queue_function_data* func = g_malloc(sizeof(queue_function_data));
             if (!strcmp(ep->d_name,".") || !strcmp(ep->d_name, "..")) { continue; }
             newDirFile = g_strdup_printf("%s/%s", dirFile, ep->d_name);
+            printf("Directory: %s",newDirFile);
             switch(file_type(newDirFile)){
                 case FTDIR:
-                    func->func  = *add_file_to_playqueue;
+                    func->func  = *add_folder_to_playqueue;
                     func->data = g_strdup(newDirFile);
                     func->priority = TP_NORMAL;
                     g_async_queue_push_sorted(file_async_queue,(gpointer)func,(GCompareDataFunc)sort_async_queue,NULL);

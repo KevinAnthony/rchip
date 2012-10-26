@@ -110,6 +110,8 @@ gboolean process_cmd(char* cmd,char* cmdTxt) {
                     }
                 }
                 g_free(dbus_command);
+            } else if (g_strcmp0(type,"DBUS_MPRIS") == 0){
+                    send_command_to_mpris(cmd,cmdTxt,musicOrVideo);
             }
             g_free(type);
             return TRUE;
