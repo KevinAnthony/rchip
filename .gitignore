@@ -1,5 +1,7 @@
 *.m4
 *.o
+*.so
+*.a
 Makefile
 Makefile.in
 config.*
@@ -17,3 +19,4 @@ src/.deps/
 src/rchip
 stamp-h1
 *.swp
+lib/*

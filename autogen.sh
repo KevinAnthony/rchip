@@ -43,6 +43,21 @@ function run () {
 	rm .autogen.log
 }
 
+function zwave() {
+    cd lib/
+    if [ -d "open-zwave" ]; then
+        cd open-zwave
+        svn update
+    else
+        svn checkout http://open-zwave.googlecode.com/svn/trunk/ open-zwave
+        cd open-zwave
+    fi
+    cd cpp/build/linux/
+    make
+    cd ../../../../..
+    cp lib/open-zwave/cpp/lib/linux/libopenzwave* src/
+}
+
 srcdir=$(dirname $0)
 test -z "$srcdir" && srcdir=.
 
@@ -57,6 +72,7 @@ if [ x"$WHICHLIBTOOLIZE" == x"" ]; then
 fi
 LIBTOOLIZE=$(basename $WHICHLIBTOOLIZE)
 
+zwave
 check_autotool_version aclocal 1.9
 check_autotool_version automake 1.9
 check_autotool_version autoconf 2.53

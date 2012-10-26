@@ -52,6 +52,7 @@ DISTCLEANFILES = Makefile
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
+	libopenzwave*
 
 distclean-local:
 	rm -rf .deps

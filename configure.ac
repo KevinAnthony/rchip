@@ -102,5 +102,6 @@ data/pluggable-xml/Makefile
 data/settings-xml/Makefile
 man/Makefile
 doc/Makefile
+lib/Makefile
 ])
 
