@@ -1,4 +1,138 @@
+2012-09-07  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/main.c, src/rest.c, src/showlist.c, src/status.c, src/utils.c,
+	src/utils.h: Added Register and Unregister commands for the threads, allowing
+	for Strings instead of HEX numbers, allowing for easier debugging
+
+2012-08-28  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* configure.ac, src/cmdhandler.c: I was too Aggressive with my code
+	cleaning... i needed some lines i too out
+
+2012-08-22  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* configure.ac, src/dbus.c: Stopped attaching on_property_change multiple
+	times
+
+	* configure.ac, src/cmdhandler.c, src/dbus.c, src/tray.c: Changed all string
+	pointer manipulations to strtok to improve stablitlity.
+
+2012-08-18  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/dbus.c, src/rest.c: We now catch the PlayingStateChange signal, so we
+	can update the remote devices when the music player starts/stops playing
+
+2012-08-15  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* configure.ac, data/pluggable-xml/banshee.music.xml, src/dbus.c, src/xml.c,
+	src/xml.h: Fixed problem with send commands, where it wasn't working for
+	mpris
+
+	* src/dbus.c, src/dbus.h, src/main.c: Took out Update Song loop, and Instead
+	update database when the the track is changed
+
+2012-08-14  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* data/pluggable-xml/banshee.music.xml, src/dbus.c: Implemented mpris std for
+	getting song info, should make it much easier to expand later
+
+	* src/main.c, src/rest.c, src/utils.h: removed Elapised_time
+
+2012-08-08  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* configure.ac, src/status.c, src/tray.c: Added missing set_icon's to window
+	and file dialogs
+
+	* configure.ac, data/ui/rchip_status_window.glade, m4/verbosity.m4,
+	src/dbus.c, src/main.c, src/rest.c, src/status.c, src/status.h, src/tray.c,
+	src/utils.c, src/utils.h: Changed Text Buffer to Treeview added 4 columns
+
+	* src/cmdhandler.c, src/dbus.c, src/main.c, src/rest.c, src/settings.c,
+	src/showlist.c, src/status.c, src/tray.c, src/utils.c, src/utils.h,
+	src/xml.c: Moved all printf and logging statments to a print statement i
+	wrote, to allow for better control
+
+	* src/Makefile.am, src/notifications.c, src/notifications.h: Removed unused
+	notifications
+
+	* src/main.c, src/status.c, src/status.h: Added Command line argument for
+	passing diffrent glade file
+
+2012-08-07  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* configure.ac, data/settings-xml/apps.noside.rchip.gschema.xml,
+	src/settings.c, src/settings.h, src/status.c: Added Max Buffer Size, should
+	keep buffer from becomming huge
+
+2012-08-05  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* data/ui/rchip_status_window.glade, src/Makefile.am, src/cmdhandler.c,
+	src/dbus.c, src/main.c, src/rest.c, src/showlist.c, src/status.c,
+	src/status.h, src/tray.c, src/utils.c, src/utils.h: Better exiting of program
+	 On closeing the status window, it writes the contents out to a file, too
+	keep a longer log of commands
+
+2012-07-25  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/showlist.c, src/showlist.h: CHanged to a much more unversal, and
+	simplier way of parsing filenames
+
+2012-07-23  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* configure.ac, src/rest.c, src/showlist.c, src/showlist.h, src/utils.h:
+	Changed Animated to follow a more standard filename system
+
+2012-07-19  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/Makefile.am, src/cmdhandler.c, src/dbus.c, src/dbus.h, src/main.c,
+	src/rest.c, src/rest.h, src/showlist.c, src/tray.c, src/utils.c, src/utils.h:
+	Added Mutex for Hosts Struct  Also Fixed a bug with pInfo being deallocated
+	before being used
+
+2012-07-17  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/main.c, src/rest.c, src/showlist.c, src/utils.h: Added a sleep in the
+	thread handlers to reduce cpu usage
+
+2012-07-10  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* TODO, configure.ac, src/cmdhandler.c, src/cmdhandler.h, src/dbus.c,
+	src/dbus.h, src/main.c, src/notifications.c, src/notifications.h, src/rest.c,
+	src/rest.h, src/settings.c, src/settings.h, src/showlist.c, src/showlist.h,
+	src/status.c, src/status.h, src/tray.c, src/tray.h, src/utils.c, src/utils.h,
+	src/xml.c, src/xml.h: Changed dates and email address
+
+2012-07-08  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* src/cmdhandler.c, src/cmdhandler.h, src/main.c, src/showlist.c, src/tray.c,
+	src/utils.c, src/utils.h: Updated threading queues to allow for priority
+
+	* ChangeLog, Makefile.am, README, build/icon-theme-installer,
+	data/Makefile.am, data/icons-hicolor/Makefile.am,
+	data/pluggable-xml/Makefile.am, data/pluggable-xml/banshee.music.xml,
+	data/rchip.ico, data/settings-xml/Makefile.am, m4/glib.m4, m4/music.m4,
+	src/Makefile.am, src/cmdhandler.c, src/cmdhandler.h, src/dbus.c, src/dbus.h,
+	src/notifications.c, src/notifications.h, src/rest.h, src/settings.c,
+	src/settings.h, src/status.c, src/status.h, src/utils.c, src/utils.h,
+	src/xml.c, src/xml.h: Fixed whitespace errors in files
+
+	* src/main.c, src/rest.c, src/showlist.c, src/showlist.h, src/tray.c,
+	src/tray.h: Added FileIO threading
+
+2012-07-07  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* m4/glib.m4, src/Makefile.am, src/cmdhandler.c, src/main.c, src/rest.c,
+	src/rest.h, src/tray.h, src/utils.c, src/utils.h: Added Threading Support for
+	networking, underlying threading support for other threads
+
+2012-05-10  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* INSTALL, src/rest.c: Updated rest.c to deal with the new response messages
+
 2012-01-29  Kevin Anthony <kevin.s.anthony@gmail.com>
+
+	* Makefile.am, src/main.c, src/rest.c, src/rest.h: dded missing function to
+	register remote daemons
 
 	* ChangeLog, INSTALL, Makefile.am, change.py, data/Makefile.am,
 	data/icons-hicolor/Makefile.am, data/settings-xml/Makefile.am,
@@ -24,13 +158,7 @@
 	src/status.h, src/tray.c, src/tray.h, src/utils.c, src/utils.h, src/xml.c,
 	src/xml.h: Changed tabs to spaces
 
-2012-01-10  Kevin Anthony <kevin.s.anthony@gmail.com>
-
-	* src/rest.c: Removed Debuging return statment
-
 2012-01-09  Kevin Anthony <kevin.s.anthony@gmail.com>
-
-	* src/rest.c: Removed Debuging print statment, Added TODO comment
 
 	* src/cmdhandler.c, src/main.c, src/rest.c, src/rest.h: Added JSON
 	Authentication
@@ -51,8 +179,6 @@
 	* src/showlist.c, src/utils.c, src/utils.h: Added checking for correct
 	extension before adding to showlist
 
-	* data/settings-xml/apps.noside.rchip.gschema.xml: Removed an errent tab
-
 2011-12-23  Kevin Anthony <kevin.s.anthony@gmail.com>
 
 	* libs/GNU.Gettext.dll, libs/freetype6.dll, libs/iconv.dll, libs/intl.dll,
@@ -68,19 +194,7 @@
 	libs/libwimp.dll, libs/libxml2.dll, libs/zlib1.dll: Removed old windows
 	Library
 
-	* src/tray.c: Fixed a bug preventing Add Folder from working correctly
-
-2011-12-18  Kevin Anthony <kevin.s.anthony@gmail.com>
-
-	* src/cmdhandler.c: Added some escaping before calling system commands
-	escaping ' ( ) ;
-
-	* src/utils.c: Fixed bug in str_replace where if replace string contained
-	find string, an infinite loop occored
-
 2011-12-10  Kevin Anthony <kevin.s.anthony@gmail.com>
-
-	* src/resource.rc: deleted unused file
 
 	* src/cmdhandler.c, src/notifications.c, src/rest.c, src/rest.h: Added
 	send_command_to_server function  Allows for two way communication between
@@ -93,14 +207,8 @@
 	* src/cmdhandler.c, src/dbus.c, src/dbus.h, src/main.c, src/notifications.c,
 	src/notifications.h, src/tray.c: Removed all windows ifdefs
 
-	* src/rest.c: libcur was calling the wrong method when asking for hostnames
-
 	* src/utils.c, src/utils.h: Fixed bug in str_replace function  leading to a
 	complete rewrite
-
-	* src/tray.c: libcur was calling the wrong method when asking for hostnames
-
-	* src/main.c: Changed timeout for daemon loop from 1/2 sec to 2 seconds
 
 	* configure, configure.ac, m4/Makefile: Changed version numbering system
 
@@ -190,10 +298,6 @@
 	src/dbus.c, src/main.c, src/resource.rc, src/settings.c, src/settings.h,
 	src/sql.c, src/tray.c: finally made the switch to gsettings
 
-2011-03-07  KevinAnthony <Kevin.S.Anthony@gmail.com>
-
-	* scripts/build.sh: Added build commands -s(silent) -i(install)
-
 2011-03-06  KevinAnthony <Kevin.S.Anthony@gmail.com>
 
 	* TODO, configure, configure.ac, scripts/build.sh, src/cmdhandler.c,
@@ -202,8 +306,6 @@
 	up includes
 
 2011-03-06  KevinAnthony <Kevin@nosideracing.com>
-
-	* scripts/build.sh: fixed a small bug in build.sh
 
 	* configure, configure.ac, scripts/build.sh, src/cmdhandler.c, src/dbus.c,
 	src/main.c, src/notifications.c, src/settings.c, src/showlist.c, src/sql.c,
@@ -406,10 +508,6 @@
 
 2011-02-23  Kevin <kevin.s.anthony@gmail.com>
 
-	* configure.ac: :)
-
-	* TODO: :)
-
 	* Makefile.in, config.status, configure, configure.ac, src/msdaemon.c,
 	src/notifications.c, src/settings.h: Notifications now uses the list from
 	sql.h of known hosts to report it's adds to.  Also it uses the computers
@@ -422,16 +520,7 @@
 
 	* src/settings.c, src/settings.h: wrote the getsetting fuction
 
-	* src/notifications.c: Changed the way malloc works, so large file names
-	don't crash to program
-
-	* TODO: New file, to track what needs to be done
-
 	* configure.ac, src/mstray.c: Bug Fix with about box
-
-	* config.status: changed file permissions
-
-	* src/settings.c: Added a false return so the program works, for now
 
 	* Makefile.am, Makefile.in: We were deleting a file on make clean we
 	shouldn't have been
@@ -441,20 +530,8 @@
 	* src/dbus.c, src/msdaemon.c, src/notifications.c, src/settings.c,
 	src/showlist.c, src/utils.c: Added <config.h> include
 
-	* src/mstray.h: surrouned activate with #if GTK >= 3
-
-	* src/mstray.c: included <config.h> and fixed link to icon file
-
 	* src/sql.c, src/sql.h: surrouned the entire file with #ifdef _SQL allowing
 	for the use of --disable-mysql
-
-	* scripts/changelogCreate: Changed location of ChangeLog so that it was in
-	the root directory
-
-	* src/cmdhandler.c: Put #ifdef _SQL around all calls to sql.h  This allows
-	for --disable-sql to funciton properly
-
-	* autogen.sh: small script to automaticlly reload automake confiuration
 
 	* AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am, Makefile.in,
 	config.h.in, config.status, configure, configure.ac, data/Makefile.am,
@@ -468,9 +545,6 @@
 
 	* src/mstray.c, src/mstray.h: We now use GtkApplication so that you can't
 	spawn multiple versions of msdeamon
-
-	* src/msdaemon.c: made some changes to the preprocessors, so that we could
-	compile up the program if SQL isn't available
 
 	* : copied these from a diffrent machine
 
@@ -490,12 +564,6 @@
 	* src/settings.c, src/settings.h: Started to make changes from standalone SQL
 	file to gconf2
 
-	* src/Makefile: Put linker and compiler flags in the correct order, allowing
-	for compiling on newer gcc compilers
-
-	* scripts/changelogCreate: script file, to automatically create a changelog
-	file
-
 	* src/cmdhandler.c, src/mstray.c, src/mstray.h: fixed a small warning in
 	cmdhandler  removed depreshated function in mstray.c
 
@@ -504,14 +572,6 @@
 	* src/cmdhandler.c, src/mstray.c, src/mstray.h: Added "Add Files to From
 	Folder"  This Allows recursive adding of folders. Allowing people to add
 	files quicker
-
-2011-02-08  KevinAnthony <Kevin.S.Anthony@gmail.com>
-
-	* src/mstray.c: Setup a branch,
-
-2011-01-20  Kevin <kevin.s.anthony@gmail.com>
-
-	* src/sql.c: fixed the random crashing when playing some Movies
 
 2010-12-24  unknown <Kevin@.(none)>
 
@@ -540,10 +600,6 @@
 	* src/Makefile.win, src/cmdhandler.c, src/cmdhandler.c.bak, src/msDaemon.nsi,
 	src/msdaemon.c, src/mstray.c, src/showlist.c, src/sql.c: Video Controller now
 	works in windows
-
-2010-12-20  Kevin <kevin.s.anthony@gmail.com>
-
-	* src/cmdhandler.c: Controling smplayer now works in linux!
 
 2010-12-20  unknown <Kevin@.(none)>
 
@@ -621,11 +677,6 @@
 	src/msdaemon, src/msdaemon.o, src/mstray.h.gch, src/mstray.o,
 	src/notifications.h.gch, src/notifications.o, src/sql.c, src/sql.h.gch,
 	src/sql.o: Fixed crashing because of too many sql connections
-
-2010-12-06  Kevin <kevin.s.anthony@gmail.com>
-
-	* src/msdaemon.c: Removed 2 print statements to make it run quite, removed
-	some commented code
 
 2010-12-05  Kevin <kevin.s.anthony@gmail.com>
 
